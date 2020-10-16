@@ -31,7 +31,12 @@
                             <div class="form-group">
                                 <textarea name="" id="task-summary" rows="4" placeholder="Resumen" class="form-control"></textarea>
                             </div>
-
+                            <div class="form-group">
+                                <label for="categorySelect">Categoria</label>
+                                <select class="form-control" id="categorySelect">
+                                    <option value="0">Seleccione una categoria</option>
+                                </select>
+                            </div>
                             <div class="form-group">
                                 <div class="row">
                                     <div class="col">
@@ -41,8 +46,13 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="">Portafolio</label>
-                                            <input type="file" name="" id="task-portafolio" class="btn btn-danger">
+                                            <div id="img-portafolio">
+                                                <input type="file" name="" id="task-portafolio_0" class="btn btn-danger" di>
+                                            </div>
                                         </div>
+                                        <button class="btn btn-secondary btn-block" id="new-portafolio">
+                                            Nueva imagen
+                                        </button>
                                     </div>
                                 </div>
                             </div>
