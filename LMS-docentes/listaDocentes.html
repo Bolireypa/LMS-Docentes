@@ -16,7 +16,7 @@
     
     <nav>
         <div class="nav-wrapper">
-          <a href="index.html" class="brand-logo">Co Marka</a>
+          <a href="index.html" class="brand-logo">Co Marca</a>
           <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
           <ul id="nav-mobile" class="right hide-on-med-and-down">
             <li><a href="registroDocentes.html">Registro de docentes</a></li>
@@ -41,19 +41,22 @@
             <div class="input-field col s12 m6">
                 <select id="docenteCategoria" onchange="filtroCategoria(this.value)">
                     <option value="" disabled selected>Seleccione la categoria</option>
+                    <option value="todas">Todas las categorias</option>
                 </select>
                 <label>Filtrar por categoria</label>
             </div>
         </div>
-        <div class="row" id="idListaDocentes">
+        <div id="idListaD">
+            <div class="row" id="idListaDocentes">
             
+            </div>
         </div>
     </div>
 
     <!-- Modal Trigger -->
 
   <!-- Modal Structure -->
-  <div id="modal1" class="modal">
+  <div id="modal1" class="modal modal-fixed-footer">
     <div class="modal-content">
       <h4>Portafolio de: ...</h4>
       <p>Imagenes</p>

@@ -17,6 +17,14 @@ var c1 = 0;
 var c2 = 0;
 
 //
+var c3 = 0;
+
+//
+// downloadCV = function (docName, docRef, downloadCVButton) {
+    // console.log('Descargando CV de '+docName);
+// }
+
+//
 portafolio = function (docName, docRef) {
     console.log(docName+' '+docRef);
     var idModalBody = document.getElementById('idModalBody');
@@ -56,7 +64,7 @@ imagenPortafolioDocente = function (ref, c1) {
         querySnapshot.forEach(function(doc1) {
             // doc.data() is never undefined for query doc snapshots
             // urlCV = doc1.data().url;
-            console.log(doc1.id, " => ", doc1.data().url);
+            // console.log(doc1.id, " => ", doc1.data().url);
             urlSrc = doc1.data().url;
             // var imagenPortafolio = document.createElement('img');
             // imagenPortafolio.src = doc1.data().url;
@@ -64,8 +72,6 @@ imagenPortafolioDocente = function (ref, c1) {
             // pad.appendChild(imagenPortafolio);
             //   var img = document.getElementById('myimg');
             //   img.src = url;
-
-
 
         });
 
@@ -78,9 +84,7 @@ imagenPortafolioDocente = function (ref, c1) {
 
         divImageCard.replaceChild(newImageCard, imageCard);
 
-        console.log(urlSrc);
-
-        
+        // console.log(urlSrc);
     // return urlSrc;
         
     })
@@ -93,29 +97,39 @@ imagenPortafolioDocente = function (ref, c1) {
     return urlSrc;
 }
 
-filtroCategoria = function (catRef) {
+async function filtroCategoria(catRef) {
     console.log(catRef);
+    const lmsCategorias = await getCat();
+    const lmsDocentes = await getTask();
+    if (catRef != 'todas') {
+        db.collection("lms-docentes").where("refCatDoc", "==", catRef)
+        .get()
+        .then(function(querySnapshot) {
+            // querySnapshot.forEach(function(doc2) {
+                
+            // });
+            listaDocentes(querySnapshot, 'allCategories');
+
+        })
+        .catch(function(error) {
+            console.log("Error getting documents: ", error);
+        });
+        // listaDocentes(lmsDocentes, 'allCategories');
+    } else {
+        listaDocentes(lmsDocentes, 'allCategories');        
+    }
     
 }
 
-window.addEventListener('DOMContentLoaded', async (e) => {
-    var selectId = document.getElementById("docenteCategoria");
-    const lmsCategorias = await getCat();
-    lmsCategorias.forEach(docC => {
-        console.log(docC.data());
-        var optionCat = document.createElement('option');
-        optionCat.value = docC.data().refCat;
-        // optionCat.onclick = filtroCategoria(docC.data().refCat);
-        var optionCatText = document.createTextNode(docC.data().nombreCat);
-        optionCat.appendChild(optionCatText);
-        selectId.appendChild(optionCat);
-    })
+listaDocentes = function (lmsDocentes, category) {
+    // c2=0;
+    var idListaD = document.getElementById('idListaD');
+    var idListaDocentes = document.createElement('div');
+    idListaDocentes.id = 'idListaDocentes';
+    idListaDocentes.className = 'row';
+    var idListaDocentes2 = document.getElementById('idListaDocentes');
+    idListaD.replaceChild(idListaDocentes, idListaDocentes2);
 
-    $(document).ready(function(){
-        $('select').formSelect();
-    });
-
-    const lmsDocentes = await getTask();
     var categoriasDoc = [];
     lmsDocentes.forEach(doc => {
         c = c+1;
@@ -131,9 +145,11 @@ window.addEventListener('DOMContentLoaded', async (e) => {
         dicCard.className = 'card';
         var divCardImage = document.createElement('div');
         divCardImage.className = 'card-image';
+        // divCardImage.style = 'height: 180px; width: 100%;';
         divCardImage.id = 'divCardImageId_'+c1;
         var cardImage = document.createElement('img');
         cardImage.id = 'cardImageId_'+c1;
+        // cardImage.style = 'max-height: 100%; max-width: 100%; margin: auto;';
         cardImage.src = imagenPortafolioDocente(docenteDatos.ref, c1);
         divCardImage.appendChild(cardImage);
         var divCardContent = document.createElement('div');
@@ -167,6 +183,27 @@ window.addEventListener('DOMContentLoaded', async (e) => {
         var btnCV = document.createElement('a');
         btnCV.className = 'btn red';
         btnCV.style = 'width: 100%;';
+        // btnCV.onclick = function () {
+        //     downloadCV(docenteDatos.name, docenteDatos.ref, btnCV);
+        // };
+
+        db.collection("lms-archivos").where("refid", "==", docenteDatos.ref).where("type", "==", "pdf")
+        .get()
+        .then(function(querySnapshot) {
+            querySnapshot.forEach(function(doc1) {
+                // doc.data() is never undefined for query doc snapshots
+                urlCV = doc1.data().url;
+                console.log("Url => ", doc1.data().url);
+
+                btnCV.setAttribute("href", urlCV);
+                btnCV.setAttribute("target", "_blank");
+
+                
+            });
+        })
+        .catch(function(error) {
+            console.log("Error getting documents: ", error);
+        });
         var btnCVText = document.createTextNode('CV');
         btnCV.appendChild(btnCVText);
         divColCA1.appendChild(btnCV);
@@ -214,26 +251,22 @@ window.addEventListener('DOMContentLoaded', async (e) => {
         
 
         if (docenteDatos.refCatDoc) {
+            c3 = 1;
+            console.log(docenteDatos.refCatDoc);
+            
+            // /*
             var catNom="";
             db.collection("lms-categorias").where("refCat", "==", docenteDatos.refCatDoc)
             .get()
             .then(function(querySnapshot) {
                 querySnapshot.forEach(function(doc2) {
-                    // doc.data() is never undefined for query doc snapshots
+
                     catNom = doc2.data().nombreCat;
                     catDoc = doc2.data().nombreCat;
 
                     categoriasDoc[c-1].cat = doc2.data().nombreCat;
 
                     console.log(doc2.id, " => ", catNom);
-
-                    // var imagenPortafolio = document.createElement('img');
-                    // imagenPortafolio.src = doc2.data().url;
-                    // imagenPortafolio.width = "400";
-                    // pad.appendChild(imagenPortafolio);
-                    //   var img = document.getElementById('myimg');
-                    //   img.src = url;
-                    // return catNom;
 
                     var idCardContent = document.getElementById('idCardContent_'+c2);
                     var idh6 = document.getElementById('h6Id_'+c2);
@@ -252,20 +285,59 @@ window.addEventListener('DOMContentLoaded', async (e) => {
                     c2=c2+1;
 
                 });
-
-                
-                
-                
-
-
             })
             .catch(function(error) {
                 console.log("Error getting documents: ", error);
-            });
+            });/* */
+            
         } else {
+            // c2=c2+1;
+            c3 = 0;
             catDoc = "No categoria";
+            console.log(catDoc);
+
+            var idCardContent = document.getElementById('idCardContent_'+c2);
+            var idh6 = document.getElementById('h6Id_'+c2);
+
+            var newh6 = document.createElement('h6');
+            newh6.id = 'h6Id_'+c2;
+            var newH6Text = document.createTextNode(catDoc);
+            newh6.appendChild(newH6Text);
+
+            console.log(newh6, idh6, c2);
+            
+
+            idCardContent.replaceChild(newh6, idh6);
+
+            console.log(catDoc, c2);
+            c2=c2+1;
+            
         }
+
         c1=c1+1;
 
     })
+}
+
+window.addEventListener('DOMContentLoaded', async (e) => {
+    var selectId = document.getElementById("docenteCategoria");
+    const lmsCategorias = await getCat();
+    lmsCategorias.forEach(docC => {
+        console.log(docC.data());
+        var optionCat = document.createElement('option');
+        optionCat.value = docC.data().refCat;
+        // optionCat.onclick = filtroCategoria(docC.data().refCat);
+        var optionCatText = document.createTextNode(docC.data().nombreCat);
+        optionCat.appendChild(optionCatText);
+        selectId.appendChild(optionCat);
+    })
+
+    $(document).ready(function(){
+        $('select').formSelect();
+    });
+
+    const lmsDocentes = await getTask();
+
+    listaDocentes(lmsDocentes, 'allCategories');
+    
 })
