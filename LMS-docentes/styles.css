@@ -1,0 +1,40 @@
+.card > .card-image > img {
+    width: auto;
+    max-height: 100%;
+    max-width: 100%;
+    margin: auto;
+}
+
+.card > .card-image {
+    height: 180px;
+    background-color: lightseagreen;
+    display: flex;
+    vertical-align: middle;
+}
+
+.card {
+    height: 550px;
+}
+
+.card > .card-content{
+    height: 51%;
+}
+
+.card  > .card-content > .card-title{
+    height: 65px;
+}
+
+.cardSummary{
+    height: 59%;
+    overflow-y: auto;
+    margin-bottom: 6px;
+}
+
+/* .spanCardTitle{
+    background-color: black;
+}
+
+.card-title{
+    background-color: black;
+    opacity: 20%;
+} */

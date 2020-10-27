@@ -17,13 +17,31 @@ const imagePortafolio = docenteForm["docentePortafolio_0"];
 var c = 0;
 
 //
-const saveUser = (ref, name, email, summary, refCatDoc) =>
-    db.collection('lms-docentes').doc().set({
-        ref,
+var c1 = 0;
+
+//
+var c2 = 0;
+
+//
+const saveUser = (name, email, summary, category) =>
+    db.collection('lms-docentes').add({
+        // ref,
         name,
         email,
         summary,
-        refCatDoc,
+        category,
+        // refCatDoc,
+    }).then(function(docData) {
+        console.log("Document successfully written! ",docData.id);
+        // return docData.id;
+        // Se inicia la funcion uploadImg() que sube la imagen en storage de firebase
+        uploadImg(docData.id);
+
+        // Se ejecuta la funcion uploadDocument() que sube el archivo PDF del CV del docente en storage de firebase
+        uploadDocument(docData.id);
+    })
+    .catch(function(error) {
+        console.error("Error writing document: ", error);
     });
 
 // Funcion saveDocuments() que captura los dotos del los archivos del formulario en la coleccion llamada 'lms-archivos'
@@ -35,37 +53,49 @@ const saveDocuments = (refid, url, type) =>
     });/* */
 
 //
-const newBtnPortafolio = function () {
-    console.log("nueva imagen");
-    c=c+1;
-    if (c==6) {
+const newBtnPortafolio = function (imgVal, imgId) {
+    var divPortafolio = document.getElementById('idPortafolio');
+
+    
+    if (imgVal!="") {
+        console.log("nueva imagen "+imgVal);
+        c=c+1;
+        if (c==6) {
+            
+        } else {
+            // var divPortafolio = document.getElementById('idPortafolio');
+            var newInput = document.createElement('input');
+            newInput.type='file';
+            newInput.id='docentePortafolio_'+c;
+            newInput.onchange = function () { newBtnPortafolio(this.value, this.id); };
+            var newSpan = document.createElement('span');
+            var spanText = document.createTextNode('Portafolio');
+            newSpan.appendChild(spanText);
+            var divBtn = document.createElement('div');
+            divBtn.className = 'btn red';
+            divBtn.appendChild(newSpan);
+            divBtn.appendChild(newInput);
+            var newInputText = document.createElement('input');
+            newInputText.type = 'text';
+            newInputText.className = 'file-path validate';
+            newInputText.placeholder = 'Selecciona una imagen';
+            var divInputText = document.createElement('div');
+            divInputText.className = 'file-path-wrapper';
+            divInputText.appendChild(newInputText);
+            var divInputFile = document.createElement('div');
+            divInputFile.className = 'file-field input-field';
+            divInputFile.appendChild(divBtn);
+            divInputFile.appendChild(divInputText);
+            divPortafolio.appendChild(divInputFile);
+        }
         
     } else {
-        var divPortafolio = document.getElementById('idPortafolio');
-        var newInput = document.createElement('input');
-        newInput.type='file';
-        newInput.id='docentePortafolio_'+c;
-        newInput.onchange = function () { newBtnPortafolio(); };
-        var newSpan = document.createElement('span');
-        var spanText = document.createTextNode('Portafolio');
-        newSpan.appendChild(spanText);
-        var divBtn = document.createElement('div');
-        divBtn.className = 'btn red';
-        divBtn.appendChild(newSpan);
-        divBtn.appendChild(newInput);
-        var newInputText = document.createElement('input');
-        newInputText.type = 'text';
-        newInputText.className = 'file-path validate';
-        newInputText.placeholder = 'Selecciona una imagen';
-        var divInputText = document.createElement('div');
-        divInputText.className = 'file-path-wrapper';
-        divInputText.appendChild(newInputText);
-        var divInputFile = document.createElement('div');
-        divInputFile.className = 'file-field input-field';
-        divInputFile.appendChild(divBtn);
-        divInputFile.appendChild(divInputText);
-        divPortafolio.appendChild(divInputFile);
+        imgVal = 'no hay imagen';
+        console.log("nueva imagen "+imgVal);
+        
     }
+    console.log(divPortafolio.childNodes);
+    
 }
 // imagePortafolio.addEventListener('change', (e)=>{
     
@@ -83,18 +113,74 @@ const verificarDatos = function () {
     
 }
 
+function initApp() {
+    // var state;
+    firebase.auth().onAuthStateChanged(async function(user) {    
+        if (user) {
+            console.log('User is signed in');
+            // document.getElementById('dropdown1Text').textContent = user.email;
+            // idDropdown.setAttribute('style', '');
+            // btnLogOut.disabled = false;
+            // state = true;
+
+            
+        } else {
+            console.log('User is signed out');
+            // document.getElementById('formRegistroDocentes').textContent = 'Acceso denegado!!! Inicie sesión o registrese.';
+            document.getElementById('formRegistroDocentes').setAttribute('style','');
+            // idDropdown.setAttribute('style', 'display:none;');
+            // btnLogOut.disabled = true;
+            // state = false;
+        }
+    });
+
+    // return state;
+}
+
 window.addEventListener('DOMContentLoaded', async (e) => {
-    const lmsDocentes = await getTask();
-    lmsDocentes.forEach(doc => {
-        console.log(doc.data());
-    })
+    $('.sidenav').sidenav();
+
+    $('.modal').modal();
+
+    initApp();
+
+    document.getElementById('formRegistroDocentes').setAttribute('style','');
+    var divPortafolio = document.getElementById('idPortafolio');
+    var newInput = document.createElement('input');
+    newInput.type='file';
+    newInput.id='docentePortafolio_0';
+    newInput.onchange = function () { newBtnPortafolio(this.value, this.id); };
+    var newSpan = document.createElement('span');
+    var spanText = document.createTextNode('Portafolio');
+    newSpan.appendChild(spanText);
+    var divBtn = document.createElement('div');
+    divBtn.className = 'btn red';
+    divBtn.appendChild(newSpan);
+    divBtn.appendChild(newInput);
+    var newInputText = document.createElement('input');
+    newInputText.type = 'text';
+    newInputText.className = 'file-path validate';
+    newInputText.placeholder = 'Selecciona una imagen';
+    var divInputText = document.createElement('div');
+    divInputText.className = 'file-path-wrapper';
+    divInputText.appendChild(newInputText);
+    var divInputFile = document.createElement('div');
+    divInputFile.className = 'file-field input-field';
+    divInputFile.appendChild(divBtn);
+    divInputFile.appendChild(divInputText);
+    divPortafolio.appendChild(divInputFile);
+
+    // const lmsDocentes = await getTask();
+    // lmsDocentes.forEach(doc => {
+    //     console.log(doc.data());
+    // })
 
     var selectId = document.getElementById("docenteCategoria");
     const lmsCategorias = await getCat();
     lmsCategorias.forEach(docC => {
         console.log(docC.data());
         var optionCat = document.createElement('option');
-        optionCat.value = docC.data().refCat;
+        optionCat.value = docC.data().nombreCat; // refCat
         var optionCatText = document.createTextNode(docC.data().nombreCat);
         optionCat.appendChild(optionCatText);
         selectId.appendChild(optionCat);
@@ -103,6 +189,7 @@ window.addEventListener('DOMContentLoaded', async (e) => {
     $(document).ready(function(){
         $('select').formSelect();
     });
+    
 })
 
 //
@@ -119,7 +206,11 @@ function refGenerada(name, mail) {
 
 //
 docenteForm.addEventListener('submit', async (e) => {
-    e.preventDefault();//Impide que el formulario se recargue
+    e.preventDefault();//Impide que el formulario se recargue en el evento submit
+
+    
+
+    $('.modal').modal('open');
 
     const name = docenteForm['docenteNombre'].value;
     const email = docenteForm["docenteEmail"].value;
@@ -132,13 +223,11 @@ docenteForm.addEventListener('submit', async (e) => {
     const ref = refGenerada(name,email);
     
     // Se ejecuta la funcion saveUser() que guarda los datos del docentes en la coleccion 'lms-docentes' en firebase
-    await saveUser(ref, name, email, summary, category);
+    await saveUser(name, email, summary, category);//await
 
-    // Se inicia la funcion uploadImg() que sube la imagen en storage de firebase
-    uploadImg(ref);
+    // console.log('-----id del docente '+idDoc);
 
-    // Se ejecuta la funcion uploadDocument() que sube el archivo PDF del CV del docente en storage de firebase
-    uploadDocument(ref);
+    
 });
 
 uploadImg = function(ref){
@@ -166,6 +255,8 @@ uploadImg = function(ref){
 };
 
 uploadImageProccess = function (imgNumber, imagenesSubidas, refid) {
+    c1=c1+1;
+
     /////////////////////// -- (Cambiar comnetario) Posible solucion: ejecutaar las siguientes lineas de codigo en una funcion, y utilizar funciones recursivas para subir una imagen luego de otra y asi obtener el nombre de la imagen y la ruta
     var file = docenteForm["docentePortafolio_"+imgNumber].files[0];
     console.log(file);
@@ -192,13 +283,14 @@ uploadImageProccess = function (imgNumber, imagenesSubidas, refid) {
             console.log(error);
             
         }, function () {
-            console.log('Imagen '+file.name+' subida');
+            console.log('Imagen '+c1+' '+file.name+' subida');
             
             uploadTask.snapshot.ref.getDownloadURL().then(function (url) {
                 console.log(url);
 
                 imagenesSubidas.push(file.name);
                 console.log(imagenesSubidas);
+                confirmacionRegistro(imgNumber, c1-1);
                 
                 // --(posible accion a borrar) Se asigna a las variables los valores de la refernecia al docente que subio sus archivos, y las rutas de los mismos
                 // const refid = 'docente1';
@@ -216,6 +308,7 @@ uploadImageProccess = function (imgNumber, imagenesSubidas, refid) {
 
             })
         });
+        
         // Fin de proceso de imagenes a subir
     }/* */
 }
@@ -244,3 +337,20 @@ uploadDocument = function(refid){
         });
     }
 };
+
+confirmacionRegistro = function (subir, subido) {
+    console.log(subir, subido);
+    if (subir == subido) {
+        console.log("Todas la imagenes subidas");
+        var idModalContent = document.getElementById('modalContent');
+        var idModalProgress = document.getElementById('modalProgress');
+        var newModalProgress = document.createElement('h1');
+        newModalProgress.id = 'modalProgress';
+        var modalProgressText = document.createTextNode('Registrado correctamete!');
+        newModalProgress.appendChild(modalProgressText);
+        idModalContent.replaceChild(newModalProgress, idModalProgress);
+    } else {
+        
+    }
+    
+}
