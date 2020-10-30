@@ -32,6 +32,18 @@ var categoriaGlobal = document.getElementById('docenteCategoria').value;
 var listaLmsDoc = '';
 
 //
+const saveImage = (fileName, refid, url, type) => 
+    db.collection('lms-archivos').doc().set({
+        fileName,
+        refid,
+        url,
+        type,
+    }).then(function () {
+        console.log('Datos guardados en la coleccion lms-archivos', refid);
+        portafolio('nombre de docente', refid, false);
+    });/* */
+
+//
 const deleteDoc = id => db.collection('lms-docentes').doc(id).delete().then(async function() {
         if (categoriaGlobal != "todas") {
             db.collection("lms-docentes").where("category", "==", categoriaGlobal)
@@ -47,6 +59,27 @@ const deleteDoc = id => db.collection('lms-docentes').doc(id).delete().then(asyn
             listaDocentes(lmsDocentes, 'allCategories');        
         }
         console.log("Document successfully deleted!", categoriaGlobal);
+    }).catch(function(error) {
+        console.error("Error removing document: ", error);
+    });
+
+const deleteImgPortafolio = id => db.collection('lms-archivos').doc(id).delete().then(async function() {
+    $('.modal').modal('close');
+
+        if (categoriaGlobal != "todas") {
+            db.collection("lms-docentes").where("category", "==", categoriaGlobal)
+            .get()
+            .then(function(querySnapshot) {
+                listaDocentes(querySnapshot, 'allCategories');
+            })
+            .catch(function(error) {
+                console.log("Error getting documents: ", error);
+            });
+        } else {
+            const lmsDocentes = await getTask();
+            listaDocentes(lmsDocentes, 'allCategories');        
+        }
+        console.log("Image successfully deleted!", categoriaGlobal);
     }).catch(function(error) {
         console.error("Error removing document: ", error);
     });
@@ -77,7 +110,30 @@ const updateDoc = (id, updatedDoc) => db.collection('lms-docentes').doc(id).upda
         console.error("Error updating document: ", error);
     });
 
-
+const updateDocCV = (id, updatedDocCV) => db.collection('lms-archivos').doc(id).update(updatedDocCV).then(async function() {
+        console.log(categoriaGlobal);
+        $('.modal').modal('close');
+        if (categoriaGlobal != "todas") {
+            console.log('categoria '+categoriaGlobal);
+            
+            db.collection("lms-docentes").where("category", "==", categoriaGlobal)
+            .get()
+            .then(function(querySnapshot) {
+                listaDocentes(querySnapshot, 'allCategories');
+            })
+            .catch(function(error) {
+                console.log("Error getting documents: ", error);
+            });
+        } else {
+            console.log('todas las categorias');
+            const lmsDocentes = await getTask();
+            
+            listaDocentes(lmsDocentes, 'allCategories');        
+        }
+        console.log("Document successfully updated!", categoriaGlobal);
+    }).catch(function(error) {
+        console.error("Error updating document: ", error);
+    });
 
 //
 // downloadCV = function (docName, docRef, downloadCVButton) {
@@ -85,35 +141,196 @@ const updateDoc = (id, updatedDoc) => db.collection('lms-docentes').doc(id).upda
 // }
 
 //
-portafolio = function (docName, docRef) {
-    console.log(docName+' '+docRef);
+portafolio = function (docName, docRef, editPortafolio) {
+    console.log(docName+' '+docRef, editPortafolio);
     var idModalBody = document.getElementById('idModalBody');
     var idVerPortafolio = document.getElementById('verPortafolio');
     var pad = document.createElement('div');
+    pad.className = 'row';
     pad.id = "verPortafolio";
     idModalBody.replaceChild(pad, idVerPortafolio);
+
+    var countImagesPortafolio = 0;
 
     // idVerPortafolio.appendChild(pad);
     db.collection("lms-archivos").where("refid", "==", docRef).where("type", "==", "imagen")
     .get()
     .then(function(querySnapshot) {
+        console.log(querySnapshot);
+        
         querySnapshot.forEach(function(doc1) {
+            countImagesPortafolio = countImagesPortafolio + 1;
+            
             // doc.data() is never undefined for query doc snapshots
             // urlCV = doc1.data().url;
             console.log(doc1.id, " => ", doc1.data().url);
+            var divColImagePortafolio = document.createElement('div');
+            divColImagePortafolio.className = 'col s6 m4';
+            var divRowEditImageBtn = document.createElement('div');
+            divRowEditImageBtn.className = 'row'
+            var divColEditImage = document.createElement('div');
+            divColEditImage.className = 'col s12 portafolioImg';
+            divRowEditImageBtn.appendChild(divColEditImage);
 
             var imagenPortafolio = document.createElement('img');
             imagenPortafolio.src = doc1.data().url;
-            imagenPortafolio.height = "200";
-            pad.appendChild(imagenPortafolio);
+            // imagenPortafolio.height = "200";
+            
+            divColEditImage.appendChild(imagenPortafolio);
+
+            var divColEditImageBtn = document.createElement('div');
+            divColEditImageBtn.className = 'col s6';
+            var divInputField = document.createElement('div');
+            divInputField.className = 'file-field input-field';
+            var divEditButton = document.createElement('div');
+            divEditButton.className = 'btn red';
+            var spanEditBtn = document.createElement('span');
+            spanEditBtn.textContent = 'Cambiar';
+            var editImageBtn = document.createElement('input');
+            editImageBtn.type = 'file';
+            editImageBtn.className = 'changeFileBtn';
+            // editImageBtn.className = 'btn';
+            editImageBtn.onchange = function () {
+                console.log(this.files[0]);
+                var docFileCV = this.files[0];
+                if (!docFileCV) {
+
+                }else{
+                    var storageDocRef = storage.ref('/portafolioDocente/'+docFileCV.name)
+                    var uploadDoc = storageDocRef.put(docFileCV);
+                    uploadDoc.on('state_changed', function (snapshot) {
+                        
+                    }, function (error) {
+                        console.log(error);
+            
+                    }, function () {
+                        console.log('Imagen cambiada');
+                        uploadDoc.snapshot.ref.getDownloadURL().then(async function (url1) {
+                            console.log(url1);
+            
+                            //
+                            await updateDocCV(doc1.id, {
+                                fileName: docFileCV.name,
+                                url: url1,
+                            });
+                            
+                        })
+                    });
+                }
+            };
+            var newInputText = document.createElement('input');
+            newInputText.type = 'text';
+            newInputText.setAttribute('style', 'display:none;');
+            newInputText.className = 'file-path validate';
+            newInputText.placeholder = 'Selecciona una imagen';
+            var divInputText = document.createElement('div');
+            divInputText.className = 'file-path-wrapper';
+            divInputText.appendChild(newInputText);
+
+            divEditButton.appendChild(spanEditBtn);
+            divEditButton.appendChild(editImageBtn);
+            divInputField.appendChild(divEditButton);
+            divInputField.appendChild(divInputText);
+            divColEditImageBtn.appendChild(divInputField);
+
+            var divColDeleteImageBtn = document.createElement('div');
+            divColDeleteImageBtn.className = 'col s6';
+            var deleteImageBtn = document.createElement('a');
+            deleteImageBtn.className = 'btn';
+            deleteImageBtn.textContent = 'Eliminar';
+            deleteImageBtn.onclick = function () {
+                deleteImgPortafolio(doc1.id);
+            }
+            divColDeleteImageBtn.appendChild(deleteImageBtn);
+
+            divRowEditImageBtn.appendChild(divColEditImageBtn);
+            divRowEditImageBtn.appendChild(divColDeleteImageBtn);
+            
+            // divRowEditImageBtn.appendChild(editImageBtn);
+            divColImagePortafolio.appendChild(divRowEditImageBtn);
+            // divColImagePortafolio.appendChild(divRowEditImageBtn);
+            pad.appendChild(divColImagePortafolio);
             //   var img = document.getElementById('myimg');
             //   img.src = url;
 
         });
+        console.log(countImagesPortafolio);
+        
+        if (countImagesPortafolio < 6) {
+            var divColImagePortafolioEmpty = document.createElement('div');
+            divColImagePortafolioEmpty.className = 'col s6 m4';
+            var divRowAddImageBtn = document.createElement('div');
+            divRowAddImageBtn.className = 'row'
+            var divColAddImageEmpty = document.createElement('div');
+            divColAddImageEmpty.className = 'col s12 portafolioImg';
+
+            var divInputFieldAdd = document.createElement('div');
+            divInputFieldAdd.className = 'file-field input-field';
+
+            var divAddButton = document.createElement('div');
+            divAddButton.className = 'btn grey';
+            var spanAddBtn = document.createElement('span');
+            spanAddBtn.textContent = 'Agregar';
+            var addImageBtn = document.createElement('input');
+            addImageBtn.type = 'file';
+            addImageBtn.onchange = function () {
+                console.log(this.files[0]);
+                console.log('--------------id del docente => '+docRef);
+                var imageFile = this.files[0];
+                if (imageFile) {
+                    var storageImageRef = storage.ref('/portafolioDocente/'+imageFile.name)
+                    var uploadImage = storageImageRef.put(imageFile);
+                    uploadImage.on('state_changed', function (snapshot) {
+                        
+                    }, function (error) {
+                        console.log(error);
+            
+                    }, function () {
+                        console.log('Imagen Guardada');
+                        uploadImage.snapshot.ref.getDownloadURL().then(async function (urlImage) {
+                            console.log(urlImage);
+                            saveImage(imageFile.name, docRef, urlImage, 'imagen');
+                        })
+                    });
+                }else{
+                    
+                }
+            }
+
+            divAddButton.appendChild(spanAddBtn);
+            divAddButton.appendChild(addImageBtn);
+
+            var addInputText = document.createElement('input');
+            addInputText.type = 'text';
+            addInputText.setAttribute('style', 'display:none;');
+            addInputText.className = 'file-path validate';
+            addInputText.placeholder = 'Selecciona una imagen';
+            var divInputTextAdd = document.createElement('div');
+            divInputTextAdd.className = 'file-path-wrapper';
+
+            divInputTextAdd.appendChild(addInputText);
+
+            divInputFieldAdd.appendChild(divAddButton);
+            divInputFieldAdd.appendChild(divInputTextAdd);
+
+            divColAddImageEmpty.appendChild(divInputFieldAdd);
+            divRowAddImageBtn.appendChild(divColAddImageEmpty);
+            divColImagePortafolioEmpty.appendChild(divRowAddImageBtn);
+            pad.appendChild(divColImagePortafolioEmpty);
+
+        } else {
+            
+        }
+        
+        // for (let index = 0; index < countImagesPortafolio; index++) {
+            
+        // }
     })
     .catch(function(error) {
         console.log("Error getting documents: ", error);
     });
+
+    
 }
 
 imagenPortafolioDocente = function (ref, c1) {
@@ -151,7 +368,7 @@ imagenPortafolioDocente = function (ref, c1) {
     .catch(function(error) {
         console.log("Error getting documents: ", error);
     });
-    var urlSrc = 'https://firebasestorage.googleapis.com/v0/b/lms-docentes.appspot.com/o/portafolioDocente%2Fportafolio3.png?alt=media&token=8e49c91d-3312-449f-9d09-a1c851e9184e';
+    // var urlSrc = 'https://firebasestorage.googleapis.com/v0/b/lms-docentes.appspot.com/o/portafolioDocente%2Fportafolio3.png?alt=media&token=8e49c91d-3312-449f-9d09-a1c851e9184e';
     // console.log(urlSrc+' url');
     
     return urlSrc;
@@ -181,7 +398,8 @@ async function filtroCategoria(catNom) {
     
 }
 
-listaDocentes = function (lmsDocentes, categories) {
+listaDocentes = async function (lmsDocentes, categories) {
+    const lmsCategorias = await getCat();
     // c2=0;
     var idListaD = document.getElementById('idListaD');
     var idListaDocentes = document.createElement('div');
@@ -216,8 +434,8 @@ listaDocentes = function (lmsDocentes, categories) {
         var aBtnFloating = document.createElement('a');
         aBtnFloating.className = 'btn-floating activator halfway-fab waves-effect waves-light red';
         aBtnFloating.onclick = async function () {
-            const doc = await getDoc(docD.id);
-            console.log(doc.data());
+            // const doc = await getDoc(docD.id);
+            // console.log(doc.data());
             // console.log(doc.id);
             // portafolio(docenteDatos.name, docenteDatos.ref);
         }
@@ -265,7 +483,7 @@ listaDocentes = function (lmsDocentes, categories) {
         var divColCA1 = document.createElement('div');
         divColCA1.className = 'col s6';
         var btnCV = document.createElement('a');
-        btnCV.className = 'btn red';
+        btnCV.className = 'btn green';
         btnCV.style = 'width: 100%;';
         // btnCV.onclick = function () {
         //     downloadCV(docenteDatos.name, docenteDatos.ref, btnCV);
@@ -295,12 +513,12 @@ listaDocentes = function (lmsDocentes, categories) {
         var divColCA2 = document.createElement('div');
         divColCA2.className = 'col s6';
         var btnPortafolio = document.createElement('a');
-        btnPortafolio.className = 'btn green modal-trigger';
+        btnPortafolio.className = 'btn red modal-trigger';
         btnPortafolio.href = '#modal1';
         btnPortafolio.style = 'width: 100%;';
         btnPortafolio.onclick = function () {
             console.log('imagenes');
-            portafolio(docenteDatos.name, docD.id);
+            portafolio(docenteDatos.name, docD.id, false);
         }
         var btnPortafolioText = document.createTextNode('Portafolio');
         // btnPortafolioText.appendChild(btnPortafolioText);
@@ -342,6 +560,7 @@ listaDocentes = function (lmsDocentes, categories) {
                 name: e.target[0].value,
                 email: e.target[1].value,
                 summary: e.target[2].value,
+                category: e.target[3].value,
                 // refCatDoc: e.target[0].value,
             });
 
@@ -358,13 +577,14 @@ listaDocentes = function (lmsDocentes, categories) {
         divRowEditForm.className = 'row';
 
         var divColInputName = document.createElement('div');
-        divColInputName.className = 'input-field col s12';
+        divColInputName.className = 'input-field divInputField col s12';
         var labelInputName = document.createElement('label');
         labelInputName.className = 'active';
         labelInputName.setAttribute('for', 'inputNameId_'+c1);
         var labelInputNameText = document.createTextNode('Nombre');
         labelInputName.appendChild(labelInputNameText);
         var inputName = document.createElement('input');
+        // inputName.className = 'inputField';
         inputName.type = 'text';
         inputName.id = 'inputNameId_'+c1;
         inputName.value = docenteDatos.name;
@@ -372,11 +592,11 @@ listaDocentes = function (lmsDocentes, categories) {
         divColInputName.appendChild(labelInputName);
 
         var divColInputEmail = document.createElement('div');
-        divColInputEmail.className = 'input-field col s12';
+        divColInputEmail.className = 'input-field divInputField col s12';
         var labelInputEmail = document.createElement('label');
         labelInputEmail.className = 'active';
         labelInputEmail.setAttribute('for', 'inputEmailId_'+c1);
-        var labelInputEmailText = document.createTextNode('Nombre');
+        var labelInputEmailText = document.createTextNode('Email');
         labelInputEmail.appendChild(labelInputEmailText);
         var inputEmail = document.createElement('input');
         inputEmail.type = 'text';
@@ -386,7 +606,7 @@ listaDocentes = function (lmsDocentes, categories) {
         divColInputEmail.appendChild(labelInputEmail);
 
         var divColInputSummary = document.createElement('div');
-        divColInputSummary.className = 'input-field col s12';
+        divColInputSummary.className = 'input-field divInputField col s12';
         var labelInputSummary = document.createElement('label');
         labelInputSummary.className = 'active';
         labelInputSummary.setAttribute('for', 'inputEmailId_'+c1);
@@ -401,19 +621,209 @@ listaDocentes = function (lmsDocentes, categories) {
         divColInputSummary.appendChild(inputSummary);
         divColInputSummary.appendChild(labelInputSummary);
 
+        var divColSelectCategory = document.createElement('div');
+        divColSelectCategory.className = 'input-field divInputField col s12';
+        var selectCategory = document.createElement('select');
+        selectCategory.id = 'selectCategoryId_'+c1;
+        // opciones del select
+        lmsCategorias.forEach(docC => {
+            // console.log(docC.data());
+            var optionSelectCat = document.createElement('option');
+            optionSelectCat.value = docC.data().nombreCat;
+            optionSelectCat.textContent = docC.data().nombreCat;
+            selectCategory.appendChild(optionSelectCat);
+        })
+        //
+        selectCategory.value = docenteDatos.category;
+        //
+        var labelSelectCategory = document.createElement('label');
+        labelSelectCategory.textContent = 'Categoria';
+
+        divColSelectCategory.appendChild(selectCategory);
+        divColSelectCategory.appendChild(labelSelectCategory);
+
+        $(document).ready(function(){
+            $('select').formSelect();
+        });
+
+        //Editar CV y Portafolio
+        var divColEditDocument = document.createElement('div');
+        divColEditDocument.className = 'col s12';
+        var divRowEditDocuments = document.createElement('div');
+        divRowEditDocuments.className = 'row';
+        divColEditDocument.appendChild(divRowEditDocuments);
+        var divColEditCV = document.createElement('div');
+        divColEditCV.className = 'col s6';
+        var editCVButton = document.createElement('a');
+        // editCVButton.type = 'button';
+        editCVButton.href = '#modal2';
+        editCVButton.className = 'btn green editButton modal-trigger';
+        editCVButton.textContent = 'Cambiar CV';
+        editCVButton.onclick = function () {
+            console.log('Cambiar CV', docD.id);
+            document.getElementById('modal2Title').textContent = 'Documento CV de '+docenteDatos.name;
+
+            var idModalBody2 = document.getElementById('idModalBody2');
+
+            var oldModalbody2 = document.getElementById('editModal');
+
+            var modalbody2 = document.createElement('div');
+            modalbody2.id = 'editModal';
+
+            idModalBody2.replaceChild(modalbody2, oldModalbody2);
+
+            db.collection("lms-archivos").where("refid", "==", docD.id).where("type", "==", "pdf")
+            .get()
+            .then(function(querySnapshot) {
+                querySnapshot.forEach(function(doc1) {
+                    // doc.data() is never undefined for query doc snapshots
+                    var divRowModalBody2 = document.createElement('div');
+                    divRowModalBody2.className = 'row';
+                    var divCol1ModalBody2 = document.createElement('div');
+                    divCol1ModalBody2.className = 'col s12';
+                    var newH51Modal2 = document.createElement('h5');
+                    newH51Modal2.textContent = 'Documento actual';
+                    divCol1ModalBody2.appendChild(newH51Modal2);
+                    var divRowActualCV = document.createElement('div');
+                    divRowActualCV.className = 'row';
+                    var divColCVName = document.createElement('div');
+                    divColCVName.className = 'col s8';
+                    var h6ActualDocumentName = document.createElement('h6');
+                    h6ActualDocumentName.textContent = doc1.data().fileName;
+                    divColCVName.appendChild(h6ActualDocumentName);
+                    var divColCVBtn = document.createElement('div');
+                    divColCVBtn.className = 'col s4';
+                    var btnActualCV = document.createElement('a');
+                    btnActualCV.className = 'btn green';
+                    btnActualCV.textContent = 'Ver';
+                    btnActualCV.setAttribute("href", doc1.data().url);
+                    btnActualCV.setAttribute("target", "_blank");
+                    divColCVBtn.appendChild(btnActualCV);
+                    divRowActualCV.appendChild(divColCVName);
+                    divRowActualCV.appendChild(divColCVBtn);
+                    divCol1ModalBody2.appendChild(divRowActualCV);
+
+                    var divCol2ModalBody2 = document.createElement('div');
+                    divCol2ModalBody2.className = 'col s12';
+                    var newH52Modal2 = document.createElement('h5');
+                    newH52Modal2.textContent = 'Documento nuevo';
+                    divCol2ModalBody2.appendChild(newH52Modal2);
+                    var divRowNewCV = document.createElement('div');
+                    divRowNewCV.className = 'row';
+                    var divColNewCVBtn = document.createElement('div');
+                    divColNewCVBtn.className = 'col s12';
+
+                    var newCVInputFile = document.createElement('input');
+                    newCVInputFile.type='file';
+                    newCVInputFile.id='docenteNewCV_';
+                    newCVInputFile.onchange = function () { console.log(this.files[0]); };
+                    var newCVSpan = document.createElement('span');
+                    var spanCVText = document.createTextNode('Portafolio');
+                    newCVSpan.appendChild(spanCVText);
+                    var divBtnNewCV = document.createElement('div');
+                    divBtnNewCV.className = 'btn green';
+                    divBtnNewCV.appendChild(newCVSpan);
+                    divBtnNewCV.appendChild(newCVInputFile);
+                    var newInputCVText = document.createElement('input');
+                    newInputCVText.type = 'text';
+                    newInputCVText.className = 'file-path validate';
+                    newInputCVText.placeholder = 'Selecciona una imagen';
+                    var divInputCVText = document.createElement('div');
+                    divInputCVText.className = 'file-path-wrapper';
+                    divInputCVText.appendChild(newInputCVText);
+                    var divInputCVFile = document.createElement('div');
+                    divInputCVFile.className = 'file-field input-field';
+                    divInputCVFile.appendChild(divBtnNewCV);
+                    divInputCVFile.appendChild(divInputCVText);
+
+                    var saveCVBtn = document.createElement('button');
+                    saveCVBtn.className = 'btn blue';
+                    saveCVBtn.type = 'button';
+                    saveCVBtn.textContent = 'Guardar'
+                    saveCVBtn.onclick = function () {
+                        console.log(doc1.id);
+                        var docFileCV = newCVInputFile.files[0];
+                        if (!docFileCV) {
+        
+                        }else{
+                            var storageDocRef = storage.ref('/cvDocente/'+docFileCV.name)
+                            var uploadDoc = storageDocRef.put(docFileCV);
+                            uploadDoc.on('state_changed', function (snapshot) {
+                                
+                            }, function (error) {
+                                console.log(error);
+                    
+                            }, function () {
+                                console.log('Documento subido');
+                                uploadDoc.snapshot.ref.getDownloadURL().then(async function (url1) {
+                                    console.log(url1);
+                    
+                                    //
+                                    await updateDocCV(doc1.id, {
+                                        fileName: docFileCV.name,
+                                        url: url1,
+                                    });
+                                    
+                                })
+                            });
+                        }
+                    }
+
+                    divColNewCVBtn.appendChild(divInputCVFile);
+                    divColNewCVBtn.appendChild(saveCVBtn);
+
+                    divRowNewCV.appendChild(divColNewCVBtn);
+                    divCol2ModalBody2.appendChild(divRowNewCV);
+
+                    divRowModalBody2.appendChild(divCol1ModalBody2);
+                    divRowModalBody2.appendChild(divCol2ModalBody2);
+                    modalbody2.appendChild(divRowModalBody2);
+                    urlCV = doc1.data().url;
+                    console.log("Url => ", doc1.data().url, doc1.data().refid, doc1.data().type);
+
+                    
+
+                    
+                });
+            })
+            .catch(function(error) {
+                console.log("Error getting documents: ", error);
+            });
+            
+        }
+        divColEditCV.appendChild(editCVButton);
+        var divColEditPortafolio = document.createElement('div');
+        divColEditPortafolio.className = 'col s6';
+        var editPortafolioButton = document.createElement('a');
+        // editPortafolioButton.type = 'button';
+        editPortafolioButton.href = '#modal1';
+        editPortafolioButton.className = 'btn red editButton modal-trigger';
+        editPortafolioButton.textContent = 'Editar Portafolio';
+        editPortafolioButton.onclick = function () {
+            console.log('Editar portafolio', docD.id);
+            portafolio(docenteDatos.name, docD.id, true);
+        }
+        divColEditPortafolio.appendChild(editPortafolioButton);
+        divRowEditDocuments.appendChild(divColEditCV);
+        divRowEditDocuments.appendChild(divColEditPortafolio);
+        
+
         divRowEditForm.appendChild(divColInputName);
         divRowEditForm.appendChild(divColInputEmail);
         divRowEditForm.appendChild(divColInputSummary);
+        divRowEditForm.appendChild(divColSelectCategory);
+        divRowEditForm.appendChild(divColEditDocument);
 
+        
 
         var editButton = document.createElement('button');
-        editButton.className = 'btn blue';
+        editButton.className = 'btn blue changeStateBtn';
         editButton.type = 'submit';
         var editButtonText = document.createTextNode('Guardar');
 
         editButton.appendChild(editButtonText);
         var deleteButton = document.createElement('button');
-        deleteButton.className = 'btn red';
+        deleteButton.className = 'btn red changeStateBtn';
         deleteButton.onclick = async function () {
             //recargar docentes
             deleteDoc(docD.id);
