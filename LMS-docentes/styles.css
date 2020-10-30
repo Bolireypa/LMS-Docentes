@@ -5,9 +5,29 @@
     margin: auto;
 }
 
+.row > .portafolioImg > img {
+    width: auto;
+    max-height: 100%;
+    max-width: 100%;
+    margin: auto;
+}
+
+.row > .portafolioImg {
+    padding: 0px;
+}
+
 .card > .card-image {
     height: 180px;
     background-color: lightseagreen;
+    display: flex;
+    vertical-align: middle;
+}
+
+.row > .portafolioImg {
+    height: 180px;
+    /* background-color: white; */
+    border: 1px solid;
+    border-color: #ececec;
     display: flex;
     vertical-align: middle;
 }
@@ -28,6 +48,39 @@
     height: 59%;
     overflow-y: auto;
     margin-bottom: 6px;
+}
+
+.row > .divInputField{
+    margin-bottom: 0px;
+}
+
+.editButton{
+    height: 70px;
+    padding: 0px 10px;
+}
+
+.changeStateBtn{
+    width: 100%;
+    margin-top: 10px;
+}
+
+.card .card-reveal{
+    padding: 12px;
+}
+
+.portafolioImg > .file-field{
+    width: 100%;
+}
+
+.portafolioImg > .file-field > .btn{
+    height: 100%;
+    width: 100%;
+    
+}
+
+.changeFileBtn{
+    position: relative;
+    z-index: -1;
 }
 
 /* .spanCardTitle{

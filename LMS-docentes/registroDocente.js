@@ -45,8 +45,9 @@ const saveUser = (name, email, summary, category) =>
     });
 
 // Funcion saveDocuments() que captura los dotos del los archivos del formulario en la coleccion llamada 'lms-archivos'
-const saveDocuments = (refid, url, type) => 
+const saveDocuments = (fileName, refid, url, type) => 
     db.collection('lms-archivos').doc().set({
+        fileName,
         refid,
         url,
         type,
@@ -289,14 +290,14 @@ uploadImageProccess = function (imgNumber, imagenesSubidas, refid) {
                 console.log(url);
 
                 imagenesSubidas.push(file.name);
-                console.log(imagenesSubidas);
+                console.log(imagenesSubidas, file.name);
                 confirmacionRegistro(imgNumber, c1-1);
                 
                 // --(posible accion a borrar) Se asigna a las variables los valores de la refernecia al docente que subio sus archivos, y las rutas de los mismos
                 // const refid = 'docente1';
                 
                 // (posible ubicacion distinta) Se ejecuta la funcion saveDocuments() que guarda las rutas de las imagenes y el documento pdf, con una refenrencia hacia el docente al que pertenecen los archivos
-                saveDocuments(refid, url, 'imagen');
+                saveDocuments(file.name, refid, url, 'imagen');
 
                 /* // -- lineas de codigo a borrar posiblemente
                 docenteArchivos.rutaImagen[imgNumber] = url;
@@ -330,8 +331,9 @@ uploadDocument = function(refid){
             console.log('Documento subido');
             uploadDoc.snapshot.ref.getDownloadURL().then(function (url) {
                 console.log(url);
+                console.log(docFile.name);
 
-                saveDocuments(refid, url, 'pdf');
+                saveDocuments(docFile.name, refid, url, 'pdf');
                 
             })
         });
