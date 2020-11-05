@@ -4,10 +4,13 @@ const db = firebase.firestore();
 // Funcion getTask() que recupera los datos guardados en la base de datos de firebase, en la coleccion 'lms-docentes'
 const getTask = () => db.collection('lms-docentes').get();
 
-//
+// Funcion getCat() que obtiene todos los datos de las categorias registradas en la coleccion 'lms-categorias' de Firebase
 const getCat = () => db.collection('lms-categorias').get();
 
-//
+// Funcion getType() que obtiene todos los datos de los tipos registradas en la coleccion 'lms-tipos' de Firebase
+const getType = () => db.collection('lms-tipos').get();
+
+// Funcion getDoc() que obtiene todos los datos de los docentes registrados en la coleccion 'lms-docentes' de Firebase
 const getDoc = (id) => db.collection('lms-docentes').doc(id).get();
 
 //
@@ -27,6 +30,12 @@ var c3 = 0;
 
 //
 var categoriaGlobal = document.getElementById('docenteCategoria').value;
+
+//
+var selectBoxType = document.getElementById('docenteTipo');
+
+//
+var tipoGlobal = selectBoxType.value;
 
 //
 var listaLmsDoc = '';
@@ -379,29 +388,121 @@ imagenPortafolioDocente = function (ref, c1) {
     return urlSrc;
 }
 
+//
 async function filtroCategoria(catNom) {
     console.log(catNom);
     const lmsDocentes = await getTask();
     categoriaGlobal = catNom;
     if (catNom != 'todas') {
-        db.collection("lms-docentes").where("category", "==", catNom)
-        .get()
-        .then(function(querySnapshot) {
-            // querySnapshot.forEach(function(doc2) {
-                
-            // });
-            listaDocentes(querySnapshot, 'allCategories');
-
-        })
-        .catch(function(error) {
-            console.log("Error getting documents: ", error);
-        });
-        // listaDocentes(lmsDocentes, 'allCategories');
-    } else {
-        listaDocentes(lmsDocentes, 'allCategories');        
-    }
+        if (tipoGlobal != 'todos') {
+            db.collection("lms-docentes").where("category", "==", catNom).where("type", "==", tipoGlobal)
+            .get()
+            .then(function(querySnapshot) {
+                // querySnapshot.forEach(function(doc2) {
+                    
+                // });
+                listaDocentes(querySnapshot, 'allCategories');
     
+            })
+            .catch(function(error) {
+                console.log("Error getting documents: ", error);
+            });                
+        } else {
+            db.collection("lms-docentes").where("category", "==", catNom)
+            .get()
+            .then(function(querySnapshot) {
+                // querySnapshot.forEach(function(doc2) {
+                    
+                // });
+                listaDocentes(querySnapshot, 'allCategories');
+    
+            })
+            .catch(function(error) {
+                console.log("Error getting documents: ", error);
+            });       
+        }
+    } else {
+        if (tipoGlobal != 'todos') {
+            db.collection("lms-docentes").where("type", "==", tipoGlobal)
+            .get()
+            .then(function(querySnapshot) {
+                // querySnapshot.forEach(function(doc2) {
+                    
+                // });
+                listaDocentes(querySnapshot, 'allCategories');
+    
+            })
+            .catch(function(error) {
+                console.log("Error getting documents: ", error);
+            });              
+        } else {
+            listaDocentes(lmsDocentes, 'allCategories');        
+            
+        }
+    }
 }
+
+//
+async function filtroTipo(typeName) {
+    console.log(typeName);
+    const lmsDocentes = await getTask();
+    tipoGlobal = typeName; 
+    if (typeName != 'todos') {
+        if (categoriaGlobal != 'todas') {
+            db.collection("lms-docentes").where("category", "==", categoriaGlobal).where("type", "==", tipoGlobal)
+            .get()
+            .then(function(querySnapshot) {
+                // querySnapshot.forEach(function(doc2) {
+                    
+                // });
+                listaDocentes(querySnapshot, 'allCategories');
+    
+            })
+            .catch(function(error) {
+                console.log("Error getting documents: ", error);
+            });   
+        } else {
+            db.collection("lms-docentes").where("type", "==", typeName)
+            .get()
+            .then(function(querySnapshot) {
+                // querySnapshot.forEach(function(doc2) {
+                    
+                // });
+                listaDocentes(querySnapshot, 'allCategories');
+
+            })
+            .catch(function(error) {
+                console.log("Error getting documents: ", error);
+            });
+        }
+        
+    } else {
+        if (categoriaGlobal != 'todas') {
+            db.collection("lms-docentes").where("category", "==", categoriaGlobal)
+            .get()
+            .then(function(querySnapshot) {
+                // querySnapshot.forEach(function(doc2) {
+                    
+                // });
+                listaDocentes(querySnapshot, 'allCategories');
+    
+            })
+            .catch(function(error) {
+                console.log("Error getting documents: ", error);
+            });              
+        } else {
+            listaDocentes(lmsDocentes, 'allCategories');
+            
+        }
+    }   
+}
+
+//
+selectBoxType.addEventListener('change', (e) => {
+    filtroTipo(e.target.value);
+    // console.log(e.target.value);
+    
+})
 
 listaDocentes = async function (lmsDocentes, categories) {
     const lmsCategorias = await getCat();
@@ -478,9 +579,20 @@ listaDocentes = async function (lmsDocentes, categories) {
             
         }
         h6CategoryText.appendChild(categoryText);
+        
+        var typeTag = document.createElement('div');
+        typeTag.className = 'chip';
+        if (docenteDatos.type) {
+            console.log('+++=====++++++++'+docenteDatos.type);
+            typeTag.textContent = docenteDatos.type;
+        } else {
+            typeTag.textContent = 'Sin tipo';
+        }
+
         divCardContent.appendChild(spanCardTitle);
         divCardContent.appendChild(divCardSummary);
         divCardContent.appendChild(h6CategoryText);
+        divCardContent.appendChild(typeTag);
         var divCardAction = document.createElement('div');
         divCardAction.className = 'card-action';
         var divRowCA = document.createElement('div');
@@ -905,26 +1017,37 @@ function initApp() {
 
 window.addEventListener('DOMContentLoaded', async (e) => {
     initApp();
-    // onGetDoc((querySnapshot) => {
-        var selectId = document.getElementById("docenteCategoria");
-        const lmsCategorias = await getCat();
-        lmsCategorias.forEach(docC => {
-            console.log(docC.data());
-            var optionCat = document.createElement('option');
-            optionCat.value = docC.data().nombreCat;
-            // optionCat.onclick = filtroCategoria(docC.data().refCat);
-            var optionCatText = document.createTextNode(docC.data().nombreCat);
-            optionCat.appendChild(optionCatText);
-            selectId.appendChild(optionCat);
-        })
 
-        $(document).ready(function(){
-            $('select').formSelect();
-        });
+    // Se realiza la consulta a la coleccion 'lms-categorias' para luego llenar el elemento <select> con las categorias existentes en la coleccion 'lms-categorias', en el formulario de registro 
+    var selectCategoryId = document.getElementById("docenteCategoria");
+    const lmsCategorias = await getCat();
+    lmsCategorias.forEach(docC => {
+        console.log(docC.data());
+        var optionCat = document.createElement('option');
+        optionCat.value = docC.data().nombreCat;
+        var optionCatText = document.createTextNode(docC.data().nombreCat);
+        optionCat.appendChild(optionCatText);
+        selectCategoryId.appendChild(optionCat);
+    })
 
-        const lmsDocentes = await getTask();
-        listaLmsDoc = lmsDocentes;
+    // Se realiza la consulta a la coleccion 'lms-tipos' para luego llenar el elemento <select> con los tipos existentes en la coleccion 'lms-tipos', en el formulario de registro 
+    var selectTypeId = document.getElementById("docenteTipo");
+    const lmsTipos = await getType();
+    lmsTipos.forEach(docT => {
+        console.log(docT.data());
+        var optionType = document.createElement('option');
+        optionType.value = docT.data().nombreTipo;
+        var optionTypeText = document.createTextNode(docT.data().nombreTipo);
+        optionType.appendChild(optionTypeText);
+        selectTypeId.appendChild(optionType);
+    })
 
-        listaDocentes(lmsDocentes, 'allCategories');
-    // })
+    $(document).ready(function(){
+        $('select').formSelect();
+    });
+
+    const lmsDocentes = await getTask();
+    listaLmsDoc = lmsDocentes;
+
+    listaDocentes(lmsDocentes, 'allCategories');
 })

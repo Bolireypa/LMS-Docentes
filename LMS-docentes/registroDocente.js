@@ -7,8 +7,11 @@ const docenteForm = document.getElementById("formRegistroDocentes");
 // Funcion getDoc() que obtiene todos los datos de los docentes registrados en la coleccion 'lms-docentes' de Firebase
 // const getDoc = () => db.collection('lms-docentes').get();
 
-// Funcion getCat() que obtiene todos los datos de las categorias registradas en la coleccion 'lms'categorias' de Firebase
+// Funcion getCat() que obtiene todos los datos de las categorias registradas en la coleccion 'lms-categorias' de Firebase
 const getCat = () => db.collection('lms-categorias').get();
+
+// Funcion getType() que obtiene todos los datos de los tipos registradas en la coleccion 'lms-tipos' de Firebase
+const getType = () => db.collection('lms-tipos').get();
 
 // Variable c, utilizada como contador para el limite de botones que apareceran en el formulario, para la subida de imagenes del portafolio del docente
 var c = 0;
@@ -20,12 +23,13 @@ var c1 = 0;
 var c2 = 0;
 
 // Funcion saveUser() que realiza el registro de docentes nuevos en la coleccion 'lms-docentes', requiere de los parametros: name (nombre de docente), email (email de docente), summary (resumen del docente), category (categoria a la que pertenece el docente).
-const saveUser = (name, email, summary, category) =>
+const saveUser = (name, email, summary, category, type) =>
     db.collection('lms-docentes').add({
         name,
         email,
         summary,
         category,
+        type,
     }).then(function(docData) {
         console.log("Docente registrado correctamente ",docData.id);
 
@@ -149,7 +153,7 @@ window.addEventListener('DOMContentLoaded', async (e) => {
     createBtnPortafolio(0);
 
     // Se realiza la consulta a la coleccion 'lms-categorias' para luego llenar el elemento <select> con las categorias existentes en la coleccion 'lms-categorias', en el formulario de registro 
-    var selectId = document.getElementById("docenteCategoria");
+    var selectCategoryId = document.getElementById("docenteCategoria");
     const lmsCategorias = await getCat();
     lmsCategorias.forEach(docC => {
         console.log(docC.data());
@@ -157,9 +161,22 @@ window.addEventListener('DOMContentLoaded', async (e) => {
         optionCat.value = docC.data().nombreCat;
         var optionCatText = document.createTextNode(docC.data().nombreCat);
         optionCat.appendChild(optionCatText);
-        selectId.appendChild(optionCat);
+        selectCategoryId.appendChild(optionCat);
     })
-    // Se inicializa el elemento <select> despues de tener listas todas opciones o categorias
+
+    // Se realiza la consulta a la coleccion 'lms-tipos' para luego llenar el elemento <select> con los tipos existentes en la coleccion 'lms-tipos', en el formulario de registro 
+    var selectTypeId = document.getElementById("docenteTipo");
+    const lmsTipos = await getType();
+    lmsTipos.forEach(docT => {
+        console.log(docT.data());
+        var optionType = document.createElement('option');
+        optionType.value = docT.data().nombreTipo;
+        var optionTypeText = document.createTextNode(docT.data().nombreTipo);
+        optionType.appendChild(optionTypeText);
+        selectTypeId.appendChild(optionType);
+    })
+
+    // Se inicializa el elemento <select> despues de tener listas todas opciones de las categorias y tipos
     $(document).ready(function(){
         $('select').formSelect();
     });
@@ -176,11 +193,12 @@ docenteForm.addEventListener('submit', async (e) => {
     const email = docenteForm["docenteEmail"].value;
     const summary = docenteForm["docenteResumen"].value;
     const category = docenteForm["docenteCategoria"].value;
+    const type = docenteForm["docenteTipo"].value;
 
     progressBarElements('Registrando docente', 'regDocBar');
 
     // Se ejecuta la funcion saveUser() que guarda los datos del docentes en la coleccion 'lms-docentes' en firebase
-    await saveUser(name, email, summary, category);
+    await saveUser(name, email, summary, category, type);
 
 });
 
