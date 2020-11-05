@@ -21,16 +21,16 @@
           <ul id="nav-mobile" class="right hide-on-med-and-down">
             <li class="active"><a href="registroDocentes.html">Registro de docentes</a></li>
             <li><a href="listaDocentes.html">Lista de docentes</a></li>
-            <li><a href="#">Registrarse</a></li>
-            <li><a href="#">Iniciar sesion</a></li>
+            <li><a href="registroUsuario.html">Registrarse</a></li>
+            <li><a href="login.html">Iniciar sesion</a></li>
           </ul>
         </div>
     </nav>
     <ul class="sidenav" id="mobile-demo">
         <li class="active"><a href="registroDocentes.html">Registro de docentes</a></li>
         <li><a href="listaDocentes.html">Lista de docentes</a></li>
-        <li><a href="#">Registrarse</a></li>
-        <li><a href="#">Iniciar sesion</a></li>
+        <li><a href="registroUsuario.html">Registrarse</a></li>
+        <li><a href="login.html">Iniciar sesion</a></li>
     </ul>
 
     <div class="container">
@@ -70,11 +70,18 @@
                                         </select>
                                         <label>Categoria</label>
                                     </div>
+                                    <div class="input-field col s12">
+                                        <select id="docenteTipo">
+                                            <option value="" disabled selected>Seleccione tipo</option>
+                                            <option value="">Docente</option>
+                                        </select>
+                                        <label>Tipo</label>
+                                    </div>
                                     <div class="col s12">
                                         <div class="file-field input-field">
                                             <div class="btn green">
                                                 <span>CV</span>
-                                                <input type="file" id="docenteCV">
+                                                <input type="file" id="docenteCV" accept="application/pdf">
                                             </div>
                                             <div class="file-path-wrapper">
                                                 <input class="file-path validate" type="text" placeholder="Seleccione un archivo con el formato pdf">
@@ -100,10 +107,7 @@
         <div class="modal-content">
           <div id="modalContent">
             <div id="modalProgress">
-                <h2>Registrando Docente</h2>
-                <div class="progress">
-                    <div class="indeterminate"></div>
-                </div>
+                
             </div>
           </div>
         </div>

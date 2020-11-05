@@ -40,7 +40,7 @@ const saveImage = (fileName, refid, url, type) =>
         type,
     }).then(function () {
         console.log('Datos guardados en la coleccion lms-archivos', refid);
-        portafolio('nombre de docente', refid, false);
+        portafolio('nombre de docente', refid, true);
     });/* */
 
 //
@@ -178,73 +178,78 @@ portafolio = function (docName, docRef, editPortafolio) {
             
             divColEditImage.appendChild(imagenPortafolio);
 
-            var divColEditImageBtn = document.createElement('div');
-            divColEditImageBtn.className = 'col s6';
-            var divInputField = document.createElement('div');
-            divInputField.className = 'file-field input-field';
-            var divEditButton = document.createElement('div');
-            divEditButton.className = 'btn red';
-            var spanEditBtn = document.createElement('span');
-            spanEditBtn.textContent = 'Cambiar';
-            var editImageBtn = document.createElement('input');
-            editImageBtn.type = 'file';
-            editImageBtn.className = 'changeFileBtn';
-            // editImageBtn.className = 'btn';
-            editImageBtn.onchange = function () {
-                console.log(this.files[0]);
-                var docFileCV = this.files[0];
-                if (!docFileCV) {
+            if (editPortafolio) {
+                //
+                var divColEditImageBtn = document.createElement('div');
+                divColEditImageBtn.className = 'col s6';
+                var divInputField = document.createElement('div');
+                divInputField.className = 'file-field input-field divBtnChangeFile';
+                var divEditButton = document.createElement('div');
+                divEditButton.className = 'btn red btnChangeFile';
+                var spanEditBtn = document.createElement('span');
+                spanEditBtn.textContent = 'Cambiar';
+                var editImageBtn = document.createElement('input');
+                editImageBtn.type = 'file';
+                editImageBtn.className = 'changeFileBtn';
+                // editImageBtn.className = 'btn';
+                editImageBtn.onchange = function () {
+                    console.log(this.files[0]);
+                    var docFileCV = this.files[0];
+                    if (!docFileCV) {
 
-                }else{
-                    var storageDocRef = storage.ref('/portafolioDocente/'+docFileCV.name)
-                    var uploadDoc = storageDocRef.put(docFileCV);
-                    uploadDoc.on('state_changed', function (snapshot) {
-                        
-                    }, function (error) {
-                        console.log(error);
-            
-                    }, function () {
-                        console.log('Imagen cambiada');
-                        uploadDoc.snapshot.ref.getDownloadURL().then(async function (url1) {
-                            console.log(url1);
-            
-                            //
-                            await updateDocCV(doc1.id, {
-                                fileName: docFileCV.name,
-                                url: url1,
-                            });
+                    }else{
+                        var storageDocRef = storage.ref('/portafolioDocente/'+docFileCV.name)
+                        var uploadDoc = storageDocRef.put(docFileCV);
+                        uploadDoc.on('state_changed', function (snapshot) {
                             
-                        })
-                    });
+                        }, function (error) {
+                            console.log(error);
+                
+                        }, function () {
+                            console.log('Imagen cambiada');
+                            uploadDoc.snapshot.ref.getDownloadURL().then(async function (url1) {
+                                console.log(url1);
+                
+                                //
+                                await updateDocCV(doc1.id, {
+                                    fileName: docFileCV.name,
+                                    url: url1,
+                                });
+                                
+                            })
+                        });
+                    }
+                };
+                var newInputText = document.createElement('input');
+                newInputText.type = 'text';
+                newInputText.setAttribute('style', 'display:none;');
+                newInputText.className = 'file-path validate';
+                newInputText.placeholder = 'Selecciona una imagen';
+                var divInputText = document.createElement('div');
+                divInputText.className = 'file-path-wrapper';
+                divInputText.appendChild(newInputText);
+
+                divEditButton.appendChild(spanEditBtn);
+                divEditButton.appendChild(editImageBtn);
+                divInputField.appendChild(divEditButton);
+                divInputField.appendChild(divInputText);
+                divColEditImageBtn.appendChild(divInputField);
+
+                var divColDeleteImageBtn = document.createElement('div');
+                divColDeleteImageBtn.className = 'col s6';
+                var deleteImageBtn = document.createElement('a');
+                deleteImageBtn.className = 'btn deleteFileBtn';
+                deleteImageBtn.textContent = 'Eliminar';
+                deleteImageBtn.onclick = function () {
+                    deleteImgPortafolio(doc1.id);
                 }
-            };
-            var newInputText = document.createElement('input');
-            newInputText.type = 'text';
-            newInputText.setAttribute('style', 'display:none;');
-            newInputText.className = 'file-path validate';
-            newInputText.placeholder = 'Selecciona una imagen';
-            var divInputText = document.createElement('div');
-            divInputText.className = 'file-path-wrapper';
-            divInputText.appendChild(newInputText);
+                divColDeleteImageBtn.appendChild(deleteImageBtn);
 
-            divEditButton.appendChild(spanEditBtn);
-            divEditButton.appendChild(editImageBtn);
-            divInputField.appendChild(divEditButton);
-            divInputField.appendChild(divInputText);
-            divColEditImageBtn.appendChild(divInputField);
-
-            var divColDeleteImageBtn = document.createElement('div');
-            divColDeleteImageBtn.className = 'col s6';
-            var deleteImageBtn = document.createElement('a');
-            deleteImageBtn.className = 'btn';
-            deleteImageBtn.textContent = 'Eliminar';
-            deleteImageBtn.onclick = function () {
-                deleteImgPortafolio(doc1.id);
+                divRowEditImageBtn.appendChild(divColEditImageBtn);
+                divRowEditImageBtn.appendChild(divColDeleteImageBtn);
+            } else {
+                
             }
-            divColDeleteImageBtn.appendChild(deleteImageBtn);
-
-            divRowEditImageBtn.appendChild(divColEditImageBtn);
-            divRowEditImageBtn.appendChild(divColDeleteImageBtn);
             
             // divRowEditImageBtn.appendChild(editImageBtn);
             divColImagePortafolio.appendChild(divRowEditImageBtn);
@@ -256,7 +261,7 @@ portafolio = function (docName, docRef, editPortafolio) {
         });
         console.log(countImagesPortafolio);
         
-        if (countImagesPortafolio < 6) {
+        if (countImagesPortafolio < 6 && editPortafolio) {
             var divColImagePortafolioEmpty = document.createElement('div');
             divColImagePortafolioEmpty.className = 'col s6 m4';
             var divRowAddImageBtn = document.createElement('div');
@@ -609,12 +614,12 @@ listaDocentes = async function (lmsDocentes, categories) {
         divColInputSummary.className = 'input-field divInputField col s12';
         var labelInputSummary = document.createElement('label');
         labelInputSummary.className = 'active';
-        labelInputSummary.setAttribute('for', 'inputEmailId_'+c1);
+        labelInputSummary.setAttribute('for', 'inputSumaryId_'+c1);
         var labelInputSummaryText = document.createTextNode('Resumen');
         labelInputSummary.appendChild(labelInputSummaryText);
         var inputSummary = document.createElement('textarea');
         inputSummary.className = 'materialize-textarea';
-        inputSummary.id = 'inputEmailId_'+c1;
+        inputSummary.id = 'inputSumaryId_'+c1;
         // inputSummary.rows = 4;
         // inputSummary.setAttribute('rows','4');
         inputSummary.value = docenteDatos.summary;
@@ -780,9 +785,6 @@ listaDocentes = async function (lmsDocentes, categories) {
                     modalbody2.appendChild(divRowModalBody2);
                     urlCV = doc1.data().url;
                     console.log("Url => ", doc1.data().url, doc1.data().refid, doc1.data().type);
-
-                    
-
                     
                 });
             })
@@ -853,79 +855,56 @@ listaDocentes = async function (lmsDocentes, categories) {
         divCol.appendChild(dicCard);
         divListaDocentes.appendChild(divCol);
 
-        
-/*
-        if (docenteDatos.refCatDoc) {
-            c3 = 1;
-            console.log(docenteDatos.refCatDoc);
-            
-            // /*
-            var catNom="";
-            db.collection("lms-categorias").where("refCat", "==", docenteDatos.refCatDoc)
-            .get()
-            .then(function(querySnapshot) {
-                querySnapshot.forEach(function(doc2) {
-
-                    catNom = doc2.data().nombreCat;
-                    catDoc = doc2.data().nombreCat;
-
-                    categoriasDoc[c-1].cat = doc2.data().nombreCat;
-
-                    console.log(doc2.id, " => ", catNom);
-
-                    var idCardContent = document.getElementById('idCardContent_'+c2);
-                    var idh6 = document.getElementById('h6Id_'+c2);
-
-                    var newh6 = document.createElement('div');
-                    newh6.className = 'chip';
-                    newh6.id = 'h6Id_'+c2;
-                    var newH6Text = document.createTextNode(catNom);
-                    newh6.appendChild(newH6Text);
-
-                    console.log(newh6, idh6, c2);
-                    
-
-                    idCardContent.replaceChild(newh6, idh6);
-
-                    console.log(catNom, c2);
-                    c2=c2+1;
-
-                });
-            })
-            .catch(function(error) {
-                console.log("Error getting documents: ", error);
-            });
-            
-        } else {
-            // c2=c2+1;
-            c3 = 0;
-            catDoc = "No categoria";
-            console.log(catDoc);
-
-            var idCardContent = document.getElementById('idCardContent_'+c2);
-            var idh6 = document.getElementById('h6Id_'+c2);
-
-            var newh6 = document.createElement('h6');
-            newh6.id = 'h6Id_'+c2;
-            var newH6Text = document.createTextNode(catDoc);
-            newh6.appendChild(newH6Text);
-
-            console.log(newh6, idh6, c2);
-            
-
-            idCardContent.replaceChild(newh6, idh6);
-
-            console.log(catDoc, c2);
-            c2=c2+1;
-            
-        }/* */
-
         c1=c1+1;
 
     })
 }
 
+// Funcion initApp() utilizada para verificar si un usuario esta autenticado
+function initApp() {
+    // var state;
+    firebase.auth().onAuthStateChanged(async function(user) {    
+        if (user) {
+            // document.getElementById('dropdown1Text').textContent = user.email;
+            // idDropdown.setAttribute('style', '');
+            // btnLogOut.disabled = false;
+            // state = true;
+            var userRol = '';
+            await db.collection("lms-roles").where("idUser", "==", user.uid)
+            .get()
+            .then(function(querySnapshot) {
+                querySnapshot.forEach(function(doc1) {
+                    userRol = doc1.data().rolName;
+                });                
+            })
+            .catch(function(error) {
+                console.log("Error getting documents: ", error);
+            });
+
+            console.log('User is signed in', user.displayName, userRol);
+
+            // if (userRol!='Administrador') {
+            //     location.href = 'login.html'
+            // } else {
+                
+            // }
+            
+        } else {
+            console.log('User is signed out');
+            // document.getElementById('formRegistroDocentes').textContent = 'Acceso denegado!!! Inicie sesión o registrese.';
+            // document.getElementById('formRegistroDocentes').setAttribute('style','');
+            // idDropdown.setAttribute('style', 'display:none;');
+            // btnLogOut.disabled = true;
+            // state = false;
+            location.href = 'login.html';
+        }
+    });
+
+    // return state;
+}
+
 window.addEventListener('DOMContentLoaded', async (e) => {
+    initApp();
     // onGetDoc((querySnapshot) => {
         var selectId = document.getElementById("docenteCategoria");
         const lmsCategorias = await getCat();

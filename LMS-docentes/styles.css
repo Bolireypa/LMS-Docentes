@@ -80,7 +80,22 @@
 
 .changeFileBtn{
     position: relative;
-    z-index: -1;
+    /* z-index: -1; */
+}
+
+.deleteFileBtn{
+    position: relative;
+    z-index: 10000;
+}
+
+.file-field > .btnChangeFile{
+    height: 100%;
+    line-height: 2.6em;
+}
+
+.divBtnChangeFile{
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
 /* .spanCardTitle{

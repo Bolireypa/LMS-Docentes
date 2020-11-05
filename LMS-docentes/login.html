@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Registro de usuario</title>
+    <title>Iniciar sesión</title>
 
     <!--Import Google Icon Font-->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -17,7 +17,7 @@
         <li><a href="#!">one</a></li>
         <li><a href="#!">two</a></li>
         <li class="divider"></li>
-        <li><a href="#!" id="btnLogOut">Log out</a></li>
+        <li><a href="#!" id="bntLogOut">Log out</a></li>
     </ul>
     <nav>
         <div class="nav-wrapper">
@@ -26,17 +26,18 @@
           <ul id="nav-mobile" class="right hide-on-med-and-down">
             <li><a href="registroDocentes.html">Registro de docentes</a></li>
             <li><a href="listaDocentes.html">Lista de docentes</a></li>
-            <li class="active"><a href="registroUsuario.html">Registrarse</a></li>
-            <li><a href="login.html">Iniciar sesion</a></li>
+            <li><a href="registroUsuario.html">Registrarse</a></li>
+            <li class="active"><a href="login.html">Iniciar sesion</a></li>
             <li id="idDropdown" style="display:none;"><a class="dropdown-trigger" href="#!" data-target="dropdown1" id="dropdown1Text">Usuario<i class="material-icons right">arrow_drop_down</i></a></li>
-        </ul>
+          </ul>
         </div>
     </nav>
     <ul class="sidenav" id="mobile-demo">
         <li><a href="registroDocentes.html">Registro de docentes</a></li>
         <li><a href="listaDocentes.html">Lista de docentes</a></li>
-        <li class="active"><a href="registroUsuario.html">Registrarse</a></li>
-        <li><a href="login.html">Iniciar sesion</a></li>
+        <li><a href="registroUsuario.html">Registrarse</a></li>
+        <li class="active"><a href="login.html">Iniciar sesion</a></li>
+        <!-- <li><a class="dropdown-trigger" href="#!" data-target="dropdown1">Dropdown<i class="material-icons right">arrow_drop_down</i></a></li> -->
     </ul>
 
     <div class="container">
@@ -48,17 +49,13 @@
                 <div class="z-depth-3">
                     <div class="" style="padding: 24px;">
                         <span class="">
-                            <h4>Registrarse</h4>
+                            <h4>Iniciar sesión</h4>
                         </span>
                         
                         <div class="row">
-                            <form id="formRegistroUsuario">
+                            <form id="formIngresoUsuario">
                                 <div class="row">
-                                    <div class="input-field col s12">
-                                        <i class="material-icons prefix">account_circle</i>
-                                        <input type="text" class="validate" id="usuarioNombre">
-                                        <label for="usuarioNombre">Nombre</label>
-                                    </div>
+                                    
                                     <div class="input-field col s12">
                                         <i class="material-icons prefix">email</i>
                                         <input type="email" class="validate" id="usuarioEmail">
@@ -74,10 +71,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col s12">
-                                        <input type="submit" value="Registrarse" class="btn">
-                                    </div>
-                                    <div class="col s12">
-                                        <!-- <button type="button" class="btn" id="btnLogOut" style="display:none">Salir</button> -->
+                                        <input type="submit" value="Ingresar" class="btn">
                                     </div>
                                 </div>
                             </form>
@@ -118,12 +112,14 @@
 
     </script>
 
-    <script src="./registroUsusario.js"></script>
+    <script src="./authentication.js"></script>
 
     <script>
         $(document).ready(function(){
             $(".dropdown-trigger").dropdown({ hover: false });
         });
+
     </script>
+
 </body>
 </html>
