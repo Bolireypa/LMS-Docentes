@@ -13,7 +13,12 @@
 
 </head>
 <body>
-    
+    <ul id="dropdown1" class="dropdown-content">
+        <li><a href="#!">one</a></li>
+        <li><a href="#!">two</a></li>
+        <li class="divider"></li>
+        <li><a href="#!" id="btnLogOut">Log out</a></li>
+    </ul>
     <nav>
         <div class="nav-wrapper">
           <a href="index.html" class="brand-logo">Co Marca</a>
@@ -22,15 +27,16 @@
             <li><a href="registroDocentes.html">Registro de docentes</a></li>
             <li><a href="listaDocentes.html">Lista de docentes</a></li>
             <li class="active"><a href="registroUsuario.html">Registrarse</a></li>
-            <li><a href="ingresoUsuario.html">Iniciar sesion</a></li>
-          </ul>
+            <li><a href="login.html">Iniciar sesion</a></li>
+            <li id="idDropdown" style="display:none;"><a class="dropdown-trigger" href="#!" data-target="dropdown1" id="dropdown1Text">Usuario<i class="material-icons right">arrow_drop_down</i></a></li>
+        </ul>
         </div>
     </nav>
     <ul class="sidenav" id="mobile-demo">
         <li><a href="registroDocentes.html">Registro de docentes</a></li>
         <li><a href="listaDocentes.html">Lista de docentes</a></li>
         <li class="active"><a href="registroUsuario.html">Registrarse</a></li>
-        <li><a href="ingresoUsuario.html">Iniciar sesion</a></li>
+        <li><a href="login.html">Iniciar sesion</a></li>
     </ul>
 
     <div class="container">
@@ -48,7 +54,11 @@
                         <div class="row">
                             <form id="formRegistroUsuario">
                                 <div class="row">
-                                    
+                                    <div class="input-field col s12">
+                                        <i class="material-icons prefix">account_circle</i>
+                                        <input type="text" class="validate" id="usuarioNombre">
+                                        <label for="usuarioNombre">Nombre</label>
+                                    </div>
                                     <div class="input-field col s12">
                                         <i class="material-icons prefix">email</i>
                                         <input type="email" class="validate" id="usuarioEmail">
@@ -67,7 +77,7 @@
                                         <input type="submit" value="Registrarse" class="btn">
                                     </div>
                                     <div class="col s12">
-                                        <button type="button" class="btn" id="btnLogOut" style="display:none">Salir</button>
+                                        <!-- <button type="button" class="btn" id="btnLogOut" style="display:none">Salir</button> -->
                                     </div>
                                 </div>
                             </form>
@@ -110,5 +120,10 @@
 
     <script src="./registroUsusario.js"></script>
 
+    <script>
+        $(document).ready(function(){
+            $(".dropdown-trigger").dropdown({ hover: false });
+        });
+    </script>
 </body>
 </html>

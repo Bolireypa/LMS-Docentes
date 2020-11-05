@@ -54,6 +54,7 @@ function initApp() {
             document.getElementById('dropdown1Text').textContent = user.email;
             idDropdown.setAttribute('style', '');
             // btnLogOut.disabled = false;
+            location.href = 'listaDocentes.html';
         } else {
             console.log('User is signed out');
             document.getElementById('dropdown1Text').textContent = 'Usuario';
