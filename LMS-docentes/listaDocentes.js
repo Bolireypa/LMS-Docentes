@@ -506,6 +506,7 @@ selectBoxType.addEventListener('change', (e) => {
 
 listaDocentes = async function (lmsDocentes, categories) {
     const lmsCategorias = await getCat();
+    const lmsTipos = await getType();
     // c2=0;
     var idListaD = document.getElementById('idListaD');
     var idListaDocentes = document.createElement('div');
@@ -518,8 +519,8 @@ listaDocentes = async function (lmsDocentes, categories) {
     lmsDocentes.forEach(docD => {
         c = c+1;
         var docenteDatos = docD.data();
-        console.log(docenteDatos);
-        console.log(docD.id);
+        // console.log(docenteDatos);
+        // console.log(docD.id);
         categoriasDoc[c-1]={cat:''};
         
 
@@ -570,11 +571,11 @@ listaDocentes = async function (lmsDocentes, categories) {
         h6CategoryText.className = 'chip';
         h6CategoryText.id = 'h6Id_'+c1;//
         if (docenteDatos.category) {
-            console.log("============="+docenteDatos.category);
+            // console.log("============="+docenteDatos.category);
             var categoryText = document.createTextNode(docenteDatos.category);
             
         } else {
-            console.log("============No hay categoria registrada");
+            // console.log("============No hay categoria registrada");
             var categoryText = document.createTextNode('Sin categoria');
             
         }
@@ -583,7 +584,7 @@ listaDocentes = async function (lmsDocentes, categories) {
         var typeTag = document.createElement('div');
         typeTag.className = 'chip';
         if (docenteDatos.type) {
-            console.log('+++=====++++++++'+docenteDatos.type);
+            // console.log('+++=====++++++++'+docenteDatos.type);
             typeTag.textContent = docenteDatos.type;
         } else {
             typeTag.textContent = 'Sin tipo';
@@ -612,7 +613,7 @@ listaDocentes = async function (lmsDocentes, categories) {
             querySnapshot.forEach(function(doc1) {
                 // doc.data() is never undefined for query doc snapshots
                 urlCV = doc1.data().url;
-                console.log("Url => ", doc1.data().url, doc1.data().refid, doc1.data().type);
+                // console.log("Url => ", doc1.data().url, doc1.data().refid, doc1.data().type);
 
                 btnCV.setAttribute("href", urlCV);
                 btnCV.setAttribute("target", "_blank");
@@ -678,10 +679,11 @@ listaDocentes = async function (lmsDocentes, categories) {
                 email: e.target[1].value,
                 summary: e.target[2].value,
                 category: e.target[3].value,
+                type: e.target[5].value,
                 // refCatDoc: e.target[0].value,
             });
 
-            console.log(e.target[0].value);
+            console.log(e);
             
             // const editFormDoc = document.getElementById("editFormId_"+c1);
             const doc = await getDoc(docD.id);
@@ -738,6 +740,7 @@ listaDocentes = async function (lmsDocentes, categories) {
         divColInputSummary.appendChild(inputSummary);
         divColInputSummary.appendChild(labelInputSummary);
 
+        // Elemento <select> de categoria
         var divColSelectCategory = document.createElement('div');
         divColSelectCategory.className = 'input-field divInputField col s12';
         var selectCategory = document.createElement('select');
@@ -755,9 +758,33 @@ listaDocentes = async function (lmsDocentes, categories) {
         //
         var labelSelectCategory = document.createElement('label');
         labelSelectCategory.textContent = 'Categoria';
-
         divColSelectCategory.appendChild(selectCategory);
         divColSelectCategory.appendChild(labelSelectCategory);
+        // Final de elemento select
+
+        
+
+        // Elemento <select> de tipo
+        var divColSelectType = document.createElement('div');
+        divColSelectType.className = 'input-field divInputField col s12';
+        var selectType = document.createElement('select');
+        selectType.id = 'selectTypeId_'+c1;
+        // opciones del select
+        lmsTipos.forEach(docC => {
+            var optionSelectType = document.createElement('option');
+            optionSelectType.value = docC.data().nombreTipo;
+            optionSelectType.textContent = docC.data().nombreTipo;
+            selectType.appendChild(optionSelectType);
+        })
+        //
+        selectType.value = docenteDatos.type;
+        //
+        var labelSelectType = document.createElement('label');
+        labelSelectType.textContent = 'Tipo';
+
+        divColSelectType.appendChild(selectType);
+        divColSelectType.appendChild(labelSelectType);
+        //Final de elemento <select>
 
         $(document).ready(function(){
             $('select').formSelect();
@@ -926,6 +953,7 @@ listaDocentes = async function (lmsDocentes, categories) {
         divRowEditForm.appendChild(divColInputEmail);
         divRowEditForm.appendChild(divColInputSummary);
         divRowEditForm.appendChild(divColSelectCategory);
+        divRowEditForm.appendChild(divColSelectType);
         divRowEditForm.appendChild(divColEditDocument);
 
         
@@ -1022,7 +1050,7 @@ window.addEventListener('DOMContentLoaded', async (e) => {
     var selectCategoryId = document.getElementById("docenteCategoria");
     const lmsCategorias = await getCat();
     lmsCategorias.forEach(docC => {
-        console.log(docC.data());
+        // console.log(docC.data());
         var optionCat = document.createElement('option');
         optionCat.value = docC.data().nombreCat;
         var optionCatText = document.createTextNode(docC.data().nombreCat);
@@ -1034,7 +1062,7 @@ window.addEventListener('DOMContentLoaded', async (e) => {
     var selectTypeId = document.getElementById("docenteTipo");
     const lmsTipos = await getType();
     lmsTipos.forEach(docT => {
-        console.log(docT.data());
+        // console.log(docT.data());
         var optionType = document.createElement('option');
         optionType.value = docT.data().nombreTipo;
         var optionTypeText = document.createTextNode(docT.data().nombreTipo);
