@@ -4,14 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Lista de docentes</title>
+    <title>Lista de usuarios</title>
 
     <!--Import Google Icon Font-->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!--Import materialize.css-->
     <link type="text/css" rel="stylesheet" href="./css/materialize.min.css"  media="screen,projection"/>
-
-    <link rel="stylesheet" href="./styles.css">
 
 </head>
 <body>
@@ -21,8 +19,9 @@
           <a href="index.html" class="brand-logo">Co Marca</a>
           <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
           <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <li><a href="listaUsuarios.html">Lista de usuarios</a></li>
             <li><a href="registroDocentes.html">Registro de docentes</a></li>
-            <li class="active"><a href="listaDocentes.html">Lista de docentes</a></li>
+            <li><a href="listaDocentes.html">Lista de docentes</a></li>
             <li><a href="registroUsuario.html">Registrarse</a></li>
             <li><a href="login.html">Iniciar sesion</a></li>
           </ul>
@@ -30,72 +29,52 @@
     </nav>
     <ul class="sidenav" id="mobile-demo">
         <li><a href="registroDocentes.html">Registro de docentes</a></li>
-        <li class="active"><a href="listaDocentes.html">Lista de docentes</a></li>
+        <li><a href="listaDocentes.html">Lista de docentes</a></li>
         <li><a href="registroUsuario.html">Registrarse</a></li>
         <li><a href="login.html">Iniciar sesion</a></li>
     </ul>
 
+
     <div class="container">
         <div class="row">
             <div class="col s12">
-                <h3>Lista de docentes</h3>
+                <h3>Lista de usuarios</h3>
             </div>
-            <div class="input-field col s12 m6">
-                <select id="docenteCategoria" onchange="filtroCategoria(this.value)">
-                    <option value="todas">Todas las categorias</option>
-                </select>
-                <label>Filtrar por categoria</label>
-            </div>
-            <div class="input-field col s12 m6">
-                <select id="docenteTipo">
-                    <option value="todos">Todos los tipos</option>
-                </select>
-                <label>Filtrar por tipo</label>
-            </div>
-        </div>
-        <div id="idListaD">
-            <div class="row" id="idListaDocentes"></div>
-        </div>
-        <div class="row">
-            <div class="col s12" id="paginationContainer">
-                <ul class="pagination" id="pagination">
-                    <li class="waves-effect" id="leftArrow"><a href="#!"><i class="material-icons">chevron_left</i></a></li>
-                    <li class="waves-effect" id="rightArrow"><a href="#!"><i class="material-icons">chevron_right</i></a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Trigger -->
-
-    <!-- Modal Structure -->
-    <div id="modal1" class="modal modal-fixed-footer">
-        <div class="modal-content">
-            <h4>Portafolio de: ...</h4>
-            <p>Imagenes</p>
-            <div class="row">
-                <div class="col s12" id="idModalBody">
-                    <div id="verPortafolio"></div>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <a href="#!" class="modal-close waves-effect waves-green btn-flat">cerrar</a>
-        </div>
-    </div>
-
-    <div id="modal2" class="modal modal-fixed-footer">
-        <div class="modal-content">
-            <h4 id="modal2Title">Portafolio de: ...</h4>
+            <div class="col s12">
+                <table id="table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Rol de usuario</th>
+                            <th>Opciones</th>
+                        </tr>
+                    </thead>
             
+                    <tbody id="usersTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div id="modal1" class="modal">
+        <div class="modal-content">
+            <h4>Cambiar rol de usuario</h4>
             <div class="row">
-                <div class="col s12" id="idModalBody2">
-                    <div id="editModal"></div>
+                <div class="input-field col s12">
+                    <select id="selectUserRol">
+                        <option value="Administrador">Administrador</option>
+                        <option value="Editor">Editor</option>
+                        <option value="Lector">Lector</option>
+                    </select>
+                    <label>Rol de usuario</label>
+                </div>
+                <div class="col s12">
+                    <a href="#" class="btn" id="saveRolBtn">Guardar</a>
                 </div>
             </div>
         </div>
         <div class="modal-footer">
-            <a href="#!" class="modal-close waves-effect waves-green btn-flat">cerrar</a>
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cerrar</a>
         </div>
     </div>
 
@@ -129,19 +108,14 @@
 
     </script>
 
-    <script src="./listaDocentes.js"></script>
+    <script src="./listaUsuario.js"></script>
 
     <script>
     
-    $(document).ready(function(){
-        $('.sidenav').sidenav();
-    });
-    $(document).ready(function(){
-        $('.modal').modal();
-    });
-    $(document).ready(function(){
-        $('select').formSelect();
-    });
+        $(document).ready(function(){
+            $('.sidenav').sidenav();
+        });
+    
     </script>
 
 </body>

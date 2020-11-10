@@ -39,7 +39,7 @@ function registrarUsuraio() {
             // photoURL: "https://example.com/jane-q-user/profile.jpg" // Se guarda la imagen de usuario añadiendo una url de imagen
         }).then(function() {
             console.log('Nombre añadido a la cuenta de usuario',user.uid);
-            registerUser('Lector', user.uid);
+            registerUser(name, 'Lector', user.uid);
         }).catch(function(error) {
             console.log(error);
             
@@ -61,8 +61,9 @@ function registrarUsuraio() {
 }
 
 // Funcion registerUser() que realiza el registro de los roles de usuarios en la coleccion 'lms-roles', requiere de los parametros: rolName (nombre de rol: Administrador, Editos, Lector), idUser (usuario al que se asignara un rol dentro del sistema)
-const registerUser = (rolName, idUser) =>
+const registerUser = (userName, rolName, idUser) =>
     db.collection('lms-roles').add({
+        userName,
         rolName,
         idUser,
     }).then(function(rolData) {

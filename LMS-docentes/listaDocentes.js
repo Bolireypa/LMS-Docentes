@@ -28,6 +28,19 @@ var c2 = 0;
 //
 var c3 = 0;
 
+//contador paginas
+var countPages = 0;
+
+//contador pagina actual
+var currentPage = 0;
+
+//items por pagina
+var pageItems = 6;
+
+var firstItem = 0;
+
+var lastItem = 0;
+
 //
 var categoriaGlobal = document.getElementById('docenteCategoria').value;
 
@@ -39,6 +52,10 @@ var tipoGlobal = selectBoxType.value;
 
 //
 var listaLmsDoc = '';
+
+//
+var docentesCards = [];
+
 
 //
 const saveImage = (fileName, refid, url, type) => 
@@ -505,7 +522,9 @@ selectBoxType.addEventListener('change', (e) => {
 })
 
 listaDocentes = async function (lmsDocentes, categories) {
+    c1 = 0;
     const lmsCategorias = await getCat();
+    const lmsTipos = await getType();
     // c2=0;
     var idListaD = document.getElementById('idListaD');
     var idListaDocentes = document.createElement('div');
@@ -515,15 +534,18 @@ listaDocentes = async function (lmsDocentes, categories) {
     idListaD.replaceChild(idListaDocentes, idListaDocentes2);
 
     var categoriasDoc = [];
+    var divListaDocentes = document.getElementById('idListaDocentes');
+
+    docentesCards = [];
+
     lmsDocentes.forEach(docD => {
         c = c+1;
         var docenteDatos = docD.data();
-        console.log(docenteDatos);
-        console.log(docD.id);
+        // console.log(docenteDatos);
+        // console.log(docD.id);
         categoriasDoc[c-1]={cat:''};
         
 
-        var divListaDocentes = document.getElementById('idListaDocentes');
         var divCol = document.createElement('div');
         divCol.className = 'col s12 m4';
         var dicCard = document.createElement('div');
@@ -537,6 +559,24 @@ listaDocentes = async function (lmsDocentes, categories) {
         // cardImage.className = 'cardImage';
         // cardImage.style = 'max-height: 100%; max-width: 100%; margin: auto;';
         cardImage.src = imagenPortafolioDocente(docD.id, c1);
+        db.collection("lms-archivos").where("refid", "==", docD.id).where("type", "==", "imagen")
+        .get()
+        .then(function(querySnapshot) {
+            querySnapshot.forEach(function(doc1) {
+                // doc.data() is never undefined for query doc snapshots
+                urlImage = doc1.data().url;
+                // console.log("Url => ", doc1.data().url, doc1.data().refid, doc1.data().type);
+
+                
+
+                
+            });
+            cardImage.src = urlImage;
+        })
+        .catch(function(error) {
+            console.log("Error getting documents: ", error);
+        });
+
         var aBtnFloating = document.createElement('a');
         aBtnFloating.className = 'btn-floating activator halfway-fab waves-effect waves-light red';
         aBtnFloating.onclick = async function () {
@@ -570,11 +610,11 @@ listaDocentes = async function (lmsDocentes, categories) {
         h6CategoryText.className = 'chip';
         h6CategoryText.id = 'h6Id_'+c1;//
         if (docenteDatos.category) {
-            console.log("============="+docenteDatos.category);
+            // console.log("============="+docenteDatos.category);
             var categoryText = document.createTextNode(docenteDatos.category);
             
         } else {
-            console.log("============No hay categoria registrada");
+            // console.log("============No hay categoria registrada");
             var categoryText = document.createTextNode('Sin categoria');
             
         }
@@ -583,7 +623,7 @@ listaDocentes = async function (lmsDocentes, categories) {
         var typeTag = document.createElement('div');
         typeTag.className = 'chip';
         if (docenteDatos.type) {
-            console.log('+++=====++++++++'+docenteDatos.type);
+            // console.log('+++=====++++++++'+docenteDatos.type);
             typeTag.textContent = docenteDatos.type;
         } else {
             typeTag.textContent = 'Sin tipo';
@@ -612,7 +652,7 @@ listaDocentes = async function (lmsDocentes, categories) {
             querySnapshot.forEach(function(doc1) {
                 // doc.data() is never undefined for query doc snapshots
                 urlCV = doc1.data().url;
-                console.log("Url => ", doc1.data().url, doc1.data().refid, doc1.data().type);
+                // console.log("Url => ", doc1.data().url, doc1.data().refid, doc1.data().type);
 
                 btnCV.setAttribute("href", urlCV);
                 btnCV.setAttribute("target", "_blank");
@@ -678,10 +718,11 @@ listaDocentes = async function (lmsDocentes, categories) {
                 email: e.target[1].value,
                 summary: e.target[2].value,
                 category: e.target[3].value,
+                type: e.target[5].value,
                 // refCatDoc: e.target[0].value,
             });
 
-            console.log(e.target[0].value);
+            console.log(e);
             
             // const editFormDoc = document.getElementById("editFormId_"+c1);
             const doc = await getDoc(docD.id);
@@ -738,6 +779,7 @@ listaDocentes = async function (lmsDocentes, categories) {
         divColInputSummary.appendChild(inputSummary);
         divColInputSummary.appendChild(labelInputSummary);
 
+        // Elemento <select> de categoria
         var divColSelectCategory = document.createElement('div');
         divColSelectCategory.className = 'input-field divInputField col s12';
         var selectCategory = document.createElement('select');
@@ -755,13 +797,35 @@ listaDocentes = async function (lmsDocentes, categories) {
         //
         var labelSelectCategory = document.createElement('label');
         labelSelectCategory.textContent = 'Categoria';
-
         divColSelectCategory.appendChild(selectCategory);
         divColSelectCategory.appendChild(labelSelectCategory);
+        // Final de elemento select
 
-        $(document).ready(function(){
-            $('select').formSelect();
-        });
+        
+
+        // Elemento <select> de tipo
+        var divColSelectType = document.createElement('div');
+        divColSelectType.className = 'input-field divInputField col s12';
+        var selectType = document.createElement('select');
+        selectType.id = 'selectTypeId_'+c1;
+        // opciones del select
+        lmsTipos.forEach(docC => {
+            var optionSelectType = document.createElement('option');
+            optionSelectType.value = docC.data().nombreTipo;
+            optionSelectType.textContent = docC.data().nombreTipo;
+            selectType.appendChild(optionSelectType);
+        })
+        //
+        selectType.value = docenteDatos.type;
+        //
+        var labelSelectType = document.createElement('label');
+        labelSelectType.textContent = 'Tipo';
+
+        divColSelectType.appendChild(selectType);
+        divColSelectType.appendChild(labelSelectType);
+        //Final de elemento <select>
+
+        
 
         //Editar CV y Portafolio
         var divColEditDocument = document.createElement('div');
@@ -926,6 +990,7 @@ listaDocentes = async function (lmsDocentes, categories) {
         divRowEditForm.appendChild(divColInputEmail);
         divRowEditForm.appendChild(divColInputSummary);
         divRowEditForm.appendChild(divColSelectCategory);
+        divRowEditForm.appendChild(divColSelectType);
         divRowEditForm.appendChild(divColEditDocument);
 
         
@@ -965,11 +1030,90 @@ listaDocentes = async function (lmsDocentes, categories) {
         dicCard.appendChild(divCardAction);
         dicCard.appendChild(divCardReveal);
         divCol.appendChild(dicCard);
-        divListaDocentes.appendChild(divCol);
-
+        // divListaDocentes.appendChild(divCol);
+        docentesCards[c1] = divCol;
         c1=c1+1;
 
     })
+    currentPage = 1;//
+    lastItem = pageItems * currentPage;
+
+    firstItem = lastItem - pageItems;
+    pagination(docentesCards, divListaDocentes);
+
+    countPages = Math.ceil(docentesCards.length / pageItems);
+    console.log(countPages);
+
+    paginationNumbers(countPages, divListaDocentes);
+    
+}
+
+pagination = function (docCards, divListaDoc) {
+    var idList = document.getElementById('idListaD');
+    var idListaDoc = document.getElementById('idListaDocentes');
+    var divpageItem = document.createElement('div');
+    divpageItem.className = 'row';
+    divpageItem.id = 'idListaDocentes';
+    console.log(firstItem,lastItem);
+
+    for (let index = firstItem; index < lastItem; index++) {
+        // const element = docentesCards[index];
+        if (docCards[index]) {
+            divpageItem.appendChild(docCards[index]);
+            
+        }
+        
+    }
+    idList.replaceChild(divpageItem, idListaDoc);
+    $(document).ready(function(){
+        $('select').formSelect();
+    });
+}
+
+//
+paginationNumbers = function (countPages, divListaDocentes) {
+    var paginationContainer = document.getElementById('paginationContainer');
+    var leftArrow = document.getElementById('leftArrow');
+    var rightArrow = document.getElementById('rightArrow');
+    var paginationItem = document.getElementById('pagination');
+    var newPaginationItem = document.createElement('div');
+    newPaginationItem.className = 'pagination';
+    newPaginationItem.id = 'pagination';
+    paginationContainer.replaceChild(newPaginationItem, paginationItem);
+
+    newPaginationItem.appendChild(leftArrow);
+
+    for (let j = 1; j <= countPages; j++) {
+        // const element = countPages;
+        var liPage = document.createElement('li');
+        liPage.onclick = function () {
+            var btnPaginationNumbers = document.getElementsByClassName('btnNro');
+            for (let k = 0; k < btnPaginationNumbers.length; k++) {
+                btnPaginationNumbers[k].setAttribute('class', 'waves-effect btnNro');                
+            }
+            this.setAttribute('class', 'active btnNro');
+            
+        }
+        liPage.className = 'waves-effect btnNro';        
+        var aNumberPage = document.createElement('a');
+        aNumberPage.href = '#!';
+        aNumberPage.onclick = function () {
+            currentPage = j;
+            lastItem = pageItems * currentPage;
+
+            firstItem = lastItem - pageItems;
+            pagination(docentesCards, divListaDocentes);
+
+        }
+        aNumberPage.textContent = j;
+        liPage.appendChild(aNumberPage);
+
+        newPaginationItem.appendChild(liPage);     
+    }
+    newPaginationItem.appendChild(rightArrow);
+
+
+
 }
 
 // Funcion initApp() utilizada para verificar si un usuario esta autenticado
@@ -1022,7 +1166,7 @@ window.addEventListener('DOMContentLoaded', async (e) => {
     var selectCategoryId = document.getElementById("docenteCategoria");
     const lmsCategorias = await getCat();
     lmsCategorias.forEach(docC => {
-        console.log(docC.data());
+        // console.log(docC.data());
         var optionCat = document.createElement('option');
         optionCat.value = docC.data().nombreCat;
         var optionCatText = document.createTextNode(docC.data().nombreCat);
@@ -1034,7 +1178,7 @@ window.addEventListener('DOMContentLoaded', async (e) => {
     var selectTypeId = document.getElementById("docenteTipo");
     const lmsTipos = await getType();
     lmsTipos.forEach(docT => {
-        console.log(docT.data());
+        // console.log(docT.data());
         var optionType = document.createElement('option');
         optionType.value = docT.data().nombreTipo;
         var optionTypeText = document.createTextNode(docT.data().nombreTipo);
