@@ -85,8 +85,6 @@ function initApp() {
         if (user) {
             document.getElementById('dropdown1Text').textContent = user.displayName;
             idDropdown.setAttribute('style', '');
-            idLogin.setAttribute('style', 'display:none;');
-            idRegistrarseBtn.setAttribute('style', 'display:none;');
             var userRol = '';
             await db.collection("lms-roles").where("idUser", "==", user.uid)
             .get()
@@ -104,7 +102,9 @@ function initApp() {
             if (userRol!='Administrador') {
                 location.href = 'listaDocentes.html'
             } else {
-                
+                idRegistrarDocenteBtn.setAttribute('style', '');
+                idListaDocentesBtn.setAttribute('style', '');
+                        
             }
             
         } else {

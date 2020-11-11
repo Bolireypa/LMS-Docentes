@@ -32,7 +32,7 @@ var c1 = 0;
 //
 var c2 = 0;
 
-// Funcion saveUser() que realiza el registro de docentes nuevos en la coleccion 'lms-docentes', requiere de los parametros: name (nombre de docente), email (email de docente), summary (resumen del docente), category (categoria a la que pertenece el docente).
+// Funcion saveUser() que realiza el registro de docentes nuevos en la coleccion 'lms-docentes', requiere de los parametros: name (nombre de docente), email (email de docente), summary (resumen del docente), category (categoria a la que pertenece el docente), type (tipo al que pertenece el docente: Consultor, Docente, Freelancer).
 const saveUser = (name, email, summary, category, type) =>
     db.collection('lms-docentes').add({
         name,
@@ -126,16 +126,19 @@ function initApp() {
                 });                
                 switch (userRol) {
                     case 'Lector':
-                        idListaUsuarios.setAttribute('style', 'display:none;');
-                        idRegistrarDocenteBtn.setAttribute('style', 'display:none;');
                     
                         break;
 
                     case 'Editor':
-                        idListaUsuarios.setAttribute('style', 'display:none;');
+                        idListaDocentesBtn.setAttribute('style', '');
                     
                         break;
                 
+                    case 'Administrador':
+                        idListaUsuarios.setAttribute('style', '');
+                        idListaDocentesBtn.setAttribute('style', '');
+                        break;
+
                     default:
                         break;
                 }   
