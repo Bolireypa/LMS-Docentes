@@ -5,10 +5,10 @@ const db = firebase.firestore();
 var formRegistroUsuario = document.getElementById('formRegistroUsuario');
 
 // Variable btnLogOut que captura el boton 'Salir' para el logout del usuario
-var btnLogOut = document.getElementById('btnLogOut');
+// var btnLogOut = document.getElementById('btnLogOut');
 
 // Variable idDropdown que captura el dropdown de usuario
-var idDropdown = document.getElementById('idDropdown');
+// var idDropdown = document.getElementById('idDropdown');
 
 // Funcion registrarUsuario() que captura los datos de usuario del formulario de registro y os guarda en Firebase auth
 function registrarUsuraio() {
@@ -78,8 +78,8 @@ function initApp() {
     // Funcion que comprueba si un usuario esta autenticado
     firebase.auth().onAuthStateChanged(async function(user) {    
         if (user) {
-            document.getElementById('dropdown1Text').textContent = user.displayName;
-            idDropdown.setAttribute('style', '');
+            // document.getElementById('dropdown1Text').textContent = user.displayName;
+            // idDropdown.setAttribute('style', '');
             var userRol = '';
             await db.collection("lms-roles").where("idUser", "==", user.uid)
             .get()
@@ -94,14 +94,14 @@ function initApp() {
 
             console.log('User is signed in', user.displayName, userRol);
             
-            btnLogOut.setAttribute('style', '');
+            // btnLogOut.setAttribute('style', '');
             // btnLogOut.disabled = false;
         } else {
-            document.getElementById('dropdown1Text').textContent = 'Usuario';
-            idDropdown.setAttribute('style', 'display:none;');
+            // document.getElementById('dropdown1Text').textContent = 'Usuario';
+            // idDropdown.setAttribute('style', 'display:none;');
             
             console.log('User is signed out');
-            btnLogOut.setAttribute('style', 'display:none;');
+            // btnLogOut.setAttribute('style', 'display:none;');
             // btnLogOut.disabled = true;
                
         }
@@ -114,17 +114,7 @@ function initApp() {
         registrarUsuraio();
     });
 
-    // Funcion que se ejecuta cuando se realice un evento 'click' en el boton de salir o logout
-    btnLogOut.addEventListener('click', (e) => {
-
-        // Se ejecuta la funcion signOut() de firebase para el logout del usuario
-         firebase.auth().signOut().then(function() {
-            console.log('Log out successful');
-             // Sign-out successful.
-            }).catch(function(error) {
-            // An error happened.
-        });
-    });
+    
 }
 
 window.onload = function () {

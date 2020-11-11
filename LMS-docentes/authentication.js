@@ -1,8 +1,5 @@
 var formIngresoUsuario = document.getElementById('formIngresoUsuario');
 
-var idDropdown = document.getElementById('idDropdown');
-var btnLogOut = document.getElementById('bntLogOut');
-
 //
 function logInUser() {
     if (firebase.auth().currentUser) {
@@ -51,14 +48,12 @@ function initApp() {
     firebase.auth().onAuthStateChanged(function(user) {    
         if (user) {
             console.log('User is signed in');
-            document.getElementById('dropdown1Text').textContent = user.email;
-            idDropdown.setAttribute('style', '');
+            
             // btnLogOut.disabled = false;
             location.href = 'listaDocentes.html';
         } else {
             console.log('User is signed out');
-            document.getElementById('dropdown1Text').textContent = 'Usuario';
-            idDropdown.setAttribute('style', 'display:none;');
+            
             // btnLogOut.disabled = true;
                
         }
@@ -70,15 +65,6 @@ function initApp() {
         logInUser();
     });
 
-    //
-    btnLogOut.addEventListener('click', (e) => {
-         firebase.auth().signOut().then(function() {
-            console.log('Log out successful');
-             // Sign-out successful.
-            }).catch(function(error) {
-            // An error happened.
-        });
-    });
 }
 
 //

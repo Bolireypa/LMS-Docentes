@@ -14,9 +14,6 @@ const getType = () => db.collection('lms-tipos').get();
 const getDoc = (id) => db.collection('lms-docentes').doc(id).get();
 
 //
-// const onGetDoc = (callback) => db.collection('lms-docentes').onSnapshot(callback);
-
-//
 var c = 0;
 
 //
@@ -56,6 +53,18 @@ var listaLmsDoc = '';
 //
 var docentesCards = [];
 
+//
+var userRol = '';
+
+// Variable btnLogOut que captura el boton 'Salir' para el logout del usuario
+var btnLogOut = document.getElementById('btnLogOut');
+
+//
+var idListaUsuarios = document.getElementById('idListaUsuarios');
+var idRegistrarDocenteBtn = document.getElementById('idRegistrarDocenteBtn');
+var idListaDocentesBtn = document.getElementById('idListaDocentesBtn');
+var idRegistrarseBtn = document.getElementById('idRegistrarseBtn');
+var idLogin = document.getElementById('idLogin');
 
 //
 const saveImage = (fileName, refid, url, type) => 
@@ -216,6 +225,7 @@ portafolio = function (docName, docRef, editPortafolio) {
                 spanEditBtn.textContent = 'Cambiar';
                 var editImageBtn = document.createElement('input');
                 editImageBtn.type = 'file';
+                editImageBtn.accept = "image/*";
                 editImageBtn.className = 'changeFileBtn';
                 // editImageBtn.className = 'btn';
                 editImageBtn.onchange = function () {
@@ -304,6 +314,7 @@ portafolio = function (docName, docRef, editPortafolio) {
             spanAddBtn.textContent = 'Agregar';
             var addImageBtn = document.createElement('input');
             addImageBtn.type = 'file';
+            addImageBtn.accept = 'image/*';
             addImageBtn.onchange = function () {
                 console.log(this.files[0]);
                 console.log('--------------id del docente => '+docRef);
@@ -362,47 +373,6 @@ portafolio = function (docName, docRef, editPortafolio) {
     });
 
     
-}
-
-imagenPortafolioDocente = function (ref, c1) {
-    var urlSrc = '';
-    db.collection("lms-archivos").where("refid", "==", ref).where("type", "==", "imagen")
-    .get()
-    .then(function(querySnapshot) {
-        querySnapshot.forEach(function(doc1) {
-            // doc.data() is never undefined for query doc snapshots
-            // urlCV = doc1.data().url;
-            // console.log(doc1.id, " => ", doc1.data().url);
-            urlSrc = doc1.data().url;
-            // var imagenPortafolio = document.createElement('img');
-            // imagenPortafolio.src = doc1.data().url;
-            // imagenPortafolio.height = "200";
-            // pad.appendChild(imagenPortafolio);
-            //   var img = document.getElementById('myimg');
-            //   img.src = url;
-
-        });
-
-        var divImageCard = document.getElementById('divCardImageId_'+c1);
-        var imageCard = document.getElementById('cardImageId_'+c1);
-
-        var newImageCard = document.createElement('img');
-        newImageCard.id = 'cardImageId_'+c1;
-        newImageCard.src = urlSrc;
-
-        divImageCard.replaceChild(newImageCard, imageCard);
-
-        // console.log(urlSrc);
-    // return urlSrc;
-        
-    })
-    .catch(function(error) {
-        console.log("Error getting documents: ", error);
-    });
-    // var urlSrc = 'https://firebasestorage.googleapis.com/v0/b/lms-docentes.appspot.com/o/portafolioDocente%2Fportafolio3.png?alt=media&token=8e49c91d-3312-449f-9d09-a1c851e9184e';
-    // console.log(urlSrc+' url');
-    
-    return urlSrc;
 }
 
 //
@@ -541,35 +511,23 @@ listaDocentes = async function (lmsDocentes, categories) {
     lmsDocentes.forEach(docD => {
         c = c+1;
         var docenteDatos = docD.data();
-        // console.log(docenteDatos);
-        // console.log(docD.id);
         categoriasDoc[c-1]={cat:''};
         
 
         var divCol = document.createElement('div');
-        divCol.className = 'col s12 m4';
+        divCol.className = 'col s12 m6 l4';
         var dicCard = document.createElement('div');
         dicCard.className = 'card';
         var divCardImage = document.createElement('div');
         divCardImage.className = 'card-image';
-        // divCardImage.style = 'height: 180px;';
         divCardImage.id = 'divCardImageId_'+c1;
         var cardImage = document.createElement('img');
         cardImage.id = 'cardImageId_'+c1;
-        // cardImage.className = 'cardImage';
-        // cardImage.style = 'max-height: 100%; max-width: 100%; margin: auto;';
-        cardImage.src = imagenPortafolioDocente(docD.id, c1);
         db.collection("lms-archivos").where("refid", "==", docD.id).where("type", "==", "imagen")
         .get()
         .then(function(querySnapshot) {
             querySnapshot.forEach(function(doc1) {
-                // doc.data() is never undefined for query doc snapshots
                 urlImage = doc1.data().url;
-                // console.log("Url => ", doc1.data().url, doc1.data().refid, doc1.data().type);
-
-                
-
-                
             });
             cardImage.src = urlImage;
         })
@@ -579,19 +537,33 @@ listaDocentes = async function (lmsDocentes, categories) {
 
         var aBtnFloating = document.createElement('a');
         aBtnFloating.className = 'btn-floating activator halfway-fab waves-effect waves-light red';
-        aBtnFloating.onclick = async function () {
-            // const doc = await getDoc(docD.id);
-            // console.log(doc.data());
-            // console.log(doc.id);
-            // portafolio(docenteDatos.name, docenteDatos.ref);
-        }
+        
         var optionsIcon = document.createElement('i');
         optionsIcon.className = 'material-icons right';
         var textOptionsIcon = document.createTextNode('more_vert');
         aBtnFloating.appendChild(optionsIcon);
         optionsIcon.appendChild(textOptionsIcon);
         divCardImage.appendChild(cardImage);
-        divCardImage.appendChild(aBtnFloating);
+        switch (userRol) {
+            case 'Administrador':
+                divCardImage.appendChild(aBtnFloating);
+            
+                break;
+
+            case 'Editor':
+                divCardImage.appendChild(aBtnFloating);
+
+                break;
+        
+            default:
+                break;
+        }
+        // if (userRol!='Lector') {
+        //     divCardImage.appendChild(aBtnFloating);
+        // } else {
+            
+        // }
+
         var divCardContent = document.createElement('div');
         divCardContent.className = 'card-content';
         divCardContent.id = 'idCardContent_'+c1;//
@@ -895,8 +867,9 @@ listaDocentes = async function (lmsDocentes, categories) {
                     divColNewCVBtn.className = 'col s12';
 
                     var newCVInputFile = document.createElement('input');
-                    newCVInputFile.type='file';
-                    newCVInputFile.id='docenteNewCV_';
+                    newCVInputFile.type = 'file';
+                    newCVInputFile.id = 'docenteNewCV_';
+                    newCVInputFile.accept = "application/pdf";
                     newCVInputFile.onchange = function () { console.log(this.files[0]); };
                     var newCVSpan = document.createElement('span');
                     var spanCVText = document.createTextNode('Portafolio');
@@ -1081,6 +1054,38 @@ paginationNumbers = function (countPages, divListaDocentes) {
     newPaginationItem.id = 'pagination';
     paginationContainer.replaceChild(newPaginationItem, paginationItem);
 
+    leftArrow.children[0].onclick = function (){
+        console.log(currentPage, countPages);
+        if (currentPage > 1) {
+            window.scrollTo(0,0);
+            // Se resta en 1 el contador de la pagina actual
+            currentPage = currentPage - 1;
+            lastItem = pageItems * currentPage;
+
+            firstItem = lastItem - pageItems;
+            pagination(docentesCards, divListaDocentes);
+        } else {
+            //Se desahabilita el boton de siguiente
+            
+        }
+        
+    }
+
+    rightArrow.children[0].onclick = function () {
+        if (currentPage < countPages) {
+            window.scrollTo(0,0);
+            // Se suma en 1 el contador de la pagina actual
+            currentPage = currentPage + 1;
+            lastItem = pageItems * currentPage;
+
+            firstItem = lastItem - pageItems;
+            pagination(docentesCards, divListaDocentes);
+        } else {
+            //Se desahabilita el boton de siguiente
+        }
+
+    }
+
     newPaginationItem.appendChild(leftArrow);
 
     for (let j = 1; j <= countPages; j++) {
@@ -1098,6 +1103,7 @@ paginationNumbers = function (countPages, divListaDocentes) {
         var aNumberPage = document.createElement('a');
         aNumberPage.href = '#!';
         aNumberPage.onclick = function () {
+            window.scrollTo(0,0);
             currentPage = j;
             lastItem = pageItems * currentPage;
 
@@ -1107,13 +1113,9 @@ paginationNumbers = function (countPages, divListaDocentes) {
         }
         aNumberPage.textContent = j;
         liPage.appendChild(aNumberPage);
-
         newPaginationItem.appendChild(liPage);     
     }
     newPaginationItem.appendChild(rightArrow);
-
-
-
 }
 
 // Funcion initApp() utilizada para verificar si un usuario esta autenticado
@@ -1121,17 +1123,33 @@ function initApp() {
     // var state;
     firebase.auth().onAuthStateChanged(async function(user) {    
         if (user) {
-            // document.getElementById('dropdown1Text').textContent = user.email;
-            // idDropdown.setAttribute('style', '');
-            // btnLogOut.disabled = false;
-            // state = true;
-            var userRol = '';
+            document.getElementById('dropdown1Text').textContent = user.displayName;
+            idDropdown.setAttribute('style', '');
+            idLogin.setAttribute('style', 'display:none;');
+            idRegistrarseBtn.setAttribute('style', 'display:none;');
+            
+            userRol = '';
             await db.collection("lms-roles").where("idUser", "==", user.uid)
             .get()
             .then(function(querySnapshot) {
                 querySnapshot.forEach(function(doc1) {
                     userRol = doc1.data().rolName;
-                });                
+                });
+                switch (userRol) {
+                    case 'Lector':
+                        idListaUsuarios.setAttribute('style', 'display:none;');
+                        idRegistrarDocenteBtn.setAttribute('style', 'display:none;');
+                    
+                        break;
+
+                    case 'Editor':
+                        idListaUsuarios.setAttribute('style', 'display:none;');
+                    
+                        break;
+                
+                    default:
+                        break;
+                }                
             })
             .catch(function(error) {
                 console.log("Error getting documents: ", error);
@@ -1139,23 +1157,34 @@ function initApp() {
 
             console.log('User is signed in', user.displayName, userRol);
 
-            // if (userRol!='Administrador') {
-            //     location.href = 'login.html'
-            // } else {
-                
-            // }
+            
+            btnLogOut.setAttribute('style', '');
             
         } else {
+            document.getElementById('dropdown1Text').textContent = 'Usuario';
+            idDropdown.setAttribute('style', 'display:none;');
+            idLogin.setAttribute('style', '');
+            idRegistrarseBtn.setAttribute('style', '');
+            
             console.log('User is signed out');
-            // document.getElementById('formRegistroDocentes').textContent = 'Acceso denegado!!! Inicie sesión o registrese.';
-            // document.getElementById('formRegistroDocentes').setAttribute('style','');
-            // idDropdown.setAttribute('style', 'display:none;');
-            // btnLogOut.disabled = true;
-            // state = false;
+            
+            btnLogOut.setAttribute('style', 'display:none;');
+
             location.href = 'login.html';
         }
     });
 
+    // Funcion que se ejecuta cuando se realice un evento 'click' en el boton de salir o logout
+    btnLogOut.addEventListener('click', (e) => {
+
+        // Se ejecuta la funcion signOut() de firebase para el logout del usuario
+         firebase.auth().signOut().then(function() {
+            console.log('Log out successful');
+             // Sign-out successful.
+            }).catch(function(error) {
+            // An error happened.
+        });
+    });
     // return state;
 }
 

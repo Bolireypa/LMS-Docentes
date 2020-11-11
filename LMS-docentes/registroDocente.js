@@ -7,6 +7,16 @@ const docenteForm = document.getElementById("formRegistroDocentes");
 // Funcion getDoc() que obtiene todos los datos de los docentes registrados en la coleccion 'lms-docentes' de Firebase
 // const getDoc = () => db.collection('lms-docentes').get();
 
+// Variable btnLogOut que captura el boton 'Salir' para el logout del usuario
+var btnLogOut = document.getElementById('btnLogOut');
+
+//
+var idListaUsuarios = document.getElementById('idListaUsuarios');
+var idRegistrarDocenteBtn = document.getElementById('idRegistrarDocenteBtn');
+var idListaDocentesBtn = document.getElementById('idListaDocentesBtn');
+var idRegistrarseBtn = document.getElementById('idRegistrarseBtn');
+var idLogin = document.getElementById('idLogin');
+
 // Funcion getCat() que obtiene todos los datos de las categorias registradas en la coleccion 'lms-categorias' de Firebase
 const getCat = () => db.collection('lms-categorias').get();
 
@@ -103,6 +113,10 @@ function initApp() {
             // idDropdown.setAttribute('style', '');
             // btnLogOut.disabled = false;
             // state = true;
+            document.getElementById('dropdown1Text').textContent = user.displayName;
+            idDropdown.setAttribute('style', '');
+            idLogin.setAttribute('style', 'display:none;');
+            idRegistrarseBtn.setAttribute('style', 'display:none;');
             var userRol = '';
             await db.collection("lms-roles").where("idUser", "==", user.uid)
             .get()
@@ -110,14 +124,30 @@ function initApp() {
                 querySnapshot.forEach(function(doc1) {
                     userRol = doc1.data().rolName;
                 });                
+                switch (userRol) {
+                    case 'Lector':
+                        idListaUsuarios.setAttribute('style', 'display:none;');
+                        idRegistrarDocenteBtn.setAttribute('style', 'display:none;');
+                    
+                        break;
+
+                    case 'Editor':
+                        idListaUsuarios.setAttribute('style', 'display:none;');
+                    
+                        break;
+                
+                    default:
+                        break;
+                }   
             })
             .catch(function(error) {
                 console.log("Error getting documents: ", error);
             });
 
             console.log('User is signed in', user.displayName, userRol);
+            btnLogOut.setAttribute('style', '');
 
-            if (userRol!='Administrador') {
+            if (userRol=='Lector') {
                 location.href = 'listaDocentes.html'
             } else {
                 
@@ -130,10 +160,26 @@ function initApp() {
             // idDropdown.setAttribute('style', 'display:none;');
             // btnLogOut.disabled = true;
             // state = false;
+            document.getElementById('dropdown1Text').textContent = 'Usuario';
+            idDropdown.setAttribute('style', 'display:none;');
+            idLogin.setAttribute('style', '');
+            idRegistrarseBtn.setAttribute('style', '');
+            btnLogOut.setAttribute('style', 'display:none;');
+
             location.href = 'login.html';
         }
     });
+    // Funcion que se ejecuta cuando se realice un evento 'click' en el boton de salir o logout
+    btnLogOut.addEventListener('click', (e) => {
 
+        // Se ejecuta la funcion signOut() de firebase para el logout del usuario
+         firebase.auth().signOut().then(function() {
+            console.log('Log out successful');
+             // Sign-out successful.
+            }).catch(function(error) {
+            // An error happened.
+        });
+    });
     // return state;
 }
 
