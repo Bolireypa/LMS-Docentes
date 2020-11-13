@@ -9,34 +9,25 @@ const getCat = () => db.collection('lms-categorias').get();
 // Funcion getType() que obtiene todos los datos de los tipos registradas en la coleccion 'lms-tipos' de Firebase
 const getType = () => db.collection('lms-tipos').get();
 
-// Funcion getDoc() que obtiene todos los datos de los docentes registrados en la coleccion 'lms-docentes' de Firebase
+// Funcion getDoc() que obtiene, mediante su id, todos los datos del docente registrado en la coleccion 'lms-docentes' de Firebase
 const getDoc = (id) => db.collection('lms-docentes').doc(id).get();
 
-//
-var c = 0;
-
-//
+// Contador utlizado para contar el numero de cards de docentes, utilizado tambien para las id de los elementos generados para los cards de docentes
 var c1 = 0;
 
-//
-var c2 = 0;
-
-//
-var c3 = 0;
-
-// Contador paginas
+// Contador paginas totales, utilizado para la paginacion
 var countPages = 0;
 
-// Contador pagina actual
+// Contador pagina actual, utilizado para la paginacion
 var currentPage = 0;
 
-// Contador de items por pagina
+// Contador de items por pagina, utilizado para la paginacion
 var pageItems = 6;
 
-// Contador de primer elemento a mostrar en la pagina
+// Contador de primer elemento a mostrar en la pagina, utilizado para la paginacion
 var firstItem = 0;
 
-// Contador de ultimo elemento a mostrar en la pagina
+// Contador de ultimo elemento a mostrar en la pagina, utilizado para la paginacion
 var lastItem = 0;
 
 // Varible que guarda la categoria, utilizada para que se mantenga el filtro en la categoria seleccionada al momento de recargar la lista de docentes en las acciones de editar y eliminar docente
@@ -60,7 +51,7 @@ var userRol = '';
 // Variable btnLogOut que captura el boton 'Salir' para el logout del usuario
 var btnLogOut = document.getElementById('btnLogOut');
 
-// Variable que captura el elemento del menu de la barra de navegacion que lleva a la vista 'listaUsuario.html'
+// Variable que captura el elemento del menu de la barra de navegacion que lleva a la vista 'listaUsuarios.html'
 var idListaUsuarios = document.getElementById('idListaUsuarios');
 
 // Variable que captura el elemento del menu de la barra de navegacion que lleva a la vista 'registroDocentes.html'
@@ -75,8 +66,13 @@ var idRegistrarseBtn = document.getElementById('idRegistrarseBtn');
 // Variable que captura el elemento del menu de la barra de navegacion que lleva a la vista 'login.html'
 var idLogin = document.getElementById('idLogin');
 
+// Variable que captura el elemento del menu responsivo de la barra de navegacion en moviles utilizado para cerrar sesion
 var idLogoutBtnMovil = document.getElementById('idLogoutBtnMovil');
+
+// Variable que captura el elemento del menu responsivo de la barra de navegacion en moviles que lleva a la vista 'listaUsuarios.html'
 var idListaUsuariosMovil = document.getElementById('idListaUsuariosMovil');
+
+// Variable que captura el elemento del menu responsivo de la barra de navegacion en moviles que lleva a la vista 'registroDocentes.html'
 var idRegistrarDocenteBtnMovil = document.getElementById('idRegistrarDocenteBtnMovil');
 
 // Funcion saveImage() que realiza el registro de los datos de los archivos en la coleccion 'lms-archivos', requiere los parametros: fileName (Nombre de archivo a guardar, imagen o PDF), refid (La id del docente al que se vinculara el archivo, imagen o PDF), url (Ubicacion donde sera subido el archivo en el storage del proyecto), type (Tipo de archivo que se esta guardando, imagen - PDF)
@@ -313,6 +309,7 @@ portafolio = function (docName, docRef, editPortafolio) {
     idModalBody.replaceChild(pad, idVerPortafolio);
     // Fin para reemplazar los elementos anteriores con los nuevos
 
+    // Contador para el numero de imagenes de portafolio del docente
     var countImagesPortafolio = 0;
 
     // Se realiza una cosulta a la coleccion 'lms-archivos', que pertenescan al docente del cual se desea ver su portafolio y que sean de tipo imagen
@@ -323,6 +320,7 @@ portafolio = function (docName, docRef, editPortafolio) {
         querySnapshot.forEach(function(doc1) {
             
             countImagesPortafolio = countImagesPortafolio + 1;
+
             // Se crea los elementos necesarios para la visualizacion de las imagenes
             var divColImagePortafolio = document.createElement('div');
             divColImagePortafolio.className = 'col s6 m4';
@@ -337,10 +335,11 @@ portafolio = function (docName, docRef, editPortafolio) {
             imagenPortafolio.src = doc1.data().url;
             
             divColEditImage.appendChild(imagenPortafolio);
+            // Fin de creacion de elementos para la visualizacion de imagenes
 
             // Si el modal con las imagenes del portafolio se pueden editar entonces se agregan los botones de editar y eliminar a los recuadros de las imagenes
             if (editPortafolio) {
-                // Se crean los elementos necesarios para el boton que cambia las imagenes en el modal de portafolio de docentes
+                // Se crean los elementos necesarios para el boton 'Cambiar' para las imagenes en el modal de portafolio de docentes
                 var divColEditImageBtn = document.createElement('div');
                 divColEditImageBtn.className = 'col s6';
                 var divInputField = document.createElement('div');
@@ -393,7 +392,7 @@ portafolio = function (docName, docRef, editPortafolio) {
                 divColEditImageBtn.appendChild(divInputField);
                 // Fin para la creacion de elementos del boton 'Cambiar', en el modal de portafolio de docentes
 
-
+                // Se crean los elementos necesarios para el boton 'Eliminar' para las imagenes en el modal de portafolio de docente
                 var divColDeleteImageBtn = document.createElement('div');
                 divColDeleteImageBtn.className = 'col s6';
                 var deleteImageBtn = document.createElement('a');
@@ -403,7 +402,9 @@ portafolio = function (docName, docRef, editPortafolio) {
                     deleteImgPortafolio(doc1.id, docRef);
                 }
                 divColDeleteImageBtn.appendChild(deleteImageBtn);
+                // Fin para la creacion de elementos del boton 'Eliminar'
 
+                // Se agregan los botones de 'Cambiar' y 'Eliminar' en el recuadro de imagenes del portafolio de docente
                 divRowEditImageBtn.appendChild(divColEditImageBtn);
                 divRowEditImageBtn.appendChild(divColDeleteImageBtn);
             } else {
@@ -413,10 +414,11 @@ portafolio = function (docName, docRef, editPortafolio) {
             
             divColImagePortafolio.appendChild(divRowEditImageBtn);
             pad.appendChild(divColImagePortafolio);
-
         });
         
+        // Se comprueba que las imagenes del portafolio no sobrepasen a 6 y que el modal de portafolio de imagenes esten disponibels para su edicion, el valor de editProtafolio deberia ser: true
         if (countImagesPortafolio < 6 && editPortafolio) {
+            // Se realiza la creacion de un boton 'Agregar' y sus elementos, que agrega nuevas imagenes al portafolio de docentes, mientras sean menor a 6
             var divColImagePortafolioEmpty = document.createElement('div');
             divColImagePortafolioEmpty.className = 'col s6 m4';
             var divRowAddImageBtn = document.createElement('div');
@@ -431,10 +433,12 @@ portafolio = function (docName, docRef, editPortafolio) {
             divAddButton.className = 'btn grey';
             var spanAddBtn = document.createElement('span');
             spanAddBtn.textContent = 'Agregar';
+            
             var addImageBtn = document.createElement('input');
             addImageBtn.type = 'file';
             addImageBtn.accept = 'image/*';
             addImageBtn.onchange = function () {
+                // Se asigna una funcion al evento onchange del boton de 'Agregar' que realiza el proceso de subir la imagen al storage de Firebase y luego guardar sus datos en la coleccion 'lms-archivos'
                 var imageFile = this.files[0];
                 if (imageFile) {
                     var storageImageRef = storage.ref('/portafolioDocente/'+imageFile.name)
@@ -454,10 +458,12 @@ portafolio = function (docName, docRef, editPortafolio) {
                     
                 }
             }
+            // Fin de funcion que realiza el proceso de subir imagenes al storage de Firebase
 
             divAddButton.appendChild(spanAddBtn);
             divAddButton.appendChild(addImageBtn);
 
+            // Se crean los elementos necesarios para el elemento <input> para su funcionamiento que contiene la imagen nueva que se guardara
             var addInputText = document.createElement('input');
             addInputText.type = 'text';
             addInputText.setAttribute('style', 'display:none;');
@@ -465,7 +471,9 @@ portafolio = function (docName, docRef, editPortafolio) {
             addInputText.placeholder = 'Selecciona una imagen';
             var divInputTextAdd = document.createElement('div');
             divInputTextAdd.className = 'file-path-wrapper';
+            // Fin de creacion de los elementos necesarios del elemento <input>
 
+            // Se realiza la inclusion de los elementos en el DOM mediante la funcion appendChild() de javascript
             divInputTextAdd.appendChild(addInputText);
 
             divInputFieldAdd.appendChild(divAddButton);
@@ -475,6 +483,7 @@ portafolio = function (docName, docRef, editPortafolio) {
             divRowAddImageBtn.appendChild(divColAddImageEmpty);
             divColImagePortafolioEmpty.appendChild(divRowAddImageBtn);
             pad.appendChild(divColImagePortafolioEmpty);
+            // Fin de la inclusion de elementos necesarios
         } else {
             
         }
@@ -484,7 +493,7 @@ portafolio = function (docName, docRef, editPortafolio) {
     });
 }
 
-//
+// Funcion filtroCategoria() que realiza el filtro de docentes de acuerdo a la categoria seleccionada utilizando el elemento <select> de categoria
 async function filtroCategoria(catNom) {
     console.log(catNom);
     const lmsDocentes = await getTask();
@@ -605,7 +614,6 @@ listaDocentes = async function (lmsDocentes, categories) {
     c1 = 0;
     const lmsCategorias = await getCat();
     const lmsTipos = await getType();
-    // c2=0;
     var idListaD = document.getElementById('idListaD');
     var idListaDocentes = document.createElement('div');
     idListaDocentes.id = 'idListaDocentes';
@@ -613,17 +621,13 @@ listaDocentes = async function (lmsDocentes, categories) {
     var idListaDocentes2 = document.getElementById('idListaDocentes');
     idListaD.replaceChild(idListaDocentes, idListaDocentes2);
 
-    var categoriasDoc = [];
     var divListaDocentes = document.getElementById('idListaDocentes');
 
     docentesCards = [];
 
     lmsDocentes.forEach(docD => {
-        c = c+1;
         var docenteDatos = docD.data();
-        categoriasDoc[c-1]={cat:''};
         
-
         var divCol = document.createElement('div');
         divCol.className = 'col s12 m6 l4';
         var dicCard = document.createElement('div');
