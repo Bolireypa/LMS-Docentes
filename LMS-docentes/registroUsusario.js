@@ -4,6 +4,8 @@ const db = firebase.firestore();
 // Variable formRegistroUsuario que captura el formulario de registro de usuarios
 var formRegistroUsuario = document.getElementById('formRegistroUsuario');
 
+var userEnable = false;
+
 // Variable btnLogOut que captura el boton 'Salir' para el logout del usuario
 // var btnLogOut = document.getElementById('btnLogOut');
 
@@ -16,6 +18,7 @@ function registrarUsuraio() {
     var name = formRegistroUsuario['usuarioNombre'].value;
     var email = formRegistroUsuario['usuarioEmail'].value;
     var password = formRegistroUsuario['usuarioPassword'].value;
+    var userEnable = false;
 
     if (email.length < 4) {
         console.log('Please enter an email address.');
@@ -37,9 +40,9 @@ function registrarUsuraio() {
         user.updateProfile({
             displayName: name,
             // photoURL: "https://example.com/jane-q-user/profile.jpg" // Se guarda la imagen de usuario añadiendo una url de imagen
-        }).then(function() {
+        }).then(async function() {
             console.log('Nombre añadido a la cuenta de usuario',user.uid);
-            registerUser(name, 'Lector', user.uid);
+            await registerUser(name, 'Lector', user.uid, userEnable);
         }).catch(function(error) {
             console.log(error);
             
@@ -61,11 +64,12 @@ function registrarUsuraio() {
 }
 
 // Funcion registerUser() que realiza el registro de los roles de usuarios en la coleccion 'lms-roles', requiere de los parametros: rolName (nombre de rol: Administrador, Editos, Lector), idUser (usuario al que se asignara un rol dentro del sistema)
-const registerUser = (userName, rolName, idUser) =>
+const registerUser = (userName, rolName, idUser, userEnable) =>
     db.collection('lms-roles').add({
         userName,
         rolName,
         idUser,
+        userEnable,
     }).then(function(rolData) {
         console.log("Rol de usuario registrado correctamente ",rolData.id);
 
@@ -91,18 +95,17 @@ function initApp() {
             .catch(function(error) {
                 console.log("Error getting documents: ", error);
             });
-
+            if (userEnable == true) {
+                location.href = 'listaDocentes.html';
+                
+            }else{
+                location.href = 'deshabilitado.html';
+            }
             console.log('User is signed in', user.displayName, userRol);
             
-            // btnLogOut.setAttribute('style', '');
-            // btnLogOut.disabled = false;
         } else {
-            // document.getElementById('dropdown1Text').textContent = 'Usuario';
-            // idDropdown.setAttribute('style', 'display:none;');
             
             console.log('User is signed out');
-            // btnLogOut.setAttribute('style', 'display:none;');
-            // btnLogOut.disabled = true;
                
         }
     });
