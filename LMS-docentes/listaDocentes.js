@@ -75,6 +75,10 @@ var idRegistrarseBtn = document.getElementById('idRegistrarseBtn');
 // Variable que captura el elemento del menu de la barra de navegacion que lleva a la vista 'login.html'
 var idLogin = document.getElementById('idLogin');
 
+var idLogoutBtnMovil = document.getElementById('idLogoutBtnMovil');
+var idListaUsuariosMovil = document.getElementById('idListaUsuariosMovil');
+var idRegistrarDocenteBtnMovil = document.getElementById('idRegistrarDocenteBtnMovil');
+
 // Funcion saveImage() que realiza el registro de los datos de los archivos en la coleccion 'lms-archivos', requiere los parametros: fileName (Nombre de archivo a guardar, imagen o PDF), refid (La id del docente al que se vinculara el archivo, imagen o PDF), url (Ubicacion donde sera subido el archivo en el storage del proyecto), type (Tipo de archivo que se esta guardando, imagen - PDF)
 const saveImage = (fileName, refid, url, type) => 
     db.collection('lms-archivos').doc().set({
@@ -1259,13 +1263,20 @@ function initApp() {
             idLogin.setAttribute('style', 'display:none;');
             idRegistrarseBtn.setAttribute('style', 'display:none;');
             
+            var userEnable = false;
             userRol = '';
             await db.collection("lms-roles").where("idUser", "==", user.uid)
             .get()
             .then(function(querySnapshot) {
                 querySnapshot.forEach(function(doc1) {
                     userRol = doc1.data().rolName;
+                    userEnable = doc1.data().userEnable;
                 });
+                if (userEnable == true) {
+                    
+                }else{
+                    location.href = 'deshabilitado.html';
+                }
                 switch (userRol) {
                     case 'Lector':
                     
@@ -1273,13 +1284,17 @@ function initApp() {
 
                     case 'Editor':
                         idRegistrarDocenteBtn.setAttribute('style', '');
+                        idRegistrarDocenteBtnMovil.setAttribute('style', '');
                     
                         break;
                     
                     case 'Administrador':
                         idListaUsuarios.setAttribute('style', '');
+                        idListaUsuariosMovil.setAttribute('style', '');
                         idRegistrarDocenteBtn.setAttribute('style', '');
+                        idRegistrarDocenteBtnMovil.setAttribute('style', '');
                         break;
+                    
 
                     default:
                         break;
@@ -1310,6 +1325,16 @@ function initApp() {
 
     // Funcion que se ejecuta cuando se realice un evento 'click' en el boton de salir o logout
     btnLogOut.addEventListener('click', (e) => {
+
+        // Se ejecuta la funcion signOut() de firebase para el logout del usuario
+         firebase.auth().signOut().then(function() {
+            console.log('Log out successful');
+             // Sign-out successful.
+            }).catch(function(error) {
+            // An error happened.
+        });
+    });
+    idLogoutBtnMovil.addEventListener('click', (e) => {
 
         // Se ejecuta la funcion signOut() de firebase para el logout del usuario
          firebase.auth().signOut().then(function() {

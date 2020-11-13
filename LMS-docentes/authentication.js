@@ -1,4 +1,9 @@
+// DB firestore
+const db = firebase.firestore();
+
 var formIngresoUsuario = document.getElementById('formIngresoUsuario');
+
+var userEnable = false;
 
 //
 function logInUser() {
@@ -15,7 +20,7 @@ function logInUser() {
             console.log('Please enter an email address.');
             return;
         }
-        if (password.length < 4) {
+        if (password.length < 8) {
             console.log('Please enter a password.');
             return;
         }
@@ -45,16 +50,28 @@ function logInUser() {
 //
 function initApp() {
 
-    firebase.auth().onAuthStateChanged(function(user) {    
+    firebase.auth().onAuthStateChanged(async function(user) {    
         if (user) {
             console.log('User is signed in');
-            
-            // btnLogOut.disabled = false;
-            location.href = 'listaDocentes.html';
+            await db.collection("lms-roles").where("idUser", "==", user.uid)
+            .get()
+            .then(function(querySnapshot) {
+                querySnapshot.forEach(function(doc1) {
+                    userEnable = doc1.data().userEnable;
+                });                
+            })
+            .catch(function(error) {
+                console.log("Error getting documents: ", error);
+            });
+            if (userEnable == true) {
+                location.href = 'listaDocentes.html';
+                
+            }else{
+                location.href = 'deshabilitado.html';
+            }
         } else {
             console.log('User is signed out');
             
-            // btnLogOut.disabled = true;
                
         }
     });

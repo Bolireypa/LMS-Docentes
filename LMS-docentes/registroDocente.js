@@ -9,6 +9,7 @@ const docenteForm = document.getElementById("formRegistroDocentes");
 
 // Variable btnLogOut que captura el boton 'Salir' para el logout del usuario
 var btnLogOut = document.getElementById('btnLogOut');
+var idLogoutBtnMovil = document.getElementById('idLogoutBtnMovil');
 
 //
 var idListaUsuarios = document.getElementById('idListaUsuarios');
@@ -16,6 +17,8 @@ var idRegistrarDocenteBtn = document.getElementById('idRegistrarDocenteBtn');
 var idListaDocentesBtn = document.getElementById('idListaDocentesBtn');
 var idRegistrarseBtn = document.getElementById('idRegistrarseBtn');
 var idLogin = document.getElementById('idLogin');
+var idListaUsuariosMovil = document.getElementById('idListaUsuariosMovil');
+var idListaDocentesBtnMovil = document.getElementById('idListaDocentesBtnMovil');
 
 // Funcion getCat() que obtiene todos los datos de las categorias registradas en la coleccion 'lms-categorias' de Firebase
 const getCat = () => db.collection('lms-categorias').get();
@@ -118,11 +121,13 @@ function initApp() {
             idLogin.setAttribute('style', 'display:none;');
             idRegistrarseBtn.setAttribute('style', 'display:none;');
             var userRol = '';
+            var userEnable = false;
             await db.collection("lms-roles").where("idUser", "==", user.uid)
             .get()
             .then(function(querySnapshot) {
                 querySnapshot.forEach(function(doc1) {
                     userRol = doc1.data().rolName;
+                    userEnable = doc1.data().userEnable;
                 });                
                 switch (userRol) {
                     case 'Lector':
@@ -131,12 +136,15 @@ function initApp() {
 
                     case 'Editor':
                         idListaDocentesBtn.setAttribute('style', '');
+                        idListaDocentesBtnMovil.setAttribute('style', '');
                     
                         break;
                 
                     case 'Administrador':
                         idListaUsuarios.setAttribute('style', '');
+                        idListaUsuariosMovil.setAttribute('style', '');
                         idListaDocentesBtn.setAttribute('style', '');
+                        idListaDocentesBtnMovil.setAttribute('style', '');
                         break;
 
                     default:
@@ -149,12 +157,17 @@ function initApp() {
 
             console.log('User is signed in', user.displayName, userRol);
             btnLogOut.setAttribute('style', '');
-
-            if (userRol=='Lector') {
-                location.href = 'listaDocentes.html'
-            } else {
+            if (userEnable == true) {
+                if (userRol=='Lector') {
+                    location.href = 'listaDocentes.html'
+                } else {
+                    
+                }
                 
+            }else{
+                location.href = 'deshabilitado.html';
             }
+            
             
         } else {
             console.log('User is signed out');
@@ -174,6 +187,16 @@ function initApp() {
     });
     // Funcion que se ejecuta cuando se realice un evento 'click' en el boton de salir o logout
     btnLogOut.addEventListener('click', (e) => {
+
+        // Se ejecuta la funcion signOut() de firebase para el logout del usuario
+         firebase.auth().signOut().then(function() {
+            console.log('Log out successful');
+             // Sign-out successful.
+            }).catch(function(error) {
+            // An error happened.
+        });
+    });
+    idLogoutBtnMovil.addEventListener('click', (e) => {
 
         // Se ejecuta la funcion signOut() de firebase para el logout del usuario
          firebase.auth().signOut().then(function() {
