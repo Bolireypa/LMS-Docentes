@@ -16,6 +16,7 @@
 </head>
 <body>
         <ul id="dropdown1" class="dropdown-content">
+            <li><a href="#!" id="btnUserProfile">Ver perfil</a></li>
             <li><a href="#!" id="btnLogOut">Log out</a></li>
         </ul>
     <nav>
@@ -36,6 +37,8 @@
             <li id="idListaUsuariosMovil" style="display:none;"><a href="listaUsuarios.html">Lista de usuarios</a></li>
             <li id="idRegistrarDocenteBtnMovil" style="display:none;"><a href="registroDocentes.html">Registro de docentes</a></li>
             <li id="idListaDocentesBtnMovil" class="active"><a href="listaDocentes.html">Lista de docentes</a></li>
+            <li class="divider" tabindex="-1"></li>
+            <li id="idUserProfile"><a href="#!">Ver perfil</a></li>
             <li id="idLogoutBtnMovil"><a href="#!">Logout</a></li>
     </ul>
 
@@ -103,6 +106,47 @@
         </div>
     </div>
 
+    <div id="modalProfile" class="modal modal-fixed-footer">
+        <div class="modal-content">
+            <h4 id="modalProfileTitle">Perfil de: ...</h4>
+            
+            <div class="row">
+                <form id="formUserProfile">
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <i class="material-icons prefix">account_circle</i>
+                            <input type="text" class="validate" id="userName">
+                            <label for="userName" id="labelUserName">Nombre</label>
+                        </div>
+                        <div class="input-field col s12">
+                            <i class="material-icons prefix">email</i>
+                            <input type="email" class="validate" id="userEmail">
+                            <label for="userEmail" id="labelUserEmail">e-mail</label>
+                            <span class="helper-text" data-error="e-mail invalido" data-success="Correcto"></span>
+                        </div>
+                        <div class="input-field col s12">
+                            <i class="material-icons prefix">lock</i>
+                            <input type="password" class="validate" id="userPassword">
+                            <label for="userPassword">Contraseña</label>
+                        </div>
+                        
+                    </div>
+                    <div class="row">
+                        <div class="col s12">
+                            <input type="submit" value="Guardar" class="btn">
+                        </div>
+                        <div class="col s12">
+                            <!-- <button type="button" class="btn" id="btnLogOut" style="display:none">Salir</button> -->
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat">cerrar</a>
+        </div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
 
@@ -134,6 +178,7 @@
     </script>
 
     <script src="./listaDocentes.js"></script>
+    <script src="./perfilUsuario.js"></script>
 
     <script>
     

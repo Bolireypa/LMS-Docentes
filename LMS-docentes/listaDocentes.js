@@ -1260,7 +1260,8 @@ paginationNumbers = function (countPages, divListaDocentes) {
 // Funcion initApp() utilizada para verificar si un usuario esta autenticado
 function initApp() {
     // var state;
-    firebase.auth().onAuthStateChanged(async function(user) {    
+    firebase.auth().onAuthStateChanged(async function(user) {  
+        currentUser = user;
         if (user) {
             document.getElementById('dropdown1Text').textContent = user.displayName;
             idDropdown.setAttribute('style', '');
@@ -1348,7 +1349,7 @@ function initApp() {
             // An error happened.
         });
     });
-    // return state;
+
 }
 
 window.addEventListener('DOMContentLoaded', async (e) => {

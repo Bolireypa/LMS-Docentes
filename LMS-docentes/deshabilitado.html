@@ -16,6 +16,7 @@
 </head>
 <body>
         <ul id="dropdown1" class="dropdown-content">
+            <li><a href="#!" id="btnUserProfile">Ver perfil</a></li>
             <li><a href="#!" id="btnLogOut">Log out</a></li>
         </ul>
     <nav>
@@ -28,6 +29,7 @@
         </div>
     </nav>
     <ul class="sidenav" id="mobile-demo">
+            <li id="idUserProfile"><a href="#!">Ver perfil</a></li>
             <li id="idLogoutBtnMovil"><a href="#!">Logout</a></li>
     </ul>
 
@@ -36,6 +38,47 @@
             <div class="col s12">
                 <h3>Su cuenta de usuario aun no ha sido habilitada, contacte con un administrador para su habilitación!</h3>
             </div>
+        </div>
+    </div>
+
+    <div id="modalProfile" class="modal modal-fixed-footer">
+        <div class="modal-content">
+            <h4 id="modalProfileTitle">Perfil de: ...</h4>
+            
+            <div class="row">
+                <form id="formUserProfile">
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <i class="material-icons prefix">account_circle</i>
+                            <input type="text" class="validate" id="userName">
+                            <label for="userName" id="labelUserName">Nombre</label>
+                        </div>
+                        <div class="input-field col s12">
+                            <i class="material-icons prefix">email</i>
+                            <input type="email" class="validate" id="userEmail">
+                            <label for="userEmail" id="labelUserEmail">e-mail</label>
+                            <span class="helper-text" data-error="e-mail invalido" data-success="Correcto"></span>
+                        </div>
+                        <div class="input-field col s12">
+                            <i class="material-icons prefix">lock</i>
+                            <input type="password" class="validate" id="userPassword">
+                            <label for="userPassword">Contraseña</label>
+                        </div>
+                        
+                    </div>
+                    <div class="row">
+                        <div class="col s12">
+                            <input type="submit" value="Guardar" class="btn">
+                        </div>
+                        <div class="col s12">
+                            <!-- <button type="button" class="btn" id="btnLogOut" style="display:none">Salir</button> -->
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat">cerrar</a>
         </div>
     </div>
 
@@ -70,6 +113,7 @@
     </script>
 
     <script src="./logout.js"></script>
+    <script src="./perfilUsuario.js"></script>
 
     <script>
     

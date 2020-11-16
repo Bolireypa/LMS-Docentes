@@ -16,10 +16,10 @@ function registrarUsuraio() {
         console.log('Please enter an email address.');
         return;
     }
-    if (password.length < 8) {
-        console.log('Please enter a password.');
-        return;
-    }
+    // if (password.length < 8) {
+        // console.log('Please enter a password.');
+        // return;
+    // }
 
     // Se utiliza una funcion de firebase para la creacion de usuario que requiere el email y la contraseña, si se registro correctamente se logea automaticamente al sistema
     firebase.auth().createUserWithEmailAndPassword(email, password).then(function () {
@@ -46,7 +46,7 @@ function registrarUsuraio() {
         var errorMessage = error.message;
 
         if (errorCode == 'auth/weak-password') {
-          alert('The password is too weak.');
+          alert('La contraseña es muy corta, mínimo 8 caracteres');
         } else {
           alert(errorMessage);
         }
