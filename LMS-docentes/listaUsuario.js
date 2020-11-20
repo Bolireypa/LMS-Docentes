@@ -1,6 +1,17 @@
 //
 const db = firebase.firestore();
 
+// Variable btnLogOut que captura el boton 'Salir' para el logout del usuario
+var btnLogOut = document.getElementById('btnLogOut');
+var idLogoutBtnMovil = document.getElementById('idLogoutBtnMovil');
+
+//
+var idListaUsuarios = document.getElementById('idListaUsuarios');
+var idRegistrarDocenteBtn = document.getElementById('idRegistrarDocenteBtn');
+var idListaDocentesBtn = document.getElementById('idListaDocentesBtn');
+var idRegistrarseBtn = document.getElementById('idRegistrarseBtn');
+var idLogin = document.getElementById('idLogin');
+
 // Funcion getUsers() que recupera los datos guardados en la base de datos de firebase, en la coleccion 'lms-roles'
 const getUsers = () => db.collection('lms-roles').get();
 
@@ -61,15 +72,114 @@ usersTable = async function () {
 
         }
         tableElement3.appendChild(editRolBtn);
+        var tableElement4 = document.createElement('td');
+        var userStatus = document.createElement('a');
+        userStatus.href = '#modal2';
+        var userstateText = '';
+        var userState = !userData.userEnable;
+        if (userData.userEnable == true) {
+            userStatus.textContent = 'Deshabilitar';
+            userStatus.className = 'btn red modal-trigger';
+            userstateText = 'Deshabilitar';
+        } else {
+            userStatus.textContent = 'Habilitar';
+            userStatus.className = 'btn green modal-trigger';
+            userstateText = 'Habilitar';
+            
+        }
+        userStatus.onclick = function () {
+            document.getElementById('modalTextH5').textContent = 'Desea '+userstateText+' a '+userData.userName+' ?';
+            console.log('hab/des');
+            document.getElementById('acceptBtn').onclick = async function () {
+                console.log(user.id, userState);
+                await updateUser(user.id, {
+                    userEnable: userState,
+                });
+            }
+        }
+        tableElement4.appendChild(userStatus);
         tableRow.appendChild(tableElement1);
         tableRow.appendChild(tableElement2);
         tableRow.appendChild(tableElement3);
+        tableRow.appendChild(tableElement4);
         newTableBody.appendChild(tableRow);
+
+
     });
+    
+    
+}
+
+// Funcion initApp() utilizada para verificar si un usuario esta autenticado
+function initApp() {
+    // var state;
+    firebase.auth().onAuthStateChanged(async function(user) {    
+        if (user) {
+            document.getElementById('dropdown1Text').textContent = user.displayName;
+            idDropdown.setAttribute('style', '');
+            var userRol = '';
+            var userEnable = false;
+            await db.collection("lms-roles").where("idUser", "==", user.uid)
+            .get()
+            .then(function(querySnapshot) {
+                querySnapshot.forEach(function(doc1) {
+                    userRol = doc1.data().rolName;
+                    userEnable = doc1.data().userEnable;
+                });                
+            })
+            .catch(function(error) {
+                console.log("Error getting documents: ", error);
+            });
+
+            console.log('User is signed in', user.displayName, userRol);
+            if (userEnable == true) {
+                if (userRol!='Administrador') {
+                    location.href = 'listaDocentes.html'
+                } else {
+                    idRegistrarDocenteBtn.setAttribute('style', '');
+                    idListaDocentesBtn.setAttribute('style', '');
+                            
+                }
+                
+            }else{
+                location.href = 'deshabilitado.html';
+            }
+            
+            
+        } else {
+            console.log('User is signed out');
+            
+            location.href = 'index.html';
+        }
+    });
+
+    // Funcion que se ejecuta cuando se realice un evento 'click' en el boton de salir o logout
+    btnLogOut.addEventListener('click', (e) => {
+
+        // Se ejecuta la funcion signOut() de firebase para el logout del usuario
+         firebase.auth().signOut().then(function() {
+            console.log('Log out successful');
+             // Sign-out successful.
+            }).catch(function(error) {
+            // An error happened.
+        });
+    });
+    idLogoutBtnMovil.addEventListener('click', (e) => {
+
+        // Se ejecuta la funcion signOut() de firebase para el logout del usuario
+         firebase.auth().signOut().then(function() {
+            console.log('Log out successful');
+             // Sign-out successful.
+            }).catch(function(error) {
+            // An error happened.
+        });
+    });
+    // return state;
 }
 
 // Funcion que se ejecuta mediante el evento 'DOMContentLoaded' (el documento listaUsuarios.html a sido cargado)
 window.addEventListener('DOMContentLoaded', (e) => {
+    initApp();
     // Se ejecuta la funcion userTable(), al momento de ser cargada la pagina
     usersTable();
     

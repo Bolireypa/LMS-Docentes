@@ -1,11 +1,27 @@
-// DB firestore
-const db = firebase.firestore();
+
 
 // Variable docenteForm, guarda el formulario de la vista reigistroDocente.html de la etiqueta <form> para capturar los datos para el registro de docentes nuevos
 const docenteForm = document.getElementById("formRegistroDocentes");
 
 // Funcion getDoc() que obtiene todos los datos de los docentes registrados en la coleccion 'lms-docentes' de Firebase
 // const getDoc = () => db.collection('lms-docentes').get();
+
+// Se capturan los elementos del DOM mediante sus ID para luego agregar mas elementos o editar los elementos
+var btnLogOut = document.getElementById('btnLogOut');
+var idLogoutBtnMovil = document.getElementById('idLogoutBtnMovil');
+var idListaUsuarios = document.getElementById('idListaUsuarios');
+var idOpcionesBtn = document.getElementById('idOpcionesBtn');
+var idRegistrarDocenteBtn = document.getElementById('idRegistrarDocenteBtn');
+var idListaDocentesBtn = document.getElementById('idListaDocentesBtn');
+var idRegistrarseBtn = document.getElementById('idRegistrarseBtn');
+var idLogin = document.getElementById('idLogin');
+var idListaUsuariosMovil = document.getElementById('idListaUsuariosMovil');
+var idOpcionesBtnMovil = document.getElementById('idOpcionesBtnMovil');
+var idListaDocentesBtnMovil = document.getElementById('idListaDocentesBtnMovil');
+// Fin de captura de elementos del DOM
+
+// Variable que guarda al usuario con sesion iniciada
+var currentUser = '';
 
 // Funcion getCat() que obtiene todos los datos de las categorias registradas en la coleccion 'lms-categorias' de Firebase
 const getCat = () => db.collection('lms-categorias').get();
@@ -22,7 +38,9 @@ var c1 = 0;
 //
 var c2 = 0;
 
-// Funcion saveUser() que realiza el registro de docentes nuevos en la coleccion 'lms-docentes', requiere de los parametros: name (nombre de docente), email (email de docente), summary (resumen del docente), category (categoria a la que pertenece el docente).
+
+
+// Funcion saveUser() que realiza el registro de docentes nuevos en la coleccion 'lms-docentes', requiere de los parametros: name (nombre de docente), email (email de docente), summary (resumen del docente), category (categoria a la que pertenece el docente), type (tipo al que pertenece el docente: Consultor, Docente, Freelancer).
 const saveUser = (name, email, summary, category, type) =>
     db.collection('lms-docentes').add({
         name,
@@ -41,6 +59,9 @@ const saveUser = (name, email, summary, category, type) =>
 
         // Se ejecuta la funcion uploadDocument() despues del registro exitoso del docente; sube el archivo PDF del CV del docente en storage de firebase, se envia el parametro: docData.id (la id del docente registrado anteriormente)
         uploadDocument(docData.id);
+
+        // Se ejecuta la funcion logRegister() que guarda un registro de que usuario esta registrando a un docente, en la coleccion 'lms-log', se envia los parametros: Primer parametro (el nombre del usuario que realiza la accion de registrar), segundo parametro (la id del usuario que realiza la accion de registrar), tercer parametro (el nombre del docente que registro), cuarto parametro (la id del docente registrado)
+        logRegister(currentUser.displayName, currentUser.uid, 'Registro de docente: '+name, docData.id);
     }).catch(function(error) {
         console.error("No se pudo registrar correctamente al docente: ", error);
     });
@@ -95,33 +116,71 @@ const newBtnPortafolio = function (imgVal) {
 
 
 // Funcion initApp() utilizada para verificar si un usuario esta autenticado
-function initApp() {
+async function initApp() {
     // var state;
     firebase.auth().onAuthStateChanged(async function(user) {    
         if (user) {
+            currentUser = user;
+            
+
             // document.getElementById('dropdown1Text').textContent = user.email;
             // idDropdown.setAttribute('style', '');
             // btnLogOut.disabled = false;
             // state = true;
+            document.getElementById('dropdown1Text').textContent = user.displayName;
+            idDropdown.setAttribute('style', '');
+            idLogin.setAttribute('style', 'display:none;');
+            idRegistrarseBtn.setAttribute('style', 'display:none;');
             var userRol = '';
+            var userEnable = false;
             await db.collection("lms-roles").where("idUser", "==", user.uid)
             .get()
             .then(function(querySnapshot) {
                 querySnapshot.forEach(function(doc1) {
                     userRol = doc1.data().rolName;
+                    userEnable = doc1.data().userEnable;
                 });                
+                switch (userRol) {
+                    case 'Lector':
+                    
+                        break;
+
+                    case 'Editor':
+                        idListaDocentesBtn.setAttribute('style', '');
+                        idListaDocentesBtnMovil.setAttribute('style', '');
+                    
+                        break;
+                
+                    case 'Administrador':
+                        idListaUsuarios.setAttribute('style', '');
+                        idListaUsuariosMovil.setAttribute('style', '');
+                        idOpcionesBtn.setAttribute('style', '');
+                        idOpcionesBtnMovil.setAttribute('style', '');
+                        idListaDocentesBtn.setAttribute('style', '');
+                        idListaDocentesBtnMovil.setAttribute('style', '');
+                        break;
+
+                    default:
+                        break;
+                }   
             })
             .catch(function(error) {
                 console.log("Error getting documents: ", error);
             });
 
             console.log('User is signed in', user.displayName, userRol);
-
-            if (userRol!='Administrador') {
-                location.href = 'listaDocentes.html'
-            } else {
+            btnLogOut.setAttribute('style', '');
+            if (userEnable == true) {
+                if (userRol=='Lector') {
+                    location.href = 'listaDocentes.html'
+                } else {
+                    
+                }
                 
+            }else{
+                location.href = 'deshabilitado.html';
             }
+            
             
         } else {
             console.log('User is signed out');
@@ -130,10 +189,36 @@ function initApp() {
             // idDropdown.setAttribute('style', 'display:none;');
             // btnLogOut.disabled = true;
             // state = false;
-            location.href = 'login.html';
+            document.getElementById('dropdown1Text').textContent = 'Usuario';
+            idDropdown.setAttribute('style', 'display:none;');
+            idLogin.setAttribute('style', '');
+            idRegistrarseBtn.setAttribute('style', '');
+            btnLogOut.setAttribute('style', 'display:none;');
+
+            location.href = 'index.html';
         }
     });
+    // Funcion que se ejecuta cuando se realice un evento 'click' en el boton de salir o logout
+    btnLogOut.addEventListener('click', (e) => {
 
+        // Se ejecuta la funcion signOut() de firebase para el logout del usuario
+         firebase.auth().signOut().then(function() {
+            console.log('Log out successful');
+             // Sign-out successful.
+            }).catch(function(error) {
+            // An error happened.
+        });
+    });
+    idLogoutBtnMovil.addEventListener('click', (e) => {
+
+        // Se ejecuta la funcion signOut() de firebase para el logout del usuario
+         firebase.auth().signOut().then(function() {
+            console.log('Log out successful');
+             // Sign-out successful.
+            }).catch(function(error) {
+            // An error happened.
+        });
+    });
     // return state;
 }
 
@@ -187,7 +272,7 @@ window.addEventListener('DOMContentLoaded', async (e) => {
 docenteForm.addEventListener('submit', async (e) => {
     e.preventDefault();//Impide que el formulario se recargue en el evento submit
 
-    $('.modal').modal('open');
+    $('#modal1').modal('open');
 
     const name = docenteForm['docenteNombre'].value;
     const email = docenteForm["docenteEmail"].value;
