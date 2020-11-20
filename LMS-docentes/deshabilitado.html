@@ -4,12 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Lista de usuarios</title>
+    <title>Lista de docentes</title>
 
     <!--Import Google Icon Font-->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!--Import materialize.css-->
     <link type="text/css" rel="stylesheet" href="./css/materialize.min.css"  media="screen,projection"/>
+
+    <link rel="stylesheet" href="./styles.css">
 
 </head>
 <body>
@@ -22,86 +24,20 @@
           <a href="index.html" class="brand-logo">Co Marca</a>
           <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
           <ul id="nav-mobile" class="right hide-on-med-and-down">
-                <li id="idListaUsuarios" class="active"><a href="listaUsuarios.html">Lista de usuarios</a></li>
-                <li id="idRegistrarDocenteBtn" style="display:none;"><a href="registroDocentes.html">Registro de docentes</a></li>
-                <li id="idListaDocentesBtn" style="display:none;"><a href="listaDocentes.html">Lista de docentes</a></li>
-                <li id="idOpcionesBtn"><a href="opciones.html">Panel de control</a></li>
-                <li id="idRegistrarseBtn" style="display:none;"><a href="registroUsuario.html">Registrarse</a></li>
-                <li id="idLogin" style="display:none;"><a href="login.html">Iniciar sesion</a></li>
-                <li id="idDropdown" style="display:none;"><a class="dropdown-trigger" href="#!" data-target="dropdown1" id="dropdown1Text">Usuario<i class="material-icons right">arrow_drop_down</i></a></li>    
+            <li id="idDropdown"><a class="dropdown-trigger" href="#!" data-target="dropdown1" id="dropdown1Text">Usuario<i class="material-icons right">arrow_drop_down</i></a></li>
           </ul>
         </div>
     </nav>
     <ul class="sidenav" id="mobile-demo">
-            <li><a href="listaUsuarios.html">Lista de usuarios</a></li>
-            <li><a href="registroDocentes.html">Registro de docentes</a></li>
-            <li><a href="listaDocentes.html">Lista de docentes</a></li>
-            <li class="divider" tabindex="-1"></li>
-            <li id="idOpcionesBtnMovil"><a href="opciones.html">Panel de control</a></li>
-            <li class="divider" tabindex="-1"></li>
             <li id="idUserProfile"><a href="#!">Ver perfil</a></li>
             <li id="idLogoutBtnMovil"><a href="#!">Logout</a></li>
-
     </ul>
-
 
     <div class="container">
         <div class="row">
             <div class="col s12">
-                <h3>Lista de usuarios</h3>
+                <h3>Su cuenta de usuario aun no ha sido habilitada, contacte con un administrador para su habilitación!</h3>
             </div>
-            <div class="col s12">
-                <table id="table">
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Rol de usuario</th>
-                            <th>Opciones</th>
-                            <th>Habilitar/Deshabilitar</th>
-                        </tr>
-                    </thead>
-            
-                    <tbody id="usersTableBody"></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    
-    <div id="modal1" class="modal">
-        <div class="modal-content">
-            <h4>Cambiar rol de usuario</h4>
-            <div class="row">
-                <div class="input-field col s12">
-                    <select id="selectUserRol">
-                        <option value="Administrador">Administrador</option>
-                        <option value="Editor">Editor</option>
-                        <option value="Lector">Lector</option>
-                    </select>
-                    <label>Rol de usuario</label>
-                </div>
-                <div class="col s12">
-                    <a href="#" class="btn" id="saveRolBtn">Guardar</a>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cerrar</a>
-        </div>
-    </div>
-
-    <div id="modal2" class="modal">
-        <div class="modal-content">
-            <h4>Habilitar/Deshabilitar usuario</h4>
-            <div class="row">
-                <div class="input-field col s12">
-                    <h5 id="modalTextH5"></h5>
-                </div>
-                
-            </div>
-        </div>
-        <div class="modal-footer">
-            <a href="#!" id="acceptBtn" class="modal-close waves-effect waves-green btn green">Si</a>
-            <a href="#!" id="declineBtn" class="modal-close waves-effect waves-green btn red">No</a>
         </div>
     </div>
 
@@ -145,7 +81,7 @@
             <a href="#!" class="modal-close waves-effect waves-green btn-flat">cerrar</a>
         </div>
     </div>
-    
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
 
@@ -176,17 +112,17 @@
 
     </script>
 
-    <script src="./listaUsuario.js"></script>
+    <script src="./logout.js"></script>
     <script src="./perfilUsuario.js"></script>
 
     <script>
     
-        $(document).ready(function(){
-            $('.sidenav').sidenav();
-        });
-        $(document).ready(function(){
-            $(".dropdown-trigger").dropdown({ hover: false });
-        });
+    $(document).ready(function(){
+        $('.sidenav').sidenav();
+    });
+    $(document).ready(function(){
+        $(".dropdown-trigger").dropdown({ hover: false });
+    });
     </script>
 
 </body>

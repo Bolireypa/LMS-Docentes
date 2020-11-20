@@ -1,7 +1,9 @@
+// DB firestore
+const db = firebase.firestore();
+
 var formIngresoUsuario = document.getElementById('formIngresoUsuario');
 
-var idDropdown = document.getElementById('idDropdown');
-var btnLogOut = document.getElementById('bntLogOut');
+var userEnable = false;
 
 //
 function logInUser() {
@@ -15,11 +17,11 @@ function logInUser() {
         var password = formIngresoUsuario['usuarioPassword'].value;
         console.log(email,password);
         if (email.length < 4) {
-            console.log('Please enter an email address.');
+            alert('Por favor ingrese un email válido.');
             return;
         }
-        if (password.length < 4) {
-            console.log('Please enter a password.');
+        if (password.length < 8) {
+            alert('La contraseña debe ser de 8 caracteres mínimo.');
             return;
         }
 
@@ -33,13 +35,37 @@ function logInUser() {
             var errorCode = error.code;
             var errorMessage = error.message;
             // [START_EXCLUDE]
-            if (errorCode === 'auth/wrong-password') {
-            alert('Wrong password.');
-            } else {
-            alert(errorMessage);
+
+            // Codigos de error de firebase
+            switch (errorCode) {
+                case 'auth/wrong-password':
+                    alert('Contraseña incorrecta.');
+                    
+                    break;
+
+                case 'auth/user-not-found':
+                    alert('Usuario no encontrado.');
+
+                    break;
+            
+                case 'auth/invalid-email':
+                    alert('Email inválido')
+                    break;
+
+                case 'auth/network-request-failed':
+                    alert('Ocurrio un error de red')
+                    break;
+
+                default:
+                    break;
             }
+            // if (errorCode === 'auth/wrong-password') {
+            // alert('Contraseña incorrecta.');
+            // } else {
+            // alert(errorMessage);
+            // }
             console.log(error);
-            document.getElementById('quickstart-sign-in').disabled = false;
+            // document.getElementById('quickstart-sign-in').disabled = false;
             // [END_EXCLUDE]
         });
     }
@@ -48,18 +74,28 @@ function logInUser() {
 //
 function initApp() {
 
-    firebase.auth().onAuthStateChanged(function(user) {    
+    firebase.auth().onAuthStateChanged(async function(user) {    
         if (user) {
             console.log('User is signed in');
-            document.getElementById('dropdown1Text').textContent = user.email;
-            idDropdown.setAttribute('style', '');
-            // btnLogOut.disabled = false;
-            location.href = 'listaDocentes.html';
+            await db.collection("lms-roles").where("idUser", "==", user.uid)
+            .get()
+            .then(function(querySnapshot) {
+                querySnapshot.forEach(function(doc1) {
+                    userEnable = doc1.data().userEnable;
+                });                
+            })
+            .catch(function(error) {
+                console.log("Error getting documents: ", error);
+            });
+            if (userEnable == true) {
+                location.href = 'listaDocentes.html';
+                
+            }else{
+                location.href = 'deshabilitado.html';
+            }
         } else {
             console.log('User is signed out');
-            document.getElementById('dropdown1Text').textContent = 'Usuario';
-            idDropdown.setAttribute('style', 'display:none;');
-            // btnLogOut.disabled = true;
+            
                
         }
     });
@@ -70,15 +106,6 @@ function initApp() {
         logInUser();
     });
 
-    //
-    btnLogOut.addEventListener('click', (e) => {
-         firebase.auth().signOut().then(function() {
-            console.log('Log out successful');
-             // Sign-out successful.
-            }).catch(function(error) {
-            // An error happened.
-        });
-    });
 }
 
 //

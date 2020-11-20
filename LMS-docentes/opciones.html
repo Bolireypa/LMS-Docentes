@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Opciones</title>
+
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="./css/materialize.min.css"  media="screen,projection"/>
+    <link rel="stylesheet" href="./styles.css">
+
+</head>
+<body>
+        <ul id="dropdown1" class="dropdown-content">
+            <li><a href="#!" id="btnUserProfile">Ver perfil</a></li>
+            <li><a href="#!" id="btnLogOut">Log out</a></li>
+        </ul>
+    <nav>
+        <div class="nav-wrapper">
+          <a href="index.html" class="brand-logo">Co Marca</a>
+          <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+          <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <li id="idListaUsuarios"><a href="listaUsuarios.html">Lista de usuarios</a></li>
+                <li id="idRegistrarDocenteBtn"><a href="registroDocentes.html">Registro de docentes</a></li>
+                <li id="idListaDocentesBtn"><a href="listaDocentes.html">Lista de docentes</a></li>
+                <li id="idOpcionesBtn" class="active"><a href="opciones.html">Panel de control</a></li>
+                <li id="idRegistrarseBtn" style="display:none;"><a href="registroUsuario.html">Registrarse</a></li>
+                <li id="idLogin" style="display:none;"><a href="login.html">Iniciar sesion</a></li>
+                <li id="idDropdown" style="display:none;"><a class="dropdown-trigger" href="#!" data-target="dropdown1" id="dropdown1Text">Usuario<i class="material-icons right">arrow_drop_down</i></a></li>    
+          </ul>
+        </div>
+    </nav>
+    <ul class="sidenav" id="mobile-demo">
+            <li><a href="listaUsuarios.html">Lista de usuarios</a></li>
+            <li><a href="registroDocentes.html">Registro de docentes</a></li>
+            <li><a href="listaDocentes.html">Lista de docentes</a></li>
+            <li class="divider" tabindex="-1"></li>
+            <li><a href="opciones.html">Panel de control</a></li>
+            <li class="divider" tabindex="-1"></li>
+            <li id="idUserProfile"><a href="#!">Ver perfil</a></li>
+            <li id="idLogoutBtnMovil"><a href="#!">Logout</a></li>
+
+    </ul>
+
+
+    <div class="container">
+        <div class="row">
+               
+            <div class="col s12 m4">
+                <div class="row">
+                    <div class="col s12">
+                        <div class="z-depth-1 panelTable">
+                            <h4>Opciones</h4>
+                            <div class="row">
+                                <form id="defaultImageForm">
+                                    <div class="col s12">
+                                        <!-- <h5>Imagen por defecto</h5> -->
+                                        <!-- <p>Seleccione una imagen por defecto que se mostrará cuando se registre un docente sin las imagenes de su portafolio.</p> -->
+                                        <h5>Imagen por defecto:</h5>
+                                        <a class="btn-floating tooltipped" data-position="bottom" data-tooltip="Seleccione una imagen por defecto que se mostrará cuando se registre un docente sin las imagenes de su portafolio."><i class="material-icons">info_outline</i></a>
+                                        <h6 id="idCurrentImageh5"></h6>
+                                    </div>
+                                    <div class="col s12">
+                                        <div class="file-field input-field">
+                                            <div class="btn blue">
+                                                <span>Seleccione una imagen</span>
+                                                <input type="file" id="inputDefaultImage" accept="image/*">
+                                            </div>
+                                            <div class="file-path-wrapper">
+                                                <input class="file-path validate" type="text" placeholder="Seleccione una imagen">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col s12">
+                                        <button type="submit" class="btn green">Guardar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12">
+                        <div class="z-depth-1 panelTable">
+                            <h4>Categorias</h4>
+                            <div class="row">
+                                <div class="col s12">
+                                    <table id="" class="responsive-table">
+                                        <thead>
+                                            <th>Categoria</th>
+                                            <th>Accion</th>
+                                        </thead>
+                                        <tbody id="categoryTableBody"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12">
+                        <div class="z-depth-1 panelTable">
+                            <h4>Tipos</h4>
+                            <div class="row">
+                                <div class="col s12">
+                                    <table id="" class="responsive-table">
+                                        <thead>
+                                            <th>Tipo</th>
+                                            <th>Accion</th>
+                                        </thead>
+                                        <tbody id="typeTableBody"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col s12 m8">
+                <div class="row">
+                    <div class="col s12">
+                        <div class="z-depth-1 panelTable">
+                            <h4>Log de registros</h4>
+                            <table id="logTable" class="responsive-table">
+                                <thead>
+                                    <th>Nombre de usuario</th>
+                                    <th>Accion</th>
+                                    <th>Fecha</th>
+                                </thead>
+                                <tbody id="logTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="modal1" class="modal">
+        <div class="modal-content">
+            <h4>Titulo</h4>
+            <div class="row">
+                <div class="input-field col s12">
+                    
+                </div>
+                <div class="col s12">
+                    <a href="#" class="btn" id="saveRolBtn">Guardar</a>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cerrar</a>
+        </div>
+    </div>
+
+    <div id="modalProfile" class="modal modal-fixed-footer">
+            <div class="modal-content">
+                <h4 id="modalProfileTitle">Perfil de: ...</h4>
+                
+                <div class="row">
+                    <form id="formUserProfile">
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <i class="material-icons prefix">account_circle</i>
+                                <input type="text" class="validate" id="userName">
+                                <label for="userName" id="labelUserName">Nombre</label>
+                            </div>
+                            <div class="input-field col s12">
+                                <i class="material-icons prefix">email</i>
+                                <input type="email" class="validate" id="userEmail">
+                                <label for="userEmail" id="labelUserEmail">e-mail</label>
+                                <span class="helper-text" data-error="e-mail invalido" data-success="Correcto"></span>
+                            </div>
+                            <div class="input-field col s12">
+                                <i class="material-icons prefix">lock</i>
+                                <input type="password" class="validate" id="userPassword">
+                                <label for="userPassword">Contraseña</label>
+                            </div>
+                            
+                        </div>
+                        <div class="row">
+                            <div class="col s12">
+                                <input type="submit" value="Guardar" class="btn">
+                            </div>
+                            <div class="col s12">
+                                <!-- <button type="button" class="btn" id="btnLogOut" style="display:none">Salir</button> -->
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#!" class="modal-close waves-effect waves-green btn-flat">cerrar</a>
+            </div>
+        </div>
+
+    
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+
+    <script src="./js/materialize.min.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/7.23.0/firebase-app.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/7.23.0/firebase-auth.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/7.23.0/firebase-firestore.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/7.23.0/firebase-storage.js"></script>
+    <script>
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyAXQXbsFbtTjJLtqcPgWJRzyUlvq1i2qOE",
+            authDomain: "lms-docentes.firebaseapp.com",
+            databaseURL: "https://lms-docentes.firebaseio.com",
+            projectId: "lms-docentes",
+            storageBucket: "lms-docentes.appspot.com",
+            messagingSenderId: "430235197366",
+            appId: "1:430235197366:web:1b31227c0c8a5e7e2a6b17"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        var storage = firebase.storage();
+
+    </script>
+
+    <script src="./opciones.js"></script>
+    <script src="./perfilUsuario.js"></script>
+
+    <script>
+    
+        $(document).ready(function(){
+            $('.sidenav').sidenav();
+        });
+        $(document).ready(function(){
+            $(".dropdown-trigger").dropdown({ hover: false });
+            $('.tooltipped').tooltip();
+        });
+    </script>
+
+</body>
+</html>

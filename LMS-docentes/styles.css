@@ -18,7 +18,7 @@
 
 .card > .card-image {
     height: 180px;
-    background-color: lightseagreen;
+    background-color: grey;
     display: flex;
     vertical-align: middle;
 }
@@ -98,6 +98,16 @@
     margin-bottom: 0;
 }
 
+#modalAlert{
+    width: 400px;
+}
+
+.panelTable{
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 1px;
+    padding-top: 1px;
+}
 /* .spanCardTitle{
     background-color: black;
 }
