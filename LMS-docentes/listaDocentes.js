@@ -12,6 +12,9 @@ const getType = () => db.collection('lms-tipos').get();
 // Funcion getDoc() que obtiene, mediante su id, todos los datos del docente registrado en la coleccion 'lms-docentes' de Firebase
 const getDoc = (id) => db.collection('lms-docentes').doc(id).get();
 
+const getDefImg = () => db.collection('lms-opciones').get();
+
+
 // Contador utlizado para contar el numero de cards de docentes, utilizado tambien para las id de los elementos generados para los cards de docentes
 var c1 = 0;
 
@@ -54,6 +57,9 @@ var btnLogOut = document.getElementById('btnLogOut');
 // Variable que captura el elemento del menu de la barra de navegacion que lleva a la vista 'listaUsuarios.html'
 var idListaUsuarios = document.getElementById('idListaUsuarios');
 
+// Variable que captura el elemento del menu de la barra de navegacion que lleva a la vista 'opciones.html'
+var idOpcionesBtnMovil = document.getElementById('idOpcionesBtnMovil');
+
 // Variable que captura el elemento del menu de la barra de navegacion que lleva a la vista 'registroDocentes.html'
 var idRegistrarDocenteBtn = document.getElementById('idRegistrarDocenteBtn');
 
@@ -72,11 +78,14 @@ var idLogoutBtnMovil = document.getElementById('idLogoutBtnMovil');
 // Variable que captura el elemento del menu responsivo de la barra de navegacion en moviles que lleva a la vista 'listaUsuarios.html'
 var idListaUsuariosMovil = document.getElementById('idListaUsuariosMovil');
 
+// Variable que captura el elemento del menu responsivo de la barra de navegacion en moviles que lleva a la vista 'opciones.html'
+var idOpcionesBtn = document.getElementById('idOpcionesBtn');
+
 // Variable que captura el elemento del menu responsivo de la barra de navegacion en moviles que lleva a la vista 'registroDocentes.html'
 var idRegistrarDocenteBtnMovil = document.getElementById('idRegistrarDocenteBtnMovil');
 
-// Funcion saveImage() que realiza el registro de los datos de los archivos en la coleccion 'lms-archivos', requiere los parametros: fileName (Nombre de archivo a guardar, imagen o PDF), refid (La id del docente al que se vinculara el archivo, imagen o PDF), url (Ubicacion donde sera subido el archivo en el storage del proyecto), type (Tipo de archivo que se esta guardando, imagen - PDF)
-const saveImage = (fileName, refid, url, type) => 
+// Funcion saveFile() que realiza el registro de los datos de los archivos en la coleccion 'lms-archivos', requiere los parametros: fileName (Nombre de archivo a guardar, imagen o PDF), refid (La id del docente al que se vinculara el archivo, imagen o PDF), url (Ubicacion donde sera subido el archivo en el storage del proyecto), type (Tipo de archivo que se esta guardando, imagen - PDF)
+const saveFile = (fileName, refid, url, type) => 
     db.collection('lms-archivos').doc().set({
         fileName,
         refid,
@@ -88,7 +97,58 @@ const saveImage = (fileName, refid, url, type) =>
         // Se ejecuta la funcion portafolio(), que recarga el modal donde se muestran las imagenes del portafolio de docente
         var docente = await getDoc(refid);
         
-        portafolio(docente.data().name, refid, true);
+        if (type == 'imagen') {
+            portafolio(docente.data().name, refid, true);
+        } else {
+            // Se cierra el modal de Editar CV
+            $('.modal').modal('close');
+            //Se verifica que los filtros de categoria y tipo sean distinto a "todos" o "todas", y asi recargar la lista de docentes con los mismos filtros de categoria seleccionados, al momento de eliminar los datos de los docentes
+            if (categoriaGlobal != "todas") {
+                if (tipoGlobal != "todos") {
+                    // Se realiza una consulta a la coleccion 'lms-docentes' seleccionando solo los docentes que pertenezcan a un tipo y categoria, de acuerdo al filtro selecionado
+                    db.collection("lms-docentes").where("category", "==", categoriaGlobal).where("type", "==", tipoGlobal)
+                    .get()
+                    .then(function(querySnapshot) {
+                        // Se ejecuta la funcion listaDocentes() que recarga la lista de los docentes de acuerdo a los resultados de la consulta realizada anteriormente
+                        listaDocentes(querySnapshot, 'allCategories');
+                    })
+                    .catch(function(error) {
+                        // Si la consulta a la coleccion 'lms-docentes' no se ejecuto correctamente, se muestra un mensaje de error
+                        console.log("Error getting documents: ", error);
+                    });
+                } else {
+                    // Se realiza una consulta a la coleccion 'lms-docentes' seleccionando solo los docentes que pertenezcan a una categoria, de acuerdo al filtro selecionado
+                    db.collection("lms-docentes").where("category", "==", categoriaGlobal)
+                    .get()
+                    .then(function(querySnapshot) {
+                        // Se ejecuta la funcion listaDocentes() que recarga la lista de los docentes de acuerdo a los resultados de la consulta realizada anteriormente
+                        listaDocentes(querySnapshot, 'allCategories');
+                    })
+                    .catch(function(error) {
+                        // Si la consulta a la coleccion 'lms-docentes' no se ejecuto correctamente, se muestra un mensaje de error
+                        console.log("Error getting documents: ", error);
+                    });
+                }
+            } else {
+                if (tipoGlobal != "todos") {
+                    // Se realiza una consulta a la coleccion 'lms-docentes' seleccionando solo los docentes que pertenezcan a un tipo, de acuerdo al filtro selecionado
+                    db.collection("lms-docentes").where("type", "==", tipoGlobal)
+                    .get()
+                    .then(function(querySnapshot) {
+                        // Se ejecuta la funcion listaDocentes() que recarga la lista de los docentes de acuerdo a los resultados de la consulta realizada anteriormente
+                        listaDocentes(querySnapshot, 'allCategories');
+                    })
+                    .catch(function(error) {
+                        // Si la consulta a la coleccion 'lms-docentes' no se ejecuto correctamente, se muestra un mensaje de error
+                        console.log("Error getting documents: ", error);
+                    });
+                } else {
+                    const lmsDocentes = await getTask();
+                    // Se ejecuta la funcion listaDocentes() que recarga la lista de todos los docentes
+                    listaDocentes(lmsDocentes, 'allCategories');   
+                }
+            }
+        }
     }).catch(function(error){
         // Si los datos de archivo no se registraron correctamente se mustra un mensaje de error
         console.log('No se pudo registrar correctamente los datos de archivo', error);
@@ -451,7 +511,7 @@ portafolio = function (docName, docRef, editPortafolio) {
                     }, function () {
                         console.log('Imagen Guardada');
                         uploadImage.snapshot.ref.getDownloadURL().then(async function (urlImage) {
-                            saveImage(imageFile.name, docRef, urlImage, 'imagen');
+                            saveFile(imageFile.name, docRef, urlImage, 'imagen');
                         })
                     });
                 }else{
@@ -637,17 +697,31 @@ listaDocentes = async function (lmsDocentes, categories) {
         divCardImage.id = 'divCardImageId_'+c1;
         var cardImage = document.createElement('img');
         cardImage.id = 'cardImageId_'+c1;
+        // Seleccion de la imagen por defecto si el docente no tiene ninguan imagen guardada
         db.collection("lms-archivos").where("refid", "==", docD.id).where("type", "==", "imagen")
         .get()
-        .then(function(querySnapshot) {
-            querySnapshot.forEach(function(doc1) {
-                urlImage = doc1.data().url;
-            });
+        .then(async function(querySnapshot) {
+            console.log(querySnapshot.docs.length);
+            // Se comprueba si
+            if (querySnapshot.docs.length > 0) {
+                querySnapshot.forEach(function(doc1) {
+                    urlImage = doc1.data().url;
+                    
+                });
+            } else {
+                var defImg = await getDefImg();
+                console.log(defImg.docs[0].data());
+                
+                urlImage = defImg.docs[0].data().defaultImageUrl;
+
+            }
+            
             cardImage.src = urlImage;
         })
         .catch(function(error) {
             console.log("Error getting documents: ", error);
         });
+        // fin de seleccion de imagen por defecto
 
         var aBtnFloating = document.createElement('a');
         aBtnFloating.className = 'btn-floating activator halfway-fab waves-effect waves-light red';
@@ -942,118 +1016,213 @@ listaDocentes = async function (lmsDocentes, categories) {
             db.collection("lms-archivos").where("refid", "==", docD.id).where("type", "==", "pdf")
             .get()
             .then(function(querySnapshot) {
-                querySnapshot.forEach(function(doc1) {
-                    // doc.data() is never undefined for query doc snapshots
-                    var divRowModalBody2 = document.createElement('div');
-                    divRowModalBody2.className = 'row';
-                    var divCol1ModalBody2 = document.createElement('div');
-                    divCol1ModalBody2.className = 'col s12';
-                    var newH51Modal2 = document.createElement('h5');
-                    newH51Modal2.textContent = 'Documento actual';
-                    divCol1ModalBody2.appendChild(newH51Modal2);
-                    var divRowActualCV = document.createElement('div');
-                    divRowActualCV.className = 'row';
-                    var divColCVName = document.createElement('div');
-                    divColCVName.className = 'col s8';
-                    var h6ActualDocumentName = document.createElement('h6');
-                    h6ActualDocumentName.textContent = doc1.data().fileName;
-                    divColCVName.appendChild(h6ActualDocumentName);
-                    var divColCVBtn = document.createElement('div');
-                    divColCVBtn.className = 'col s4';
-                    var btnActualCV = document.createElement('a');
-                    btnActualCV.className = 'btn green';
-                    btnActualCV.textContent = 'Ver';
-                    btnActualCV.setAttribute("href", doc1.data().url);
-                    btnActualCV.setAttribute("target", "_blank");
-                    divColCVBtn.appendChild(btnActualCV);
-                    divRowActualCV.appendChild(divColCVName);
-                    divRowActualCV.appendChild(divColCVBtn);
-                    divCol1ModalBody2.appendChild(divRowActualCV);
-
-                    var divCol2ModalBody2 = document.createElement('div');
-                    divCol2ModalBody2.className = 'col s12';
-                    var newH52Modal2 = document.createElement('h5');
-                    newH52Modal2.textContent = 'Documento nuevo';
-                    divCol2ModalBody2.appendChild(newH52Modal2);
-                    var divRowNewCV = document.createElement('div');
-                    divRowNewCV.className = 'row';
-                    var divColNewCVBtn = document.createElement('div');
-                    divColNewCVBtn.className = 'col s12';
-
-                    var newCVInputFile = document.createElement('input');
-                    newCVInputFile.type = 'file';
-                    newCVInputFile.id = 'docenteNewCV_';
-                    newCVInputFile.accept = "application/pdf";
-                    newCVInputFile.onchange = function () { console.log(this.files[0]); };
-                    var newCVSpan = document.createElement('span');
-                    var spanCVText = document.createTextNode('Portafolio');
-                    newCVSpan.appendChild(spanCVText);
-                    var divBtnNewCV = document.createElement('div');
-                    divBtnNewCV.className = 'btn green';
-                    divBtnNewCV.appendChild(newCVSpan);
-                    divBtnNewCV.appendChild(newCVInputFile);
-                    var newInputCVText = document.createElement('input');
-                    newInputCVText.type = 'text';
-                    newInputCVText.className = 'file-path validate';
-                    newInputCVText.placeholder = 'Selecciona una imagen';
-                    var divInputCVText = document.createElement('div');
-                    divInputCVText.className = 'file-path-wrapper';
-                    divInputCVText.appendChild(newInputCVText);
-                    var divInputCVFile = document.createElement('div');
-                    divInputCVFile.className = 'file-field input-field';
-                    divInputCVFile.appendChild(divBtnNewCV);
-                    divInputCVFile.appendChild(divInputCVText);
-
-                    var saveCVBtn = document.createElement('button');
-                    saveCVBtn.className = 'btn blue';
-                    saveCVBtn.type = 'button';
-                    saveCVBtn.textContent = 'Guardar'
-                    saveCVBtn.onclick = function () {
-                        console.log(doc1.id);
-                        var docFileCV = newCVInputFile.files[0];
-                        if (!docFileCV) {
-        
-                        }else{
-                            var storageDocRef = storage.ref('/cvDocente/'+docFileCV.name)
-                            var uploadDoc = storageDocRef.put(docFileCV);
-                            uploadDoc.on('state_changed', function (snapshot) {
-                                
-                            }, function (error) {
-                                console.log(error);
-                    
-                            }, function () {
-                                console.log('Documento subido');
-                                uploadDoc.snapshot.ref.getDownloadURL().then(async function (url1) {
-                                    console.log(url1);
-                    
-                                    //
-                                    await updateFile(doc1.id, docD.id, 'pdf', {
-                                        fileName: docFileCV.name,
-                                        url: url1,
-                                    });
+                // Se verifica que el docente tenga el documento CV guardado
+                if (querySnapshot.docs.length) {
+                    console.log("true");
+                    querySnapshot.forEach(function(doc1) {
+                        // doc.data() is never undefined for query doc snapshots
+                        var divRowModalBody2 = document.createElement('div');
+                        divRowModalBody2.className = 'row';
+                        var divCol1ModalBody2 = document.createElement('div');
+                        divCol1ModalBody2.className = 'col s12';
+                        var newH51Modal2 = document.createElement('h5');
+                        newH51Modal2.textContent = 'Documento actual';
+                        divCol1ModalBody2.appendChild(newH51Modal2);
+                        var divRowActualCV = document.createElement('div');
+                        divRowActualCV.className = 'row';
+                        var divColCVName = document.createElement('div');
+                        divColCVName.className = 'col s8';
+                        var h6ActualDocumentName = document.createElement('h6');
+                        h6ActualDocumentName.textContent = doc1.data().fileName;
+                        divColCVName.appendChild(h6ActualDocumentName);
+                        var divColCVBtn = document.createElement('div');
+                        divColCVBtn.className = 'col s4';
+                        var btnActualCV = document.createElement('a');
+                        btnActualCV.className = 'btn green';
+                        btnActualCV.textContent = 'Ver';
+                        btnActualCV.setAttribute("href", doc1.data().url);
+                        btnActualCV.setAttribute("target", "_blank");
+                        divColCVBtn.appendChild(btnActualCV);
+                        divRowActualCV.appendChild(divColCVName);
+                        divRowActualCV.appendChild(divColCVBtn);
+                        divCol1ModalBody2.appendChild(divRowActualCV);
+    
+                        var divCol2ModalBody2 = document.createElement('div');
+                        divCol2ModalBody2.className = 'col s12';
+                        var newH52Modal2 = document.createElement('h5');
+                        newH52Modal2.textContent = 'Documento nuevo';
+                        divCol2ModalBody2.appendChild(newH52Modal2);
+                        var divRowNewCV = document.createElement('div');
+                        divRowNewCV.className = 'row';
+                        var divColNewCVBtn = document.createElement('div');
+                        divColNewCVBtn.className = 'col s12';
+    
+                        var newCVInputFile = document.createElement('input');
+                        newCVInputFile.type = 'file';
+                        newCVInputFile.id = 'docenteNewCV_';
+                        newCVInputFile.accept = "application/pdf";
+                        newCVInputFile.onchange = function () { console.log(this.files[0]); };
+                        var newCVSpan = document.createElement('span');
+                        var spanCVText = document.createTextNode('Portafolio');
+                        newCVSpan.appendChild(spanCVText);
+                        var divBtnNewCV = document.createElement('div');
+                        divBtnNewCV.className = 'btn green';
+                        divBtnNewCV.appendChild(newCVSpan);
+                        divBtnNewCV.appendChild(newCVInputFile);
+                        var newInputCVText = document.createElement('input');
+                        newInputCVText.type = 'text';
+                        newInputCVText.className = 'file-path validate';
+                        newInputCVText.placeholder = 'Selecciona una imagen';
+                        var divInputCVText = document.createElement('div');
+                        divInputCVText.className = 'file-path-wrapper';
+                        divInputCVText.appendChild(newInputCVText);
+                        var divInputCVFile = document.createElement('div');
+                        divInputCVFile.className = 'file-field input-field';
+                        divInputCVFile.appendChild(divBtnNewCV);
+                        divInputCVFile.appendChild(divInputCVText);
+    
+                        var saveCVBtn = document.createElement('button');
+                        saveCVBtn.className = 'btn blue';
+                        saveCVBtn.type = 'button';
+                        saveCVBtn.textContent = 'Guardar';
+                        saveCVBtn.onclick = function () {
+                            console.log(doc1.id);
+                            var docFileCV = newCVInputFile.files[0];
+                            if (!docFileCV) {
+            
+                            }else{
+                                var storageDocRef = storage.ref('/cvDocente/'+docFileCV.name);
+                                var uploadDoc = storageDocRef.put(docFileCV);
+                                uploadDoc.on('state_changed', function (snapshot) {
                                     
-                                })
-                            });
+                                }, function (error) {
+                                    console.log(error);
+                        
+                                }, function () {
+                                    console.log('Documento subido');
+                                    uploadDoc.snapshot.ref.getDownloadURL().then(async function (url1) {
+                                        console.log(url1);
+                        
+                                        //
+                                        await updateFile(doc1.id, docD.id, 'pdf', {
+                                            fileName: docFileCV.name,
+                                            url: url1,
+                                        });
+                                        
+                                    })
+                                });
+                            }
                         }
-                    }
-
-                    divColNewCVBtn.appendChild(divInputCVFile);
-                    divColNewCVBtn.appendChild(saveCVBtn);
-
-                    divRowNewCV.appendChild(divColNewCVBtn);
-                    divCol2ModalBody2.appendChild(divRowNewCV);
-
-                    divRowModalBody2.appendChild(divCol1ModalBody2);
-                    divRowModalBody2.appendChild(divCol2ModalBody2);
-                    modalbody2.appendChild(divRowModalBody2);
-                    urlCV = doc1.data().url;
-                    console.log("Url => ", doc1.data().url, doc1.data().refid, doc1.data().type);
+    
+                        divColNewCVBtn.appendChild(divInputCVFile);
+                        divColNewCVBtn.appendChild(saveCVBtn);
+    
+                        divRowNewCV.appendChild(divColNewCVBtn);
+                        divCol2ModalBody2.appendChild(divRowNewCV);
+    
+                        divRowModalBody2.appendChild(divCol1ModalBody2);
+                        divRowModalBody2.appendChild(divCol2ModalBody2);
+                        modalbody2.appendChild(divRowModalBody2);
+                        urlCV = doc1.data().url;
+                        console.log("Url => ", doc1.data().url, doc1.data().refid, doc1.data().type);
+                        
+                    });                    
+                } 
+                // Si no tiene CV se genera los elementos en el modal 
+                else {
+                    console.log("false");
                     
-                });
+                        var divRowModalBody2 = document.createElement('div');
+                        divRowModalBody2.className = 'row';
+                        
+    
+                        var divCol2ModalBody2 = document.createElement('div');
+                        divCol2ModalBody2.className = 'col s12';
+                        var newH52Modal2 = document.createElement('h5');
+                        newH52Modal2.textContent = 'Documento nuevo';
+                        divCol2ModalBody2.appendChild(newH52Modal2);
+                        var divRowNewCV = document.createElement('div');
+                        divRowNewCV.className = 'row';
+                        var divColNewCVBtn = document.createElement('div');
+                        divColNewCVBtn.className = 'col s12';
+    
+                        var newCVInputFile = document.createElement('input');
+                        newCVInputFile.type = 'file';
+                        newCVInputFile.id = 'docenteNewCV_';
+                        newCVInputFile.accept = "application/pdf";
+                        newCVInputFile.onchange = function () { console.log(this.files[0]); };
+                        var newCVSpan = document.createElement('span');
+                        var spanCVText = document.createTextNode('Portafolio');
+                        newCVSpan.appendChild(spanCVText);
+                        var divBtnNewCV = document.createElement('div');
+                        divBtnNewCV.className = 'btn green';
+                        divBtnNewCV.appendChild(newCVSpan);
+                        divBtnNewCV.appendChild(newCVInputFile);
+                        var newInputCVText = document.createElement('input');
+                        newInputCVText.type = 'text';
+                        newInputCVText.className = 'file-path validate';
+                        newInputCVText.placeholder = 'Selecciona una imagen';
+                        var divInputCVText = document.createElement('div');
+                        divInputCVText.className = 'file-path-wrapper';
+                        divInputCVText.appendChild(newInputCVText);
+                        var divInputCVFile = document.createElement('div');
+                        divInputCVFile.className = 'file-field input-field';
+                        divInputCVFile.appendChild(divBtnNewCV);
+                        divInputCVFile.appendChild(divInputCVText);
+    
+                        var saveCVBtn = document.createElement('button');
+                        saveCVBtn.className = 'btn blue';
+                        saveCVBtn.type = 'button';
+                        saveCVBtn.textContent = 'Guardar';
+                        saveCVBtn.onclick = function () {
+                            var docFileCV = newCVInputFile.files[0];
+                            if (!docFileCV) {
+            
+                            }else{
+                                var storageDocRef = storage.ref('/cvDocente/'+docFileCV.name);
+                                var uploadDoc = storageDocRef.put(docFileCV);
+                                uploadDoc.on('state_changed', function (snapshot) {
+                                    
+                                }, function (error) {
+                                    console.log(error);
+                        
+                                }, function () {
+                                    console.log('Documento subido');
+                                    uploadDoc.snapshot.ref.getDownloadURL().then(async function (url1) {
+                                        console.log(url1);
+                        
+                                        //
+                                        // Funcion que guarda el nuevo CV 
+                                        await saveFile(docFileCV.name, docD.id, url1, 'pdf');
+
+                                        // Funcon utiliada para modificar el CV
+                                        // updateFile(doc1.id, docD.id, 'pdf', {
+                                        //     fileName: docFileCV.name,
+                                        //     url: url1,
+                                        // });
+                                    })
+                                });
+                            }
+                        }
+    
+                        divColNewCVBtn.appendChild(divInputCVFile);
+                        divColNewCVBtn.appendChild(saveCVBtn);
+    
+                        divRowNewCV.appendChild(divColNewCVBtn);
+                        divCol2ModalBody2.appendChild(divRowNewCV);
+    
+                        divRowModalBody2.appendChild(divCol2ModalBody2);
+                        modalbody2.appendChild(divRowModalBody2);
+                        // urlCV = doc1.data().url;
+                        
+                }
+                
+                
             })
             .catch(function(error) {
                 console.log("Error getting documents: ", error);
             });
+            
             
         }
         divColEditCV.appendChild(editCVButton);
@@ -1091,10 +1260,26 @@ listaDocentes = async function (lmsDocentes, categories) {
         var deleteButton = document.createElement('button');
         deleteButton.className = 'btn red changeStateBtn';
         deleteButton.onclick = async function () {
-            //recargar docentes
-            deleteDoc(docD.id);
-            console.log(docD.id);
-            // portafolio(docenteDatos.name, docenteDatos.ref);
+            // Confirmar la eliminacion del docente
+            var oldConfirmDelete = document.getElementById('confirmDelete');
+            var colConfirmDelete = document.getElementById('colConfirmDelete');
+            var confirmDelete = document.createElement('a');
+            confirmDelete.className = 'btn green modal-close';
+            confirmDelete.style = 'width: 50%';
+            confirmDelete.textContent = 'Si';
+            confirmDelete.id = 'confirmDelete';
+            confirmDelete.onclick = function () {
+                console.log(docD.id);
+                deleteDoc(docD.id);
+            }
+            colConfirmDelete.replaceChild(confirmDelete, oldConfirmDelete);
+            colConfirmDelete.appendChild(confirmDelete);
+
+            $('#modalAlert').modal('open');
+            // Fin confirmar eliminacion de docente
+
+            // deleteDoc(docD.id);
+            // console.log(docD.id);
         }
         var deleteButtonText = document.createTextNode('Eliminar');
         deleteButton.appendChild(deleteButtonText);
@@ -1294,6 +1479,8 @@ function initApp() {
                         break;
                     
                     case 'Administrador':
+                        idOpcionesBtnMovil.setAttribute('style', '');
+                        idOpcionesBtn.setAttribute('style', '');
                         idListaUsuarios.setAttribute('style', '');
                         idListaUsuariosMovil.setAttribute('style', '');
                         idRegistrarDocenteBtn.setAttribute('style', '');
@@ -1324,7 +1511,7 @@ function initApp() {
             
             btnLogOut.setAttribute('style', 'display:none;');
 
-            location.href = 'login.html';
+            location.href = 'index.html';
         }
     });
 

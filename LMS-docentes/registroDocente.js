@@ -13,11 +13,13 @@ var idLogoutBtnMovil = document.getElementById('idLogoutBtnMovil');
 
 //
 var idListaUsuarios = document.getElementById('idListaUsuarios');
+var idOpcionesBtn = document.getElementById('idOpcionesBtn');
 var idRegistrarDocenteBtn = document.getElementById('idRegistrarDocenteBtn');
 var idListaDocentesBtn = document.getElementById('idListaDocentesBtn');
 var idRegistrarseBtn = document.getElementById('idRegistrarseBtn');
 var idLogin = document.getElementById('idLogin');
 var idListaUsuariosMovil = document.getElementById('idListaUsuariosMovil');
+var idOpcionesBtnMovil = document.getElementById('idOpcionesBtnMovil');
 var idListaDocentesBtnMovil = document.getElementById('idListaDocentesBtnMovil');
 
 // Funcion getCat() que obtiene todos los datos de las categorias registradas en la coleccion 'lms-categorias' de Firebase
@@ -143,6 +145,8 @@ function initApp() {
                     case 'Administrador':
                         idListaUsuarios.setAttribute('style', '');
                         idListaUsuariosMovil.setAttribute('style', '');
+                        idOpcionesBtn.setAttribute('style', '');
+                        idOpcionesBtnMovil.setAttribute('style', '');
                         idListaDocentesBtn.setAttribute('style', '');
                         idListaDocentesBtnMovil.setAttribute('style', '');
                         break;
@@ -182,7 +186,7 @@ function initApp() {
             idRegistrarseBtn.setAttribute('style', '');
             btnLogOut.setAttribute('style', 'display:none;');
 
-            location.href = 'login.html';
+            location.href = 'index.html';
         }
     });
     // Funcion que se ejecuta cuando se realice un evento 'click' en el boton de salir o logout
@@ -259,7 +263,7 @@ window.addEventListener('DOMContentLoaded', async (e) => {
 docenteForm.addEventListener('submit', async (e) => {
     e.preventDefault();//Impide que el formulario se recargue en el evento submit
 
-    $('.modal').modal('open');
+    $('#modal1').modal('open');
 
     const name = docenteForm['docenteNombre'].value;
     const email = docenteForm["docenteEmail"].value;

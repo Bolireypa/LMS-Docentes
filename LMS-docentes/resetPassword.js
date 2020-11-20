@@ -7,7 +7,7 @@ formResetPassword.addEventListener('submit', (e) => {
     var email = document.getElementById('usuarioEmail').value;
     
     if (email < 8) {
-        window.alert('Coloque una contraseña valida');
+        window.alert('Coloque una email valida');
     } else {
         auth.sendPasswordResetEmail(email).then(function () {
             window.alert('Correo electronico enviado')

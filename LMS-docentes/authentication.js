@@ -17,11 +17,11 @@ function logInUser() {
         var password = formIngresoUsuario['usuarioPassword'].value;
         console.log(email,password);
         if (email.length < 4) {
-            console.log('Please enter an email address.');
+            alert('Por favor ingrese un email válido.');
             return;
         }
         if (password.length < 8) {
-            console.log('Please enter a password.');
+            alert('La contraseña debe ser de 8 caracteres mínimo.');
             return;
         }
 
@@ -35,11 +35,31 @@ function logInUser() {
             var errorCode = error.code;
             var errorMessage = error.message;
             // [START_EXCLUDE]
-            if (errorCode === 'auth/wrong-password') {
-            alert('Wrong password.');
-            } else {
-            alert(errorMessage);
+            
+            // Codigos de error de firebase
+            switch (errorCode) {
+                case 'auth/wrong-password':
+                    alert('Contraseña incorrecta.');
+                    
+                    break;
+
+                case 'auth/user-not-found':
+                    alert('Usuario no encontrado.');
+
+                    break;
+            
+                case 'auth/invalid-email':
+                    alert('Email inválido')
+                    break;
+
+                default:
+                    break;
             }
+            // if (errorCode === 'auth/wrong-password') {
+            // alert('Contraseña incorrecta.');
+            // } else {
+            // alert(errorMessage);
+            // }
             console.log(error);
             document.getElementById('quickstart-sign-in').disabled = false;
             // [END_EXCLUDE]

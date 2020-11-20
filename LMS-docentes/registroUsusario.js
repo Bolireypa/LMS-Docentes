@@ -11,15 +11,19 @@ function registrarUsuraio() {
     var email = formRegistroUsuario['usuarioEmail'].value;
     var password = formRegistroUsuario['usuarioPassword'].value;
 
-    // Se comprueba que el email y la contraseña sean validas
-    if (email.length < 4) {
-        console.log('Please enter an email address.');
+    if (name.length < 7) {
+        alert('Por favor ingrese nombre y apellido válido.');
         return;
     }
-    // if (password.length < 8) {
-        // console.log('Please enter a password.');
-        // return;
-    // }
+    // Se comprueba que el email y la contraseña sean validas
+    if (email.length < 7) {
+        alert('Por favor ingrese un email válido.');
+        return;
+    }
+    if (password.length < 8) {
+        alert('La contraseña debe ser de 8 caracteres mínimo.');
+        return;
+    }
 
     // Se utiliza una funcion de firebase para la creacion de usuario que requiere el email y la contraseña, si se registro correctamente se logea automaticamente al sistema
     firebase.auth().createUserWithEmailAndPassword(email, password).then(function () {
@@ -45,11 +49,31 @@ function registrarUsuraio() {
         var errorCode = error.code;
         var errorMessage = error.message;
 
-        if (errorCode == 'auth/weak-password') {
-          alert('La contraseña es muy corta, mínimo 8 caracteres');
-        } else {
-          alert(errorMessage);
+        // Codigos de error de firebase para el registro de usuarios
+        switch (errorCode) {
+            case 'auth/invalid-password':
+                alert('Contraseña inválida.');
+                
+                break;
+
+            case 'auth/email-already-in-use':
+                alert('Correo electrónico ya registrado.');
+
+                break;
+        
+            case 'auth/invalid-email':
+                alert('Email inválido')
+                break;
+
+            default:
+                break;
         }
+
+        // if (errorCode == 'auth/weak-password') {
+        //   alert('La contraseña es muy corta, mínimo 8 caracteres');
+        // } else {
+        //   alert(errorMessage);
+        // }
         console.log(error);
 
     });
