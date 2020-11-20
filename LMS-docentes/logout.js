@@ -34,7 +34,7 @@ function initApp() {
         } else {
             console.log('User is signed out');
             
-            location.href = 'login.html';
+            location.href = 'index.html';
         }
     });
 }

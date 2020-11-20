@@ -27,6 +27,7 @@
             <li id="idListaUsuarios" style="display:none;"><a href="listaUsuarios.html">Lista de usuarios</a></li>
             <li id="idRegistrarDocenteBtn" style="display:none;"><a href="registroDocentes.html">Registro de docentes</a></li>
             <li id="idListaDocentesBtn" class="active"><a href="listaDocentes.html">Lista de docentes</a></li>
+            <li id="idOpcionesBtn" style="display:none;"><a href="opciones.html">Opciones</a></li>
             <li id="idRegistrarseBtn" style="display:none;"><a href="registroUsuario.html">Registrarse</a></li>
             <li id="idLogin" style="display:none;"><a href="login.html">Iniciar sesion</a></li>
             <li id="idDropdown" style="display:none;"><a class="dropdown-trigger" href="#!" data-target="dropdown1" id="dropdown1Text">Usuario<i class="material-icons right">arrow_drop_down</i></a></li>
@@ -37,6 +38,8 @@
             <li id="idListaUsuariosMovil" style="display:none;"><a href="listaUsuarios.html">Lista de usuarios</a></li>
             <li id="idRegistrarDocenteBtnMovil" style="display:none;"><a href="registroDocentes.html">Registro de docentes</a></li>
             <li id="idListaDocentesBtnMovil" class="active"><a href="listaDocentes.html">Lista de docentes</a></li>
+            <li class="divider" tabindex="-1"></li>
+            <li id="idOpcionesBtnMovil" style="display:none;"><a href="opciones.html">Opciones</a></li>
             <li class="divider" tabindex="-1"></li>
             <li id="idUserProfile"><a href="#!">Ver perfil</a></li>
             <li id="idLogoutBtnMovil"><a href="#!">Logout</a></li>
@@ -103,6 +106,22 @@
         </div>
         <div class="modal-footer">
             <a href="#!" class="modal-close waves-effect waves-green btn-flat">cerrar</a>
+        </div>
+    </div>
+
+    <div id="modalAlert" class="modal">
+        <div class="modal-content">
+            <h4>Esta seguro?</h4>
+            
+            <div class="row">
+                <div class="col s12" id="colConfirmDelete">
+                    <a href="#" class="btn green" id="confirmDelete">Si</a>
+                </div>
+                <div class="col s12">
+                    <a href="#" class="btn red modal-close" style="width: 50%">No</a>
+                </div>
+                
+            </div>
         </div>
     </div>
 

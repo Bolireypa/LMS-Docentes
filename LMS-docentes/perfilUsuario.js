@@ -51,6 +51,7 @@ function userProfileInit() {
         e.preventDefault();
         currentUser.updateProfile({
             displayName: userName.value,
+            email: userEmail.value,
             // photoURL: "https://example.com/jane-q-user/profile.jpg" // Se guarda la imagen de usuario añadiendo una url de imagen
         }).then(async function() {
             console.log('Nombre de usuario modificado correctamente',currentUser.uid);

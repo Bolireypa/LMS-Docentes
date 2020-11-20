@@ -18,7 +18,7 @@
 
 .card > .card-image {
     height: 180px;
-    background-color: lightseagreen;
+    background-color: grey;
     display: flex;
     vertical-align: middle;
 }
@@ -96,6 +96,10 @@
 .divBtnChangeFile{
     margin-top: 0;
     margin-bottom: 0;
+}
+
+#modalAlert{
+    width: 400px;
 }
 
 /* .spanCardTitle{

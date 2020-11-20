@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Inicio</title>
+    <title>Iniciar sesión</title>
 
     <!--Import Google Icon Font-->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -20,28 +20,102 @@
           <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
           <ul id="nav-mobile" class="right hide-on-med-and-down">
             <li><a href="registroUsuario.html">Registrarse</a></li>
-            <li><a href="login.html">Iniciar sesion</a></li>
+            <li class="active"><a href="login.html"></a></li>
           </ul>
         </div>
     </nav>
     <ul class="sidenav" id="mobile-demo">
         <li><a href="registroUsuario.html">Registrarse</a></li>
-        <li><a href="login.html">Iniciar sesion</a></li>
+        <li class="active"><a href="login.html">Iniciar sesion</a></li>
     </ul>
 
-    
+    <div class="container">
+        <div class="row">
+            <div class="col s1 m6">
+
+            </div>
+            <div class="col s10 m6">
+                <div class="z-depth-3">
+                    <div class="" style="padding: 24px;">
+                        <span class="">
+                            <h4>Iniciar sesión</h4>
+                        </span>
+                        
+                        <div class="row">
+                            <form id="formIngresoUsuario">
+                                <div class="row">
+                                    
+                                    <div class="input-field col s12">
+                                        <i class="material-icons prefix">email</i>
+                                        <input type="email" class="validate" id="usuarioEmail">
+                                        <label for="usuarioEmail">e-mail</label>
+                                        <span class="helper-text" data-error="e-mail invalido" data-success="Correcto"></span>
+                                    </div>
+                                    <div class="input-field col s12">
+                                        <i class="material-icons prefix">lock</i>
+                                        <input type="password" class="validate" id="usuarioPassword">
+                                        <label for="usuarioPassword">Contraseña</label>
+                                    </div>
+                                    
+                                </div>
+                                <div class="row">
+                                    <div class="col s12">
+                                        <input type="submit" value="Ingresar" class="btn">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col s12">
+                                        <a href="resetPassword.html">¿Olvidaste la contraseña?</a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
 
     <script src="./js/materialize.min.js"></script>
 
+    <script src="https://www.gstatic.com/firebasejs/7.23.0/firebase-app.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/7.23.0/firebase-auth.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/7.23.0/firebase-firestore.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/7.23.0/firebase-storage.js"></script>
     <script>
-    
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyAXQXbsFbtTjJLtqcPgWJRzyUlvq1i2qOE",
+            authDomain: "lms-docentes.firebaseapp.com",
+            databaseURL: "https://lms-docentes.firebaseio.com",
+            projectId: "lms-docentes",
+            storageBucket: "lms-docentes.appspot.com",
+            messagingSenderId: "430235197366",
+            appId: "1:430235197366:web:1b31227c0c8a5e7e2a6b17"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        var storage = firebase.storage();
+
+    </script>
+
+    <script src="./authentication.js"></script>
+
+    <script>
         $(document).ready(function(){
             $('.sidenav').sidenav();
         });
-    
+        $(document).ready(function(){
+            $(".dropdown-trigger").dropdown({ hover: false });
+        });
+
     </script>
 
 </body>
