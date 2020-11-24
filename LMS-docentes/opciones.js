@@ -96,14 +96,85 @@ logTable = async function () {
     // Se captura el elemento <tbody> donde seran mostrados los registros de log
     var logTableBody = document.getElementById('logTableBody');
 
+
     // Se realiza la funcion forEach que crea las filas en la tabla con los datos de los usuarios, para luego colocarlos en el elemento <tbody>
     lmsLog.forEach(logReg => {
         var logRegData = logReg.data();
         var tableRow = document.createElement('tr');
+
         var tableElement1 = document.createElement('td');
-        tableElement1.textContent = logRegData.userName;
+        var aUser = document.createElement('a');
+        aUser.textContent = logRegData.userName;
+        aUser.className = 'modal-trigger';
+        aUser.href = '#modalUserLog';
+        aUser.onclick = function () {
+            document.getElementById('modalUserLogTitle').textContent = logRegData.userName;
+            var modalUser = document.getElementById('modalUser');
+            var modalUserLogContent = document.getElementById('modalUserLogContent');
+            var newModalUserLogContent = document.createElement('div');
+            newModalUserLogContent.id = 'modalUserLogContent';
+            modalUser.replaceChild(newModalUserLogContent, modalUserLogContent);
+            newModalUserLogContent.textContent = 'Informacion del usuario '+logRegData.userName;
+        }
+        tableElement1.appendChild(aUser);
+        
         var tableElement2 = document.createElement('td');
-        tableElement2.textContent = logRegData.userAction;
+        var aAction = document.createElement('a');
+        switch (logRegData.userAction.logType) {
+            case 'Registro':
+                aAction.className = 'modal-trigger green-text text-darken-4';
+                
+                break;
+
+            case 'Modificacion':
+                aAction.className = 'modal-trigger yellow-text text-darken-4';
+                
+                break;
+
+            case 'Eliminacion':
+                aAction.className = 'modal-trigger red-text text-darken-4';
+                
+                break;
+        
+            default:
+                break;
+        }
+        aAction.textContent = logRegData.userAction.logType;
+        aAction.href = '#modalActionLog';
+        aAction.onclick = function () {
+            var modalLogTitle = document.getElementById('modalActionLogTitle');
+            modalLogTitle.textContent = 'Log de '+logRegData.userAction.logType;
+            var modalAction = document.getElementById('modalAction');
+            var modalActionLogContent = document.getElementById('modalActionLogContent');
+            var newModalActionLogContent = document.createElement('div');
+            newModalActionLogContent.className = 'row';
+            newModalActionLogContent.id = 'modalActionLogContent';
+            modalAction.replaceChild(newModalActionLogContent, modalActionLogContent);
+            
+            var divLastModification = document.createElement('div');
+            divLastModification.className = 'col s12';
+            var lastModificationTitle = document.createElement('h5');
+            lastModificationTitle.textContent = 'Registro anterior';
+            var lastModificationContent = document.createElement('p');
+            lastModificationContent.textContent = logRegData.userAction.lastRegister;
+            divLastModification.appendChild(lastModificationTitle);
+            divLastModification.appendChild(lastModificationContent);
+            newModalActionLogContent.appendChild(divLastModification);
+
+            var divNewRegister = document.createElement('div');
+            divNewRegister.className = 'col s12';
+            var newRegisterTitle = document.createElement('h5');
+            newRegisterTitle.textContent = 'Registro nuevo';
+            var newRegisterContent = document.createElement('p');
+            newRegisterContent.textContent = logRegData.userAction.newRegister;
+            divNewRegister.appendChild(newRegisterTitle);
+            divNewRegister.appendChild(newRegisterContent);
+            newModalActionLogContent.appendChild(divNewRegister);
+
+            // newModalActionLogContent.textContent = logRegData.userAction.newRegister;
+        }
+        tableElement2.appendChild(aAction);
+
         var tableElement3 = document.createElement('td');
         tableElement3.textContent = logRegData.logDate.toDate();
         tableRow.appendChild(tableElement1);

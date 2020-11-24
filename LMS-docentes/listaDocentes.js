@@ -1,13 +1,11 @@
-const db = firebase.firestore();
-
 // Funcion getTask() que recupera los datos guardados en la base de datos de firebase, en la coleccion 'lms-docentes'
-const getTask = () => db.collection('lms-docentes').get();
+const getTask = () => db.collection('lms-docentes').orderBy('name').get();
 
 // Funcion getCat() que obtiene todos los datos de las categorias registradas en la coleccion 'lms-categorias' de Firebase
-const getCat = () => db.collection('lms-categorias').get();
+const getCat = () => db.collection('lms-categorias').orderBy('nombreCat').get();
 
 // Funcion getType() que obtiene todos los datos de los tipos registradas en la coleccion 'lms-tipos' de Firebase
-const getType = () => db.collection('lms-tipos').get();
+const getType = () => db.collection('lms-tipos').orderBy('nombreTipo').get();
 
 // Funcion getDoc() que obtiene, mediante su id, todos los datos del docente registrado en la coleccion 'lms-docentes' de Firebase
 const getDoc = (id) => db.collection('lms-docentes').doc(id).get();
@@ -84,6 +82,9 @@ var idOpcionesBtn = document.getElementById('idOpcionesBtn');
 // Variable que captura el elemento del menu responsivo de la barra de navegacion en moviles que lleva a la vista 'registroDocentes.html'
 var idRegistrarDocenteBtnMovil = document.getElementById('idRegistrarDocenteBtnMovil');
 
+// Variable que guarda al usuario con sesion iniciada
+var currentUser = '';
+
 // Funcion saveFile() que realiza el registro de los datos de los archivos en la coleccion 'lms-archivos', requiere los parametros: fileName (Nombre de archivo a guardar, imagen o PDF), refid (La id del docente al que se vinculara el archivo, imagen o PDF), url (Ubicacion donde sera subido el archivo en el storage del proyecto), type (Tipo de archivo que se esta guardando, imagen - PDF)
 const saveFile = (fileName, refid, url, type) => 
     db.collection('lms-archivos').doc().set({
@@ -106,7 +107,7 @@ const saveFile = (fileName, refid, url, type) =>
             if (categoriaGlobal != "todas") {
                 if (tipoGlobal != "todos") {
                     // Se realiza una consulta a la coleccion 'lms-docentes' seleccionando solo los docentes que pertenezcan a un tipo y categoria, de acuerdo al filtro selecionado
-                    db.collection("lms-docentes").where("category", "==", categoriaGlobal).where("type", "==", tipoGlobal)
+                    db.collection("lms-docentes").where("category", "==", categoriaGlobal).where("type", "==", tipoGlobal).orderBy('name')
                     .get()
                     .then(function(querySnapshot) {
                         // Se ejecuta la funcion listaDocentes() que recarga la lista de los docentes de acuerdo a los resultados de la consulta realizada anteriormente
@@ -118,7 +119,7 @@ const saveFile = (fileName, refid, url, type) =>
                     });
                 } else {
                     // Se realiza una consulta a la coleccion 'lms-docentes' seleccionando solo los docentes que pertenezcan a una categoria, de acuerdo al filtro selecionado
-                    db.collection("lms-docentes").where("category", "==", categoriaGlobal)
+                    db.collection("lms-docentes").where("category", "==", categoriaGlobal).orderBy('name')
                     .get()
                     .then(function(querySnapshot) {
                         // Se ejecuta la funcion listaDocentes() que recarga la lista de los docentes de acuerdo a los resultados de la consulta realizada anteriormente
@@ -132,7 +133,7 @@ const saveFile = (fileName, refid, url, type) =>
             } else {
                 if (tipoGlobal != "todos") {
                     // Se realiza una consulta a la coleccion 'lms-docentes' seleccionando solo los docentes que pertenezcan a un tipo, de acuerdo al filtro selecionado
-                    db.collection("lms-docentes").where("type", "==", tipoGlobal)
+                    db.collection("lms-docentes").where("type", "==", tipoGlobal).orderBy('name')
                     .get()
                     .then(function(querySnapshot) {
                         // Se ejecuta la funcion listaDocentes() que recarga la lista de los docentes de acuerdo a los resultados de la consulta realizada anteriormente
@@ -156,14 +157,14 @@ const saveFile = (fileName, refid, url, type) =>
     });
 
 // Funcion deleteDoc() que elimina los datos de docente de la coleccion 'lms-docentes', requiere el parametro: id (Id del docente)
-const deleteDoc = id => db.collection('lms-docentes').doc(id).delete()
+const deleteDoc = (id, nameDelete) => db.collection('lms-docentes').doc(id).delete()
     .then(async function() {
         // Si los datos del docente fueron eliminados correctamente se ejecuta los siguiente
         //Se verifica que los filtros de categoria y tipo sean distinto a "todos" o "todas", y asi recargar la lista de docentes con los mismos filtros de categoria seleccionados, al momento de eliminar los datos de los docentes
         if (categoriaGlobal != "todas") {
             if (tipoGlobal != "todos") {
                 // Se realiza una consulta a la coleccion 'lms-docentes' seleccionando solo los docentes que pertenezcan a un tipo y categoria, de acuerdo al filtro selecionado
-                db.collection("lms-docentes").where("category", "==", categoriaGlobal).where("type", "==", tipoGlobal)
+                db.collection("lms-docentes").where("category", "==", categoriaGlobal).where("type", "==", tipoGlobal).orderBy('name')
                 .get()
                 .then(function(querySnapshot) {
                     // Se ejecuta la funcion listaDocentes() que recarga la lista de los docentes de acuerdo a los resultados de la consulta realizada anteriormente
@@ -175,7 +176,7 @@ const deleteDoc = id => db.collection('lms-docentes').doc(id).delete()
                 });
             } else {
                 // Se realiza una consulta a la coleccion 'lms-docentes' seleccionando solo los docentes que pertenezcan a una categoria, de acuerdo al filtro selecionado
-                db.collection("lms-docentes").where("category", "==", categoriaGlobal)
+                db.collection("lms-docentes").where("category", "==", categoriaGlobal).orderBy('name')
                 .get()
                 .then(function(querySnapshot) {
                     // Se ejecuta la funcion listaDocentes() que recarga la lista de los docentes de acuerdo a los resultados de la consulta realizada anteriormente
@@ -189,7 +190,7 @@ const deleteDoc = id => db.collection('lms-docentes').doc(id).delete()
         } else {
             if (tipoGlobal != "todos") {
                 // Se realiza una consulta a la coleccion 'lms-docentes' seleccionando solo los docentes que pertenezcan a un tipo, de acuerdo al filtro selecionado
-                db.collection("lms-docentes").where("type", "==", tipoGlobal)
+                db.collection("lms-docentes").where("type", "==", tipoGlobal).orderBy('name')
                 .get()
                 .then(function(querySnapshot) {
                     // Se ejecuta la funcion listaDocentes() que recarga la lista de los docentes de acuerdo a los resultados de la consulta realizada anteriormente
@@ -205,6 +206,16 @@ const deleteDoc = id => db.collection('lms-docentes').doc(id).delete()
                 listaDocentes(lmsDocentes, 'allCategories');   
             }
         }
+
+        // Se capturan el nombre del docente a eliminar y su id
+        var log1 = {
+            logType: 'Eliminacion',
+            lastRegister: '',
+            newRegister: nameDelete,
+            idRegister: id,
+        };
+        // Se ejecuta la funcion logRegister() que guarda un registro de que usuario esta modificando a un docente, en la coleccion 'lms-log', se envia los parametros: Primer parametro (el nombre del usuario que realiza la accion de registrar), segundo parametro (la id del usuario que realiza la accion de registrar), tercer parametro (los datos del docente que se elimino), cuarto parametro (la id del docente registrado)
+        logRegister(currentUser.displayName, currentUser.uid, log1, id);
         console.log("Document successfully deleted!", categoriaGlobal);
     }).catch(function(error) {
         // Si los datos del docente no fueron eliminados correctamente se muestra un mensaje de error
@@ -226,14 +237,14 @@ const deleteImgPortafolio = (id, refid) => db.collection('lms-archivos').doc(id)
     });
 
 // Funcion updateDoc() que edita los datos de docente en la coleccion 'lms-docentes', requiere los parametros: id (id del docente), updatedDoc (un objeto que contiene los datos de docente a editar)
-const updateDoc = (id, updatedDoc) => db.collection('lms-docentes').doc(id).update(updatedDoc)
+const updateDoc = (id, updatedDoc, currentDoc) => db.collection('lms-docentes').doc(id).update(updatedDoc)
     .then(async function() {
         // Si los datos de docente se modificaron correctamente se ejecutara lo siguiente        
         //Se verifica que los filtros de categoria y tipo sean distinto a "todos" o "todas", y asi recargar la lista de docentes con los mismos filtros de categoria seleccionados, al momento de modificar los datos de los docentes
         if (categoriaGlobal != "todas") {
             if (tipoGlobal != "todos") {
                 // Se realiza una consulta a la coleccion 'lms-docentes' seleccionando solo los docentes que pertenezcan a un tipo y categoria, de acuerdo al filtro selecionado
-                db.collection("lms-docentes").where("category", "==", categoriaGlobal).where("type", "==", tipoGlobal)
+                db.collection("lms-docentes").where("category", "==", categoriaGlobal).where("type", "==", tipoGlobal).orderBy('name')
                 .get()
                 .then(function(querySnapshot) {
                     // Se ejecuta la funcion listaDocentes() que recarga la lista de los docentes de acuerdo a los resultados de la consulta realizada anteriormente
@@ -245,7 +256,7 @@ const updateDoc = (id, updatedDoc) => db.collection('lms-docentes').doc(id).upda
                 });
             } else {
                 // Se realiza una consulta a la coleccion 'lms-docentes' seleccionando solo los docentes que pertenezcan a una categoria, de acuerdo al filtro selecionado
-                db.collection("lms-docentes").where("category", "==", categoriaGlobal)
+                db.collection("lms-docentes").where("category", "==", categoriaGlobal).orderBy('name')
                 .get()
                 .then(function(querySnapshot) {
                     // Se ejecuta la funcion listaDocentes() que recarga la lista de los docentes de acuerdo a los resultados de la consulta realizada anteriormente
@@ -259,7 +270,7 @@ const updateDoc = (id, updatedDoc) => db.collection('lms-docentes').doc(id).upda
         } else {
             if (tipoGlobal != "todos") {
                 // Se realiza una consulta a la coleccion 'lms-docentes' seleccionando solo los docentes que pertenezcan a un tipo, de acuerdo al filtro selecionado
-                db.collection("lms-docentes").where("type", "==", tipoGlobal)
+                db.collection("lms-docentes").where("type", "==", tipoGlobal).orderBy('name')
                 .get()
                 .then(function(querySnapshot) {
                     // Se ejecuta la funcion listaDocentes() que recarga la lista de los docentes de acuerdo a los resultados de la consulta realizada anteriormente
@@ -275,6 +286,39 @@ const updateDoc = (id, updatedDoc) => db.collection('lms-docentes').doc(id).upda
                 listaDocentes(lmsDocentes, 'allCategories');   
             }
         }
+        // Se realiza una comparacion de los datos antiguos con los datos nuevos del docente a modificar
+        var lastReg = '';
+        var newReg = '';
+        if (currentDoc.name != updatedDoc.name) {
+            lastReg = currentDoc.name;
+            newReg = updatedDoc.name;
+        }
+        if (currentDoc.email != updatedDoc.email) {
+            lastReg = lastReg+' | '+currentDoc.email;
+            newReg = newReg+' | '+updatedDoc.email;
+        }
+        if (currentDoc.summary != updatedDoc.summary) {
+            lastReg = lastReg+' | '+currentDoc.summary;
+            newReg = newReg+' | '+updatedDoc.summary;
+        }
+        if (currentDoc.category != updatedDoc.category) {
+            lastReg = lastReg+' | '+currentDoc.category;
+            newReg = newReg+' | '+updatedDoc.category;
+        }
+        if (currentDoc.type != updatedDoc.type) {
+            lastReg = lastReg+' | '+currentDoc.type;
+            newReg = newReg+' | '+updatedDoc.type;
+        }
+        var log1 = {
+            logType: 'Modificacion',
+            lastRegister: lastReg,
+            newRegister: newReg,
+            idRegister: id,
+        };
+        console.log(log1);
+        
+        // Se ejecuta la funcion logRegister() que guarda un registro de que usuario esta modificando a un docente, en la coleccion 'lms-log', se envia los parametros: Primer parametro (el nombre del usuario que realiza la accion de registrar), segundo parametro (la id del usuario que realiza la accion de registrar), tercer parametro (los datos del docente que se modificaron), cuarto parametro (la id del docente registrado)
+        logRegister(currentUser.displayName, currentUser.uid, log1, id);
         console.log("Document successfully updated!", categoriaGlobal);
     }).catch(function(error) {
         // Si los datos del docente no fueron modificados correctamente se muestra un mensaje de error
@@ -295,7 +339,7 @@ const updateFile = (id, refid, fileType, updatedFile) => db.collection('lms-arch
                 if (categoriaGlobal != "todas") {
                     if (tipoGlobal != "todos") {
                         // Se realiza una consulta a la coleccion 'lms-docentes' seleccionando solo los docentes que pertenezcan a un tipo y categoria, de acuerdo al filtro selecionado
-                        db.collection("lms-docentes").where("category", "==", categoriaGlobal).where("type", "==", tipoGlobal)
+                        db.collection("lms-docentes").where("category", "==", categoriaGlobal).where("type", "==", tipoGlobal).orderBy('name')
                         .get()
                         .then(function(querySnapshot) {
                             // Se ejecuta la funcion listaDocentes() que recarga la lista de los docentes de acuerdo a los resultados de la consulta realizada anteriormente
@@ -307,7 +351,7 @@ const updateFile = (id, refid, fileType, updatedFile) => db.collection('lms-arch
                         });
                     } else {
                         // Se realiza una consulta a la coleccion 'lms-docentes' seleccionando solo los docentes que pertenezcan a una categoria, de acuerdo al filtro selecionado
-                        db.collection("lms-docentes").where("category", "==", categoriaGlobal)
+                        db.collection("lms-docentes").where("category", "==", categoriaGlobal).orderBy('name')
                         .get()
                         .then(function(querySnapshot) {
                             // Se ejecuta la funcion listaDocentes() que recarga la lista de los docentes de acuerdo a los resultados de la consulta realizada anteriormente
@@ -321,7 +365,7 @@ const updateFile = (id, refid, fileType, updatedFile) => db.collection('lms-arch
                 } else {
                     if (tipoGlobal != "todos") {
                         // Se realiza una consulta a la coleccion 'lms-docentes' seleccionando solo los docentes que pertenezcan a un tipo, de acuerdo al filtro selecionado
-                        db.collection("lms-docentes").where("type", "==", tipoGlobal)
+                        db.collection("lms-docentes").where("type", "==", tipoGlobal).orderBy('name')
                         .get()
                         .then(function(querySnapshot) {
                             // Se ejecuta la funcion listaDocentes() que recarga la lista de los docentes de acuerdo a los resultados de la consulta realizada anteriormente
@@ -560,7 +604,7 @@ async function filtroCategoria(catNom) {
     categoriaGlobal = catNom;
     if (catNom != 'todas') {
         if (tipoGlobal != 'todos') {
-            db.collection("lms-docentes").where("category", "==", catNom).where("type", "==", tipoGlobal)
+            db.collection("lms-docentes").where("category", "==", catNom).where("type", "==", tipoGlobal).orderBy('name')
             .get()
             .then(function(querySnapshot) {
                 // querySnapshot.forEach(function(doc2) {
@@ -573,7 +617,7 @@ async function filtroCategoria(catNom) {
                 console.log("Error getting documents: ", error);
             });                
         } else {
-            db.collection("lms-docentes").where("category", "==", catNom)
+            db.collection("lms-docentes").where("category", "==", catNom).orderBy('name')
             .get()
             .then(function(querySnapshot) {
                 // querySnapshot.forEach(function(doc2) {
@@ -588,7 +632,7 @@ async function filtroCategoria(catNom) {
         }
     } else {
         if (tipoGlobal != 'todos') {
-            db.collection("lms-docentes").where("type", "==", tipoGlobal)
+            db.collection("lms-docentes").where("type", "==", tipoGlobal).orderBy('name')
             .get()
             .then(function(querySnapshot) {
                 // querySnapshot.forEach(function(doc2) {
@@ -614,7 +658,7 @@ async function filtroTipo(typeName) {
     tipoGlobal = typeName; 
     if (typeName != 'todos') {
         if (categoriaGlobal != 'todas') {
-            db.collection("lms-docentes").where("category", "==", categoriaGlobal).where("type", "==", tipoGlobal)
+            db.collection("lms-docentes").where("category", "==", categoriaGlobal).where("type", "==", tipoGlobal).orderBy('name')
             .get()
             .then(function(querySnapshot) {
                 // querySnapshot.forEach(function(doc2) {
@@ -627,7 +671,7 @@ async function filtroTipo(typeName) {
                 console.log("Error getting documents: ", error);
             });   
         } else {
-            db.collection("lms-docentes").where("type", "==", typeName)
+            db.collection("lms-docentes").where("type", "==", typeName).orderBy('name')
             .get()
             .then(function(querySnapshot) {
                 // querySnapshot.forEach(function(doc2) {
@@ -643,7 +687,7 @@ async function filtroTipo(typeName) {
         
     } else {
         if (categoriaGlobal != 'todas') {
-            db.collection("lms-docentes").where("category", "==", categoriaGlobal)
+            db.collection("lms-docentes").where("category", "==", categoriaGlobal).orderBy('name')
             .get()
             .then(function(querySnapshot) {
                 // querySnapshot.forEach(function(doc2) {
@@ -701,7 +745,7 @@ listaDocentes = async function (lmsDocentes, categories) {
         db.collection("lms-archivos").where("refid", "==", docD.id).where("type", "==", "imagen")
         .get()
         .then(async function(querySnapshot) {
-            console.log(querySnapshot.docs.length);
+            // console.log(querySnapshot.docs.length);
             // Se comprueba si
             if (querySnapshot.docs.length > 0) {
                 querySnapshot.forEach(function(doc1) {
@@ -710,7 +754,7 @@ listaDocentes = async function (lmsDocentes, categories) {
                 });
             } else {
                 var defImg = await getDefImg();
-                console.log(defImg.docs[0].data());
+                // console.log(defImg.docs[0].data());
                 
                 urlImage = defImg.docs[0].data().defaultImageUrl;
 
@@ -880,14 +924,20 @@ listaDocentes = async function (lmsDocentes, categories) {
                 category: e.target[3].value,
                 type: e.target[5].value,
                 // refCatDoc: e.target[0].value,
+            },{
+                name: docenteDatos.name,
+                email: docenteDatos.email,
+                summary: docenteDatos.summary,
+                category: docenteDatos.category,
+                type: docenteDatos.type,
             });
 
-            console.log(e);
+            // console.log(e);
             
             // const editFormDoc = document.getElementById("editFormId_"+c1);
-            const doc = await getDoc(docD.id);
+            // const doc = await getDoc(docD.id);
             // console.log(editFormDoc['inputNameId_'+c1].value);
-            console.log(doc.id);
+            // console.log(doc.id);
             // // portafolio(docenteDatos.name, docenteDatos.ref);
         }
 
@@ -1270,7 +1320,7 @@ listaDocentes = async function (lmsDocentes, categories) {
             confirmDelete.id = 'confirmDelete';
             confirmDelete.onclick = function () {
                 console.log(docD.id);
-                deleteDoc(docD.id);
+                deleteDoc(docD.id, docenteDatos.name);
             }
             colConfirmDelete.replaceChild(confirmDelete, oldConfirmDelete);
             colConfirmDelete.appendChild(confirmDelete);
