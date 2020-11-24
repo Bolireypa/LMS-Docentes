@@ -24,10 +24,10 @@ var idListaDocentesBtnMovil = document.getElementById('idListaDocentesBtnMovil')
 var currentUser = '';
 
 // Funcion getCat() que obtiene todos los datos de las categorias registradas en la coleccion 'lms-categorias' de Firebase
-const getCat = () => db.collection('lms-categorias').get();
+const getCat = () => db.collection('lms-categorias').orderBy('nombreCat').get();
 
 // Funcion getType() que obtiene todos los datos de los tipos registradas en la coleccion 'lms-tipos' de Firebase
-const getType = () => db.collection('lms-tipos').get();
+const getType = () => db.collection('lms-tipos').orderBy('nombreTipo').get();
 
 // Variable c, utilizada como contador para el limite de botones que apareceran en el formulario, para la subida de imagenes del portafolio del docente
 var c = 0;
@@ -61,7 +61,13 @@ const saveUser = (name, email, summary, category, type) =>
         uploadDocument(docData.id);
 
         // Se ejecuta la funcion logRegister() que guarda un registro de que usuario esta registrando a un docente, en la coleccion 'lms-log', se envia los parametros: Primer parametro (el nombre del usuario que realiza la accion de registrar), segundo parametro (la id del usuario que realiza la accion de registrar), tercer parametro (el nombre del docente que registro), cuarto parametro (la id del docente registrado)
-        logRegister(currentUser.displayName, currentUser.uid, 'Registro de docente: '+name, docData.id);
+        var log1 = {
+            logType: 'Registro',
+            lastRegister: '',
+            newRegister: name,
+            idRegister: docData.id,
+        };
+        logRegister(currentUser.displayName, currentUser.uid, log1, docData.id);
     }).catch(function(error) {
         console.error("No se pudo registrar correctamente al docente: ", error);
     });

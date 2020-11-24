@@ -7,7 +7,15 @@ function initApp() {
     // var state;
     firebase.auth().onAuthStateChanged(async function(user) {    
         if (user) {
-            document.getElementById('dropdown1Text').textContent = "Usuario"+user.displayName;
+            if(user.displayName){
+                console.log(user.displayName);
+                document.getElementById('dropdown1Text').textContent = user.displayName;
+                
+            }else{
+                console.log('Notiene nombre de usuario');
+                document.getElementById('dropdown1Text').textContent = "Usuario";
+                
+            }
             
             // Funcion que se ejecuta cuando se realice un evento 'click' en el boton de salir o logout
             btnLogOut.addEventListener('click', (e) => {

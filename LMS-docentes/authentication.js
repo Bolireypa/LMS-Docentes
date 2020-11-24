@@ -31,10 +31,9 @@ function logInUser() {
             // location.href='registroDocentes.html';
             
         }).catch(function(error) {
-            // Handle Errors here.
+            // Manejo de errores.
             var errorCode = error.code;
             var errorMessage = error.message;
-            // [START_EXCLUDE]
 
             // Codigos de error de firebase
             switch (errorCode) {
@@ -66,7 +65,6 @@ function logInUser() {
             // }
             console.log(error);
             // document.getElementById('quickstart-sign-in').disabled = false;
-            // [END_EXCLUDE]
         });
     }
 }
