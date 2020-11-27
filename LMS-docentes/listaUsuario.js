@@ -13,8 +13,9 @@ var idRegistrarseBtn = document.getElementById('idRegistrarseBtn');
 var idLogin = document.getElementById('idLogin');
 
 // Funcion getUsers() que recupera los datos guardados en la base de datos de firebase, en la coleccion 'lms-roles'
-const getUsers = () => db.collection('lms-roles').get();
+const getUsers = () => db.collection('lms-roles').orderBy('userName').get();
 
+// Funcion updateUser() que modifica los datos del usuario de la coleccion 'lms-roles', que requiere los parametros: id (la id del usuario al que se modificaran los datos), updateUser (los datos que se modificaran del usuario)
 const updateUser = (id, updatedUser) => db.collection('lms-roles').doc(id).update(updatedUser).then(async function() {
         
         console.log("Document successfully updated!");
@@ -25,7 +26,16 @@ const updateUser = (id, updatedUser) => db.collection('lms-roles').doc(id).updat
         console.error("Error updating document: ", error);
     });
 
-    
+// Funcion delUser() que eliminar al usuario de la coleccion 'lms-roles', que requiere el parametro: id (la id del usuario a eliminar)
+const delUser = (id) => db.collection('lms-roles').doc(id).delete().then(function () {
+        console.log("Ususario eliminado correctamente");
+        usersTable();
+        $('.modal').modal('close');
+        
+    }).catch(function (error) {
+        console.log("Ocurrio un error al momento de eliminar al usuario: ", error);
+        
+    });
 
 // Funcion usersTable() que llena la tabla de usuarios mediante una consulta a la coleccion 'lms-roles'
 usersTable = async function () {
@@ -98,10 +108,29 @@ usersTable = async function () {
             }
         }
         tableElement4.appendChild(userStatus);
+
+        // Boton de eliminar usuario
+        var tableElement5 = document.createElement('td');
+        var deleteBtn = document.createElement('a');
+        deleteBtn.href = '#modalConfirmation';
+        deleteBtn.className = 'btn red modal-trigger';
+        deleteBtn.textContent = 'Eliminar';
+        deleteBtn.onclick = function () {
+            // Ejecuta la funcion de eliminar usuario
+            document.getElementById('acceptDeleteBtn').onclick = async function () {
+                console.log(user.id);
+                // Se ejecuta la funcion delUser que elimina 
+                delUser(user.id);
+            }
+        }
+        tableElement5.appendChild(deleteBtn);
+        // Fin de Boton para eliminar usuario
+
         tableRow.appendChild(tableElement1);
         tableRow.appendChild(tableElement2);
         tableRow.appendChild(tableElement3);
         tableRow.appendChild(tableElement4);
+        tableRow.appendChild(tableElement5);
         newTableBody.appendChild(tableRow);
 
 

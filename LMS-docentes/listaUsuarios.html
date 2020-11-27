@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!--Import materialize.css-->
     <link type="text/css" rel="stylesheet" href="./css/materialize.min.css"  media="screen,projection"/>
-
+    <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
         <ul id="dropdown1" class="dropdown-content">
@@ -58,6 +58,7 @@
                             <th>Rol de usuario</th>
                             <th>Opciones</th>
                             <th>Habilitar/Deshabilitar</th>
+                            <th>Eliminar usuario</th>
                         </tr>
                     </thead>
             
@@ -102,6 +103,17 @@
         <div class="modal-footer">
             <a href="#!" id="acceptBtn" class="modal-close waves-effect waves-green btn green">Si</a>
             <a href="#!" id="declineBtn" class="modal-close waves-effect waves-green btn red">No</a>
+        </div>
+    </div>
+<!-- Modal de confirmacion agregado -->
+    <div id="modalConfirmation" class="modal modalAlert">
+        <div class="modal-content">
+            <h4 id="modalConfirmationTitle">Esta seguro?</h4>
+            
+        </div>
+        <div class="modal-footer">
+            <a href="#!" id="acceptDeleteBtn" class="modal-close waves-effect waves-green btn green">Si</a>
+            <a href="#!" id="" class="modal-close waves-effect waves-green btn red">No</a>
         </div>
     </div>
 

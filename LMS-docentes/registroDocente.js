@@ -38,14 +38,18 @@ var c1 = 0;
 //
 var c2 = 0;
 
+// Variable que almacena el numero de imagenes del portafolio que se quiere subir
+var nImgPort = 8;
 
-
-// Funcion saveUser() que realiza el registro de docentes nuevos en la coleccion 'lms-docentes', requiere de los parametros: name (nombre de docente), email (email de docente), summary (resumen del docente), category (categoria a la que pertenece el docente), type (tipo al que pertenece el docente: Consultor, Docente, Freelancer).
-const saveUser = (name, email, summary, category, type) =>
+// Funcion saveUser() que realiza el registro de docentes nuevos en la coleccion 'lms-docentes', requiere de los parametros: name (nombre de docente), email (email de docente), summary (resumen del docente), experience(experiencia laboral), lastWork(ulitmo trabajo), phone(telefono o celular de contacto), category (categoria a la que pertenece el docente), type (tipo al que pertenece el docente: Consultor, Docente, Freelancer).
+const saveUser = (name, email, summary, experience, lastWork, phone, category, type) =>
     db.collection('lms-docentes').add({
         name,
         email,
         summary,
+        experience,
+        lastWork,
+        phone,
         category,
         type,
     }).then(function(docData) {
@@ -88,25 +92,23 @@ const saveDocuments = (fileName, refid, url, type, idProgBar) =>
         console.log('No se pudo registrar correctamente: ', error);
     });
 
-// Funcion newBtnPortafolio() que agrega un nuevo boton de imagen de portafolio al formulario de registro (con un maximo de 6 botones), requiere el parametro: imgVal (el valor de la imagen que se seleccione)
+// Funcion newBtnPortafolio() que agrega un nuevo boton de imagen de portafolio al formulario de registro (con un maximo de n botones), requiere el parametro: imgVal (el valor de la imagen que se seleccione)
 const newBtnPortafolio = function (imgVal) {
 
     
     // Se conprueba que el elemento <input> tenga una imagen, si tiene una imagen entonces se agrega un nuevo boton para subir otra imagen
-    if (imgVal!="") {
-        console.log("nueva imagen "+imgVal);
+    if (imgVal != "") {
         c=c+1;
-        if (c==6) {
+        // Se comprueba que los botones que se crearan sean menores o iguales al numero de imagenes que se quiere subir
+        if (c <= nImgPort) {
             
         } else {
-            //
+            // Se ejecuta la funcion createBtnPortafolio() que realiza la creacion del elemento <input> de tipo 'file' para subir las imagenes del portafolio de docente
             createBtnPortafolio(c);
         }
     } else {
         imgVal = 'no hay imagen';
-        console.log("nueva imagen "+imgVal);
     }
-    // console.log(divPortafolio.childNodes);
 }
 
 // Funcion verificarDatos()
@@ -283,13 +285,16 @@ docenteForm.addEventListener('submit', async (e) => {
     const name = docenteForm['docenteNombre'].value;
     const email = docenteForm["docenteEmail"].value;
     const summary = docenteForm["docenteResumen"].value;
+    const experience = docenteForm["docenteExperiencia"].value;
+    const lastWork = docenteForm["docenteTrabajo"].value;
+    const phone = docenteForm["docenteTelefono"].value;
     const category = docenteForm["docenteCategoria"].value;
     const type = docenteForm["docenteTipo"].value;
 
     progressBarElements('Registrando docente', 'regDocBar');
 
     // Se ejecuta la funcion saveUser() que guarda los datos del docentes en la coleccion 'lms-docentes' en firebase
-    await saveUser(name, email, summary, category, type);
+    await saveUser(name, email, summary, experience, lastWork, phone, category, type);
 
 });
 
@@ -298,7 +303,7 @@ uploadImg = function(ref){
     let imagenesSubidas=[];
     // var docenteArchivos = new Object();
     //contar numero de imagenes, capturar 'n' imagenes y subirlas a firebase
-    for (let img = 0; img < 6; img++) {
+    for (let img = 0; img < nImgPort; img++) {
         const inputImg = document.getElementById('docentePortafolio_'+img);
         if (inputImg) {
 
