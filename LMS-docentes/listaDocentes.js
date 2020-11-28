@@ -322,6 +322,18 @@ const updateDoc = (id, updatedDoc, currentDoc) => db.collection('lms-docentes').
             lastReg = lastReg+' | '+'Resumen: '+currentDoc.summary;
             newReg = newReg+' | '+'Resumen: '+updatedDoc.summary;
         }
+        if (currentDoc.experience != updatedDoc.experience) {
+            lastReg = lastReg+' | '+'Experiencia laboral: '+currentDoc.experience;
+            newReg = newReg+' | '+'Experiencia laboral: '+updatedDoc.experience;
+        }
+        if (currentDoc.lastWork != updatedDoc.lastWork) {
+            lastReg = lastReg+' | '+'Ultimo trabajo: '+currentDoc.lastWork;
+            newReg = newReg+' | '+'Ultimo trabajo: '+updatedDoc.lastWork;
+        }
+        if (currentDoc.phone != updatedDoc.phone) {
+            lastReg = lastReg+' | '+'Telefono: '+currentDoc.phone;
+            newReg = newReg+' | '+'Telefono: '+updatedDoc.phone;
+        }
         if (currentDoc.category != updatedDoc.category) {
             lastReg = lastReg+' | '+'Categoria: '+currentDoc.category;
             newReg = newReg+' | '+'Categoria: '+updatedDoc.category;
@@ -832,17 +844,93 @@ listaDocentes = async function (lmsDocentes, categories) {
         var divCardContent = document.createElement('div');
         divCardContent.className = 'card-content';
         divCardContent.id = 'idCardContent_'+c1;//
+
         var spanCardTitle = document.createElement('span');
         spanCardTitle.className = 'card-title grey-text text-darken-4';
         var cardTitle = document.createTextNode(docenteDatos.name);
-        
         spanCardTitle.appendChild(cardTitle);
+
+        var divCardEmail = document.createElement('div');
+        divCardEmail.className = 'cardInfo';
+        var divCardEmailText = document.createElement('p');
+        var cardEmailIcon = document.createElement('i');
+        cardEmailIcon.className = 'tiny material-icons';
+        cardEmailIcon.textContent = 'email';
+        var cardEmailText = document.createTextNode(' '+docenteDatos.email);
+        divCardEmailText.appendChild(cardEmailIcon);
+        divCardEmailText.appendChild(cardEmailText);
+        divCardEmail.appendChild(divCardEmailText);
+        
+        var divCardLastWork = document.createElement('div');
+        divCardLastWork.className = 'cardLastWork';
+        var divCardLastWorkText = document.createElement('p');
+        var cardLastWorkIcon = document.createElement('i');
+        cardLastWorkIcon.className = 'tiny material-icons';
+        cardLastWorkIcon.textContent = 'business_center';
+        if (docenteDatos.lastWork && docenteDatos.lastWork != '') {
+            var cardLastWorkText = document.createTextNode(' '+docenteDatos.lastWork);
+            
+        } else {
+            var cardLastWorkText = document.createTextNode(' No registrado');
+            
+        }
+        divCardLastWorkText.appendChild(cardLastWorkIcon);
+        divCardLastWorkText.appendChild(cardLastWorkText);
+        divCardLastWork.appendChild(divCardLastWorkText);
+
+        var divCardPhone = document.createElement('div');
+        divCardPhone.className = 'cardInfo';
+        var divCardPhoneText = document.createElement('p');
+        var cardPhoneIcon = document.createElement('i');
+        cardPhoneIcon.className = 'tiny material-icons';
+        cardPhoneIcon.textContent = 'phone';
+        if (docenteDatos.phone && docenteDatos.phone != '') {
+            var cardPhoneText = document.createTextNode(' '+docenteDatos.phone);
+            
+        } else {
+            var cardPhoneText = document.createTextNode(' No registrado');
+            
+        }
+        divCardPhoneText.appendChild(cardPhoneIcon);
+        divCardPhoneText.appendChild(cardPhoneText);
+        divCardPhone.appendChild(divCardPhoneText);
+
+        var divCardExperience = document.createElement('div');
+        divCardExperience.className = 'cardSummary';
+        var divCardExperienceText = document.createElement('p');
+        var cardExperienceIcon = document.createElement('i');
+        cardExperienceIcon.className = 'tiny material-icons';
+        cardExperienceIcon.textContent = 'assignment';
+        var cardExperienceTitle = document.createTextNode('Experiencia laboral:');
+        var pCardExperienceText = document.createElement('p');
+        pCardExperienceText.className = 'pTextContent';
+        if (docenteDatos.experience && docenteDatos.experience != '') {
+            var cardExperienceText = document.createTextNode(' '+docenteDatos.experience);
+        } else {
+            var cardExperienceText = document.createTextNode(' No registrado');
+        }
+        pCardExperienceText.appendChild(cardExperienceText);
+        divCardExperienceText.appendChild(cardExperienceIcon);
+        divCardExperienceText.appendChild(cardExperienceTitle);
+        divCardExperience.appendChild(divCardExperienceText);
+        divCardExperience.appendChild(pCardExperienceText);
+
         var divCardSummary = document.createElement('div');
         divCardSummary.className = 'cardSummary';
-        var pCardContentText = document.createElement('p');
+        var divCardContentText = document.createElement('p');
+        var cardSummaryIcon = document.createElement('i');
+        cardSummaryIcon.className = 'tiny material-icons';
+        cardSummaryIcon.textContent = 'assignment';
+        var cardSummaryTitle = document.createTextNode('Resumen:');
+        var pCardSummaryText = document.createElement('p');
+        pCardSummaryText.className = 'pTextContent';
         var cardContentText = document.createTextNode(docenteDatos.summary);
-        pCardContentText.appendChild(cardContentText);
-        divCardSummary.appendChild(pCardContentText);
+        pCardSummaryText.appendChild(cardContentText);
+        divCardContentText.appendChild(cardSummaryIcon);
+        divCardContentText.appendChild(cardSummaryTitle);
+        divCardSummary.appendChild(divCardContentText);
+        divCardSummary.appendChild(pCardSummaryText);
+
         var h6CategoryText = document.createElement('div');
         h6CategoryText.className = 'chip';
         h6CategoryText.id = 'h6Id_'+c1;//
@@ -866,16 +954,18 @@ listaDocentes = async function (lmsDocentes, categories) {
             typeTag.textContent = 'Sin tipo';
         }
 
-        divCardContent.appendChild(spanCardTitle);
-        divCardContent.appendChild(divCardSummary);
-        divCardContent.appendChild(h6CategoryText);
-        divCardContent.appendChild(typeTag);
-        var divCardAction = document.createElement('div');
-        divCardAction.className = 'card-action';
+        var cardDivider = document.createElement('div');
+        cardDivider.className = 'divider';
+
+
+
+        // var divCardAction = document.createElement('div');
+        // divCardAction.className = 'card-action';
         var divRowCA = document.createElement('div');
-        divRowCA.className = 'row';
+        divRowCA.className = 'row divCAButtons';
+
         var divColCA1 = document.createElement('div');
-        divColCA1.className = 'col s6';
+        divColCA1.className = 'col s5';
         var btnCV = document.createElement('a');
         btnCV.className = 'btn green';
         btnCV.style = 'width: 100%;';
@@ -905,7 +995,7 @@ listaDocentes = async function (lmsDocentes, categories) {
         divColCA1.appendChild(btnCV);
 
         var divColCA2 = document.createElement('div');
-        divColCA2.className = 'col s6';
+        divColCA2.className = 'col s7';
         var btnPortafolio = document.createElement('a');
         btnPortafolio.className = 'btn red modal-trigger';
         btnPortafolio.href = '#modal1';
@@ -922,7 +1012,19 @@ listaDocentes = async function (lmsDocentes, categories) {
         divRowCA.appendChild(divColCA1);
         divRowCA.appendChild(divColCA2);
 
-        divCardAction.appendChild(divRowCA);
+        divCardContent.appendChild(spanCardTitle);
+        divCardContent.appendChild(divCardEmail);
+        divCardContent.appendChild(divCardPhone);
+        divCardContent.appendChild(divCardLastWork);
+        divCardContent.appendChild(divCardExperience);
+        divCardContent.appendChild(divCardSummary);
+        divCardContent.appendChild(h6CategoryText);
+        divCardContent.appendChild(typeTag);
+        divCardContent.appendChild(cardDivider);
+        divCardContent.appendChild(divRowCA);
+        
+
+        // divCardAction.appendChild(divRowCA);
 
         var divCardReveal = document.createElement('div');
         divCardReveal.className = 'card-reveal';
@@ -954,24 +1056,23 @@ listaDocentes = async function (lmsDocentes, categories) {
                 name: e.target[0].value,
                 email: e.target[1].value,
                 summary: e.target[2].value,
-                category: e.target[3].value,
-                type: e.target[4].value,
+                experience: e.target[3].value,
+                lastWork: e.target[4].value,
+                phone: e.target[5].value,
+                category: e.target[6].value,
+                type: e.target[7].value,
                 // refCatDoc: e.target[0].value,
             },{
                 name: docenteDatos.name,
                 email: docenteDatos.email,
                 summary: docenteDatos.summary,
+                experience: docenteDatos.experience,
+                lastWork: docenteDatos.lastWork,
+                phone: docenteDatos.phone,
                 category: docenteDatos.category,
                 type: docenteDatos.type,
             });
 
-            // console.log(e);
-            
-            // const editFormDoc = document.getElementById("editFormId_"+c1);
-            // const doc = await getDoc(docD.id);
-            // console.log(editFormDoc['inputNameId_'+c1].value);
-            // console.log(doc.id);
-            // // portafolio(docenteDatos.name, docenteDatos.ref);
         }
 
         var divRowEditForm = document.createElement('div');
@@ -1021,6 +1122,48 @@ listaDocentes = async function (lmsDocentes, categories) {
         inputSummary.value = docenteDatos.summary;
         divColInputSummary.appendChild(inputSummary);
         divColInputSummary.appendChild(labelInputSummary);
+
+        // Creacion de elemento <input> para la ecperiencia laboral del docente
+        var divColInputExperience = document.createElement('div');
+        divColInputExperience.className = 'input-field divInputField col s12';
+        var labelInputExperience = document.createElement('label');
+        labelInputExperience.className = 'active';
+        labelInputExperience.setAttribute('for', 'inputExperienceId_'+c1);
+        labelInputExperience.textContent = 'Experiencia laboral';
+        var inputExperience = document.createElement('input');
+        inputExperience.type = 'text';
+        inputExperience.id = 'inputExperienceId_'+c1;
+        inputExperience.value = docenteDatos.experience;
+        divColInputExperience.appendChild(inputExperience);
+        divColInputExperience.appendChild(labelInputExperience);
+
+        // Creacion de elemento <input> para lultimo trabajo de docente
+        var divColInputLastWork = document.createElement('div');
+        divColInputLastWork.className = 'input-field divInputField col s12';
+        var labelInputLastWork = document.createElement('label');
+        labelInputLastWork.className = 'active';
+        labelInputLastWork.setAttribute('for', 'inputLastWorkId_'+c1);
+        labelInputLastWork.textContent = 'Ultimo trabajo';
+        var inputLastWork = document.createElement('input');
+        inputLastWork.type = 'text';
+        inputLastWork.id = 'inputLastWorkId_'+c1;
+        inputLastWork.value = docenteDatos.lastWork;
+        divColInputLastWork.appendChild(inputLastWork);
+        divColInputLastWork.appendChild(labelInputLastWork);
+
+        // Creacion de elemento <input> para el telefono del docente
+        var divColInputPhone = document.createElement('div');
+        divColInputPhone.className = 'input-field divInputField col s12';
+        var labelInputPhone = document.createElement('label');
+        labelInputPhone.className = 'active';
+        labelInputPhone.setAttribute('for', 'inputPhoneId_'+c1);
+        labelInputPhone.textContent = 'Telefono / Celular';
+        var inputPhone = document.createElement('input');
+        inputPhone.type = 'number';
+        inputPhone.id = 'inputPhoneId_'+c1;
+        inputPhone.value = docenteDatos.phone;
+        divColInputPhone.appendChild(inputPhone);
+        divColInputPhone.appendChild(labelInputPhone);
 
         // Elemento <select> de categoria
         var divColSelectCategory = document.createElement('div');
@@ -1331,6 +1474,9 @@ listaDocentes = async function (lmsDocentes, categories) {
         divRowEditForm.appendChild(divColInputName);
         divRowEditForm.appendChild(divColInputEmail);
         divRowEditForm.appendChild(divColInputSummary);
+        divRowEditForm.appendChild(divColInputExperience);
+        divRowEditForm.appendChild(divColInputLastWork);
+        divRowEditForm.appendChild(divColInputPhone);
         divRowEditForm.appendChild(divColSelectCategory);
         divRowEditForm.appendChild(divColSelectType);
         divRowEditForm.appendChild(divColEditDocument);
@@ -1385,7 +1531,7 @@ listaDocentes = async function (lmsDocentes, categories) {
 
         dicCard.appendChild(divCardImage);
         dicCard.appendChild(divCardContent);
-        dicCard.appendChild(divCardAction);
+        // dicCard.appendChild(divCardAction);
         dicCard.appendChild(divCardReveal);
         divCol.appendChild(dicCard);
         // divListaDocentes.appendChild(divCol);
