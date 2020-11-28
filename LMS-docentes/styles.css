@@ -33,11 +33,15 @@
 }
 
 .card {
-    height: 550px;
+    height: 648px;
+}
+
+.cardInfo{
+    padding-bottom: 4px;
 }
 
 .card > .card-content{
-    height: 51%;
+    height: 58%;
 }
 
 .card  > .card-content > .card-title{
@@ -45,13 +49,26 @@
 }
 
 .cardSummary{
-    height: 59%;
+    height: 26%;
     overflow-y: auto;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
+}
+
+.cardLastWork{
+    height: 45px;
+    margin-bottom: 3px;
 }
 
 .row > .divInputField{
     margin-bottom: 0px;
+}
+
+.divCAButtons{
+    padding-top: 5px;
+}
+
+.pTextContent{
+    padding-left: 15px;
 }
 
 .editButton{

@@ -100,7 +100,7 @@ const newBtnPortafolio = function (imgVal) {
     if (imgVal != "") {
         c=c+1;
         // Se comprueba que los botones que se crearan sean menores o iguales al numero de imagenes que se quiere subir
-        if (c <= nImgPort) {
+        if (c >= nImgPort) {
             
         } else {
             // Se ejecuta la funcion createBtnPortafolio() que realiza la creacion del elemento <input> de tipo 'file' para subir las imagenes del portafolio de docente

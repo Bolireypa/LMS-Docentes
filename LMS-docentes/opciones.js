@@ -300,11 +300,86 @@ logTable = async function () {
                     var spanCardTitle = document.createElement('span');
                     spanCardTitle.className = 'card-title grey-text text-darken-4';
                     spanCardTitle.textContent = dataD.name;
+
+                    var divCardEmail = document.createElement('div');
+                    var divCardEmailText = document.createElement('p');
+                    var cardEmailIcon = document.createElement('i');
+                    cardEmailIcon.className = 'tiny material-icons';
+                    cardEmailIcon.textContent = 'email';
+                    var cardEmailText = document.createTextNode(' '+dataD.email);
+                    divCardEmailText.appendChild(cardEmailIcon);
+                    divCardEmailText.appendChild(cardEmailText);
+                    divCardEmail.appendChild(divCardEmailText);
+                    
+                    var divCardLastWork = document.createElement('div');
+                    divCardLastWork.className = 'cardLastWork';
+                    var divCardLastWorkText = document.createElement('p');
+                    var cardLastWorkIcon = document.createElement('i');
+                    cardLastWorkIcon.className = 'tiny material-icons';
+                    cardLastWorkIcon.textContent = 'business_center';
+                    if (dataD.lastWork && dataD.lastWork != '') {
+                        var cardLastWorkText = document.createTextNode(' '+dataD.lastWork);
+                        
+                    } else {
+                        var cardLastWorkText = document.createTextNode(' No registrado');
+                        
+                    }
+                    divCardLastWorkText.appendChild(cardLastWorkIcon);
+                    divCardLastWorkText.appendChild(cardLastWorkText);
+                    divCardLastWork.appendChild(divCardLastWorkText);
+
+                    var divCardPhone = document.createElement('div');
+                    var divCardPhoneText = document.createElement('p');
+                    var cardPhoneIcon = document.createElement('i');
+                    cardPhoneIcon.className = 'tiny material-icons';
+                    cardPhoneIcon.textContent = 'phone';
+                    if (dataD.phone && dataD.phone != '') {
+                        var cardPhoneText = document.createTextNode(' '+dataD.phone);
+                        
+                    } else {
+                        var cardPhoneText = document.createTextNode(' No registrado');
+                        
+                    }
+                    divCardPhoneText.appendChild(cardPhoneIcon);
+                    divCardPhoneText.appendChild(cardPhoneText);
+                    divCardPhone.appendChild(divCardPhoneText);
+                    
+                    var divCardExperience = document.createElement('div');
+                    divCardExperience.className = 'cardSummary';
+                    var divCardExperienceText = document.createElement('p');
+                    var cardExperienceIcon = document.createElement('i');
+                    cardExperienceIcon.className = 'tiny material-icons';
+                    cardExperienceIcon.textContent = 'assignment';
+                    var cardExperienceTitle = document.createTextNode('Experiencia laboral:');
+                    var pCardExperienceText = document.createElement('p');
+                    pCardExperienceText.className = 'pTextContent';
+                    if (dataD.experience && dataD.experience != '') {
+                        var cardExperienceText = document.createTextNode(' '+dataD.experience);
+                    } else {
+                        var cardExperienceText = document.createTextNode(' No registrado');
+                    }
+                    pCardExperienceText.appendChild(cardExperienceText);
+                    divCardExperienceText.appendChild(cardExperienceIcon);
+                    divCardExperienceText.appendChild(cardExperienceTitle);
+                    divCardExperience.appendChild(divCardExperienceText);
+                    divCardExperience.appendChild(pCardExperienceText);
+
                     var divCardSummary = document.createElement('div');
                     divCardSummary.className = 'cardSummary';
-                    var pCardContentText = document.createElement('p');
-                    pCardContentText.textContent = dataD.summary;
-                    divCardSummary.appendChild(pCardContentText);
+                    var divCardContentText = document.createElement('p');
+                    var cardSummaryIcon = document.createElement('i');
+                    cardSummaryIcon.className = 'tiny material-icons';
+                    cardSummaryIcon.textContent = 'assignment';
+                    var cardSummaryTitle = document.createTextNode('Resumen:');
+                    var pCardSummaryText = document.createElement('p');
+                    pCardSummaryText.className = 'pTextContent';
+                    var cardContentText = document.createTextNode(dataD.summary);
+                    pCardSummaryText.appendChild(cardContentText);
+                    divCardContentText.appendChild(cardSummaryIcon);
+                    divCardContentText.appendChild(cardSummaryTitle);
+                    divCardSummary.appendChild(divCardContentText);
+                    divCardSummary.appendChild(pCardSummaryText);
+
                     var h6CategoryText = document.createElement('div');
                     h6CategoryText.className = 'chip';
                     h6CategoryText.id = 'h6Id_';
@@ -326,6 +401,10 @@ logTable = async function () {
                     }
 
                     divCardContent.appendChild(spanCardTitle);
+                    divCardContent.appendChild(divCardEmail);
+                    divCardContent.appendChild(divCardPhone);
+                    divCardContent.appendChild(divCardLastWork);
+                    divCardContent.appendChild(divCardExperience);
                     divCardContent.appendChild(divCardSummary);
                     divCardContent.appendChild(h6CategoryText);
                     divCardContent.appendChild(typeTag);
