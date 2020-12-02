@@ -166,6 +166,29 @@ const saveFile = (fileName, refid, url, type) =>
         
     });
 
+// Funcion deleteCV() que elimina el CV del docente de la coleccion 'lms-archivos'
+const deleteCV = (id, refId, namefile) => db.collection('lms-archivos').doc(id).delete()
+    .then(async function () {
+        // Se cierra el modal de Editar CV
+        $('.modal').modal('close');
+
+        // Se capturan el nombre de la imagen a eliminar y su id
+        var log1 = {
+            logType: 'Eliminacion de archivo',
+            lastRegister: '',
+            newRegister: namefile,
+            idRegister: refId,
+        };
+        // Se ejecuta la funcion logRegister() que guarda un registro de que usuario esta eliminando una imagen del portafolio de docente, en la coleccion 'lms-log', se envia los parametros: Primer parametro (el nombre del usuario que realiza la accion de registrar), segundo parametro (la id del usuario que realiza la accion de registrar), tercer parametro (los datos de la imagen que se elimino), cuarto parametro (la id de la imagen)
+        logRegister(currentUser.displayName, currentUser.uid, log1, id);
+        console.log('Datos eliminados correctamente');
+        
+    })
+    .catch(function (error) {
+        console.log('Ocurrion un error al intentar borrar el docuento', error);
+        
+    });
+
 // Funcion deleteDoc() que elimina los datos de docente de la coleccion 'lms-docentes', requiere el parametro: id (Id del docente)
 const deleteDoc = (id, nameDelete) => db.collection('lms-docentes').doc(id).delete()
     .then(async function() {
@@ -775,7 +798,7 @@ listaDocentes = async function (lmsDocentes, categories) {
 
     lmsDocentes.forEach(docD => {
         var docenteDatos = docD.data();
-        console.log(docenteDatos);
+        // console.log(docenteDatos);
         
         var divCol = document.createElement('div');
         divCol.className = 'col s12 m6 l4';
@@ -1137,7 +1160,7 @@ listaDocentes = async function (lmsDocentes, categories) {
         divColInputExperience.appendChild(inputExperience);
         divColInputExperience.appendChild(labelInputExperience);
 
-        // Creacion de elemento <input> para lultimo trabajo de docente
+        // Creacion de elemento <input> para ultimo trabajo de docente
         var divColInputLastWork = document.createElement('div');
         divColInputLastWork.className = 'input-field divInputField col s12';
         var labelInputLastWork = document.createElement('label');
@@ -1345,6 +1368,24 @@ listaDocentes = async function (lmsDocentes, categories) {
     
                         divColNewCVBtn.appendChild(divInputCVFile);
                         divColNewCVBtn.appendChild(saveCVBtn);
+
+                        // Se agrega el boton para eliminar el CV del docente en el modal de cambiar CV
+                        var divDeleteCVBtn = document.createElement('div');
+                        divDeleteCVBtn.className = 'col s12';
+                        divDeleteCVBtn.style = 'padding-top: 5px; padding-left: 0px;';
+
+                        var deleteCVBtn = document.createElement('button');
+                        deleteCVBtn.className = 'btn red';
+                        deleteCVBtn.type = 'button';
+                        deleteCVBtn.textContent = 'Eliminar';
+                        deleteCVBtn.onclick = async function () {
+                            console.log(doc1.id, docD.id, doc1.data().fileName);
+                            await deleteCV(doc1.id, docD.id, doc1.data().fileName);
+                        }
+
+                        divDeleteCVBtn.appendChild(deleteCVBtn);
+                        divColNewCVBtn.appendChild(divDeleteCVBtn);
+                        // Fin de agregar boton para eliminar CV del docente
     
                         divRowNewCV.appendChild(divColNewCVBtn);
                         divCol2ModalBody2.appendChild(divRowNewCV);
