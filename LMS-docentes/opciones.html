@@ -50,6 +50,80 @@
         <div class="row">
                
             <div class="col s12 m4">
+                <!-- Añadido panel para exporta datos en excel -->
+                <div class="row">
+                    <div class="col s12">
+                        <div class="z-depth-1 panelTable">
+                            <h5>Exportar datos de docentes
+                                <a class="btn-floating tooltipped" data-position="bottom" data-tooltip="Se exportarán los datos de los docentes registrados."><i class="material-icons">info_outline</i></a>
+                            </h5>
+                            <div class="row">
+                                <div class="input-field col s12">
+                                    <i class="material-icons prefix">business</i>
+                                    <input type="text" class="validate" id="CSVFileName">
+                                    <label for="CSVFileName">Nombre de archivo</label>
+                                </div>
+                                <div class="col s12">
+                                    <form id="formCheckbox">
+                                            <p>
+                                                <label>
+                                                    <input type="checkbox" class="filled-in" id="allCheckbox" name="exportCheckbox"/>
+                                                    <span>Todos</span>
+                                                </label>
+                                            </p>
+                                            <p>
+                                                <label>
+                                                    <input type="checkbox" class="filled-in" id="emailCheckbox" name="exportCheckbox"/>
+                                                    <span>Correo</span>
+                                                </label>
+                                            </p>
+                                            <p>
+                                                <label>
+                                                    <input type="checkbox" class="filled-in" id="summaryCheckbox" name="exportCheckbox"/>
+                                                    <span>Resumen</span>
+                                                </label>
+                                            </p>
+                                            <p>
+                                                <label>
+                                                    <input type="checkbox" class="filled-in" id="experienceCheckbox" name="exportCheckbox"/>
+                                                    <span>Experiencia laboral</span>
+                                                </label>
+                                            </p>
+                                            <p>
+                                                <label>
+                                                    <input type="checkbox" class="filled-in" id="lastWorkCheckbox" name="exportCheckbox"/>
+                                                    <span>Ultimo trabajo</span>
+                                                </label>
+                                            </p>
+                                            <p>
+                                                <label>
+                                                    <input type="checkbox" class="filled-in" id="phoneCheckbox" name="exportCheckbox"/>
+                                                    <span>Telefono</span>
+                                                </label>
+                                            </p>
+                                            <p>
+                                                <label>
+                                                    <input type="checkbox" class="filled-in" id="categoryCheckbox" name="exportCheckbox"/>
+                                                    <span>Categoria</span>
+                                                </label>
+                                            </p>
+                                            <p>
+                                                <label>
+                                                    <input type="checkbox" class="filled-in" id="typeCheckbox" name="exportCheckbox"/>
+                                                    <span>Tipo</span>
+                                                </label>
+                                            </p>
+                                            
+                                    </form>
+                                </div>
+                                <div class="col s12">
+                                    <button type="button" class="btn blue" id="btnExportEmail">Exportar en CSV</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--  -->
                 <div class="row">
                     <div class="col s12">
                         <div class="z-depth-1 panelTable">
@@ -79,6 +153,24 @@
                                     </div>
                                 </form>
                             </div>
+                            <!-- Se agrega la opcion para cambiar el numero de imagenes permitido para el portafolio de docente -->
+                            <div class="divider"></div>
+                            <div class="row">
+                                <div class="col s12">
+                                    <h5>Numero máximo de imagenes</h5>
+                                    <a class="btn-floating btn-small tooltipped" data-position="bottom" data-tooltip="Seleccione el numero maximo de imagenes del portafolio de docente."><i class="material-icons">info_outline</i></a>
+                                </div>
+                                <div class="col s12">
+                                    <form action="#" id="formImgPort">
+                                        <p class="range-field">
+                                            <input type="range" id="nImagesPort" min="1" max="20" />
+                                        </p>
+                                        <!-- <a href="#" class="btn green">Guardar</a> -->
+                                        <button class="btn green" type="submit">Guardar</button>
+                                    </form>
+                                </div>
+                            </div>
+                            <!--  -->
                         </div>
                     </div>
                 </div>

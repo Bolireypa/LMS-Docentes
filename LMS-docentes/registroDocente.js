@@ -38,6 +38,9 @@ var c1 = 0;
 //
 var c2 = 0;
 
+// Funcion getOptions() que obtiene los datos de la coleccion 'lms-opciones' de firebase
+const getOptions = () => db.collection('lms-opciones').get();
+
 // Variable que almacena el numero de imagenes del portafolio que se quiere subir
 var nImgPort = 8;
 
@@ -228,6 +231,10 @@ async function initApp() {
         });
     });
     // return state;
+
+    // Se realiza una consulta a la coleccion 'lms-opciones' mediante la funcion getOptions(), luego se reemplaza la varialble nImgPort que limita las imagenes que se quiere registrar
+    var imgNumber = await getOptions();
+    nImgPort = imgNumber.docs[0].data().imagesNumber;
 }
 
 // Funcion asincrona que se ejecuta mediante el evento 'DOMContentLoaded' (el documento registroDocentes.html a sido cargado)
