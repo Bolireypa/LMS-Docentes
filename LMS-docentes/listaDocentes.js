@@ -85,6 +85,9 @@ var idRegistrarDocenteBtnMovil = document.getElementById('idRegistrarDocenteBtnM
 // Variable que guarda al usuario con sesion iniciada
 var currentUser = '';
 
+// Variable que guarda el valor de numero maximo de imagenes que se mostraran
+var numMaxImg = 0;
+
 // Funcion saveFile() que realiza el registro de los datos de los archivos en la coleccion 'lms-archivos', requiere los parametros: fileName (Nombre de archivo a guardar, imagen o PDF), refid (La id del docente al que se vinculara el archivo, imagen o PDF), url (Ubicacion donde sera subido el archivo en el storage del proyecto), type (Tipo de archivo que se esta guardando, imagen - PDF)
 const saveFile = (fileName, refid, url, type) => 
     db.collection('lms-archivos').add({
@@ -588,7 +591,7 @@ portafolio = function (docName, docRef, editPortafolio) {
         });
         
         // Se comprueba que las imagenes del portafolio no sobrepasen a n numero de imagenes y que el modal de portafolio de imagenes esten disponibels para su edicion, el valor de editProtafolio deberia ser: true
-        if (countImagesPortafolio < 8 && editPortafolio) {
+        if (countImagesPortafolio < numMaxImg && editPortafolio) {
             // Se realiza la creacion de un boton 'Agregar' y sus elementos, que agrega nuevas imagenes al portafolio de docentes, mientras sean menor a el numero de imagenes escogido
             var divColImagePortafolioEmpty = document.createElement('div');
             divColImagePortafolioEmpty.className = 'col s6 m4';
@@ -1716,7 +1719,7 @@ paginationNumbers = function (countPages, divListaDocentes) {
 }
 
 // Funcion initApp() utilizada para verificar si un usuario esta autenticado
-function initApp() {
+async function initApp() {
     // var state;
     firebase.auth().onAuthStateChanged(async function(user) {  
         currentUser = user;
@@ -1810,6 +1813,9 @@ function initApp() {
         });
     });
 
+    // Se realiza una consulta a la coleccion 'lms-opciones' mediante la funcion getDefImg(), luego se reemplaza la varialble imgMaxNumber que limita las imagenes del portafolio de docente
+    var imgMaxNumber = await getDefImg();
+    numMaxImg = imgMaxNumber.docs[0].data().imagesNumber;
 }
 
 window.addEventListener('DOMContentLoaded', async (e) => {

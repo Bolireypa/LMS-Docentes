@@ -22,6 +22,9 @@ const getOptions = () => db.collection('lms-opciones').get();
 // Funcion getLog() que recupera los datos guardados en la base de datos de firebase, en la coleccion 'lms-log'
 const getLog = () => db.collection('lms-log').orderBy('logDate', 'desc').get();
 
+// Funcion getDocs() que recupera los datos guardados en la base de datos de firebase, en la coleccion 'lms-docentes'
+const getDocs = () => db.collection('lms-docentes').orderBy('name', 'desc').get();
+
 // Funcion getCategories() que recupera los datos guardados en la base de datos de firebase, en la coleccion 'lms-categorias'
 const getCategories = () => db.collection('lms-categorias').get();
 
@@ -36,7 +39,7 @@ const getDoc = (id) => db.collection('lms-docentes').doc(id).get();
 
 const getDefImg = () => db.collection('lms-opciones').get();
     
-const saveDefectImage = (defaultImageName, defaultImageUrl) => db.collection("lms-opciones").doc("I15m4a89g618E37rd5WQ").set({
+const saveDefectImage = (defaultImageName, defaultImageUrl) => db.collection("lms-opciones").doc("I15m4a89g618E37rd5WQ").update({
         defaultImageName,
         defaultImageUrl,
     })
@@ -45,6 +48,16 @@ const saveDefectImage = (defaultImageName, defaultImageUrl) => db.collection("lm
         location.reload();
     })
     .catch(function(error) {
+        console.error("Error writing document: ", error);
+    });
+
+// Funcion que guarda el numero maximo de imagenes para el portafolio de docentes en la coleccion 'lms-opciones' requiere como parametro: imagesNumber(el valor del numero de imagenes que se quierea guardar)
+const changeNumberImages = (imagesNumber) => db.collection("lms-opciones").doc("I15m4a89g618E37rd5WQ").update({
+        imagesNumber
+    }).then(function () {
+        console.log("Document successfully written!");
+        location.reload();
+    }).catch(function(error) {
         console.error("Error writing document: ", error);
     });
 
@@ -560,7 +573,7 @@ logTable = async function () {
         tableRow.appendChild(tableElement2);
         tableRow.appendChild(tableElement3);
         logTableBody.appendChild(tableRow);
-        console.log(logRegData.logDate.toDate());
+        // console.log(logRegData.logDate.toDate());
         
     });
 }
@@ -609,8 +622,152 @@ typeTable = async function () {
     });
 }
 
+// Se captura el checkbos "todos" para que los checkbox del panel sean seleccionados o no seleccionados
+var formCheckbox = document.getElementById('formCheckbox');
+var allCheckbox = document.getElementById('allCheckbox');
+allCheckbox.addEventListener('click', (e) => {
+    if (allCheckbox.checked) {
+        formCheckbox['emailCheckbox'].checked = true;
+        formCheckbox['summaryCheckbox'].checked = true;
+        formCheckbox['experienceCheckbox'].checked = true;
+        formCheckbox['lastWorkCheckbox'].checked = true;
+        formCheckbox['phoneCheckbox'].checked = true;
+        formCheckbox['categoryCheckbox'].checked = true;
+        formCheckbox['typeCheckbox'].checked = true;
+    } else {
+        formCheckbox['emailCheckbox'].checked = false;
+        formCheckbox['summaryCheckbox'].checked = false;
+        formCheckbox['experienceCheckbox'].checked = false;
+        formCheckbox['lastWorkCheckbox'].checked = false;
+        formCheckbox['phoneCheckbox'].checked = false;
+        formCheckbox['categoryCheckbox'].checked = false;
+        formCheckbox['typeCheckbox'].checked = false;
+    }
+});
+
+// Se captura el boton para exportar el documento CSV y se asigna una funcion que se ejecuta en el evento 'onclick' del boton, que captura los checkbox seleccionados en el panel, para luego exportarlos
+var btnExportEmail = document.getElementById('btnExportEmail');
+btnExportEmail.addEventListener('click', async (e) => {
+    var docsList = await getDocs();
+    // console.log(docsList.docs[0].data());
+    var countDocs = 0;
+    var data = [];
+    
+    docsList.forEach(docData => {
+        data[countDocs] = {
+            name: docData.data().name
+        };
+        if (formCheckbox['emailCheckbox'].checked) {
+            data[countDocs].email = docData.data().email+" ";
+        }
+        if (formCheckbox['summaryCheckbox'].checked) {
+            data[countDocs].summary = docData.data().summary+" ";
+        }
+        if (formCheckbox['experienceCheckbox'].checked) {
+            data[countDocs].experience = docData.data().experience+" ";
+        }
+        if (formCheckbox['lastWorkCheckbox'].checked) {
+            data[countDocs].lastWork = docData.data().lastWork+" ";
+        }
+        if (formCheckbox['phoneCheckbox'].checked) {
+            data[countDocs].phone = docData.data().phone+" ";
+        }
+        if (formCheckbox['categoryCheckbox'].checked) {
+            data[countDocs].category = docData.data().category+" ";
+        }
+        if (formCheckbox['typeCheckbox'].checked) {
+            data[countDocs].type = docData.data().type+" ";
+        }
+        
+        // data.push(docData.data());
+        countDocs++;
+    });
+    console.log(data);
+    
+    const headers = {
+        nombre: 'Nombre'
+    };
+    if (formCheckbox['emailCheckbox'].checked) {
+        headers.correo = 'Correo Electronico'
+    }
+    if (formCheckbox['summaryCheckbox'].checked) {
+        headers.resumen = 'Resumen'
+    }
+    if (formCheckbox['experienceCheckbox'].checked) {
+        headers.experience = 'Experiencia laboral';
+    }
+    if (formCheckbox['lastWorkCheckbox'].checked) {
+        headers.lastWork = 'Ultimo trabajo';
+    }
+    if (formCheckbox['phoneCheckbox'].checked) {
+        headers.phone = 'Telefono';
+    }
+    if (formCheckbox['categoryCheckbox'].checked) {
+        headers.category = 'Categoria';
+    }
+    if (formCheckbox['typeCheckbox'].checked) {
+        headers.type = 'Tipo';
+    }
+
+    var CSVFileName = document.getElementById('CSVFileName').value;
+    if (CSVFileName == '') {
+        CSVFileName = 'Documento';
+    }
+    exportCSVFile(headers, data, CSVFileName);
+})
+
+// Funcion conertToCSV() que convierte los datos que se quiere exportar, a formato CSV, requiere el parametro de los datos a exportar
+function convertToCSV(objArray) {
+    const array = typeof objArray != "object" ? JSON.parse(objArray) : objArray;
+    let str = 'sep=|' + '\r\n\n';
+    for (let i = 0; i < array.length; i++) {
+        let line = "";
+        for (let index in array[i]) {
+            if (line != "") line += "|";
+            line += array[i][index];
+        }
+        str += line + "\r\n";
+    }
+    return str;
+}
+
+// Funcion exportCSVFile() que exporta los datos ya converidos a CSV, requiere los parametros: headers(los titulos de cabecera del documento), items(los datos que se quiere exportar), fileName(el nombre del archivo CSV)
+function exportCSVFile(headers, items, fileName) {
+    if (headers) {
+        items.unshift(headers);
+    }
+    const jsonObject = JSON.stringify(items);
+    const csv = convertToCSV(jsonObject);
+    console.log(csv);
+    
+    const exportName = fileName + ".csv" || "export.csv";
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    if (navigator.msSaveBlob) {
+        // console.log('navigator mssaveblob');
+        
+        navigator.msSaveBlob(blob, exportName);
+    } else {
+        // console.log('no navigator mssaveblob');
+
+        const link = document.createElement("a");
+        if (link.download !== undefined) {
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", exportName);
+            link.style.visibility = "hidden";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    }
+}
+
+
+
+
+
 // Funcion initApp() utilizada para verificar si un usuario esta autenticado
-function initApp() {
+async function initApp() {
     // var state;
     firebase.auth().onAuthStateChanged(async function(user) {    
         if (user) {
@@ -679,6 +836,25 @@ function initApp() {
         e.preventDefault();
         uploadImageFile();
     });
+
+    // Se realiza el guardado del valor para el numero maximo de imagenes del portafolio de docente
+    var formImgPort = document.getElementById('formImgPort');
+    formImgPort.addEventListener('submit', (e) => {
+        e.preventDefault();
+        var nImagesPort = formImgPort["nImagesPort"].value;
+        console.log(nImagesPort);
+        
+        changeNumberImages(nImagesPort);
+    });
+
+    // Se obtiene el valor guardado en la coleccion 'lms-opciones' del numero maximo de imagenes
+    var imgMax = await getDefImg();
+    if (imgMax.docs[0].data().imagesNumber && imgMax.docs[0].data().imagesNumber != "") {
+        console.log('numero existe', imgMax.docs[0].data().imagesNumber);
+        formImgPort["nImagesPort"].value = imgMax.docs[0].data().imagesNumber;
+    }else{
+        console.log('numero no existe');
+    }
 }
 
 // Funcion que se ejecuta mediante el evento 'DOMContentLoaded' (el documento listaUsuarios.html a sido cargado)
