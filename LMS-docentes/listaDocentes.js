@@ -981,7 +981,7 @@ listaDocentes = async function (lmsDocentes, categories) {
         }
 
         var cardDivider = document.createElement('div');
-        cardDivider.className = 'divider';
+        cardDivider.className = 'divider dividerClass';
 
 
 
