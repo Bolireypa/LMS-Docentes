@@ -61,6 +61,70 @@ const changeNumberImages = (imagesNumber) => db.collection("lms-opciones").doc("
         console.error("Error writing document: ", error);
     });
 
+// Funcion saveCategory() que guarda la categoria en la coleccion 'lms-categorias', requiere como parametro: nombreCat(el nombre de la categoria que se quiere agregar)
+const saveCategory = (nombreCat) => db.collection("lms-categorias").doc().set({
+        nombreCat
+    }).then(function () {
+        console.log("Categoria registrada correctamente");
+        categoryTable();
+        $('.modal').modal('close');
+    }).catch(function (error) {
+        console.log("Error al guardar la categoria: ", error);
+    });
+
+// Funcion updateCategory() que edita la categoria de la coleccion 'lms-categorias', requiere como parametros: id(el id de la categoria para editar), nombreCat(el nombre de la categoria que se quiere editar)
+const updateCategory = (id, nombreCat) => db.collection('lms-categorias').doc(id).update({
+        nombreCat
+    }).then(function () {
+        console.log("Categoria editada correctamente");
+        categoryTable();
+        $('.modal').modal('close');
+    }).catch(function (error) {
+        console.log("Error al editar la categoria: ", error);
+    });
+
+// Funcion deleteCategory() que elimina la categoria de la coleccion 'lms-categorias', requiere como parametro: id(la id de la categoria que se quiere eliminar)
+const deleteCategory = (id) => db.collection('lms-categorias').doc(id).delete()
+    .then(function () {
+        console.log("Categoria eliminada correctamenete");
+        categoryTable();        
+        $('.modal').modal('close');
+    }).catch(function (error) {
+        console.log("Error al eliminar la categoria: ", error);        
+    });
+
+// Funcion saveType() que guarda el tipo en la coleccion 'lms-tipos', requiere como parametro: nombreTipo(el nombre del tipo que se quiere agregar)
+const saveType = (nombreTipo) => db.collection("lms-tipos").doc().set({
+        nombreTipo
+    }).then(function () {
+        console.log("Tipo registrado correctamente");
+        typeTable();        
+        $('.modal').modal('close');
+    }).catch(function (error) {
+        console.log("Error al guardar el tipo: ", error);
+    });
+
+// Funcion updateType() que edita el tipo de la coleccion 'lms-tipos', requiere como parametros: id(el id del tipo para editar), nombreTipo(el nombre del tipo que se quiere editar)
+const updateType = (id, nombreTipo) => db.collection('lms-tipos').doc(id).update({
+    nombreTipo
+    }).then(function () {
+        console.log("Tipo editado correctamente");
+        typeTable();
+        $('.modal').modal('close');
+    }).catch(function (error) {
+        console.log("Error al editar el tipo: ", error);
+    });
+
+// Funcion deleteType() que elimina el tipo de la coleccion 'lms-tipos', requiere como parametro: id(la id del tipo que se quiere eliminar)
+const deleteType = (id) => db.collection('lms-tipos').doc(id).delete()
+    .then(function () {
+        console.log("Tipo eliminado correctamenete");
+        typeTable();        
+        $('.modal').modal('close');
+    }).catch(function (error) {
+        console.log("Error al eliminar el tipo: ", error);        
+    });
+
 // Fucnion currentImage que muestra el nombre de la imagen por defecto si existe una imagen por defecto
 currentImage = async function () {
     const currentDefaultImage = await getOptions();
@@ -227,7 +291,6 @@ logTable = async function () {
         aAction.onclick = async function () {
             var docData = await getDoc(logRegData.userAction.idRegister);
             
-            
             var modalLogTitle = document.getElementById('modalActionLogTitle');
             if (docData.data()) {
                 modalLogTitle.textContent = 'Log de '+logRegData.userAction.logType+' en el docente: '+docData.data().name;
@@ -242,31 +305,9 @@ logTable = async function () {
             newModalActionLogContent.className = 'row';
             newModalActionLogContent.id = 'modalActionLogContent';
             modalAction.replaceChild(newModalActionLogContent, modalActionLogContent);
-            
-            switch (logRegData.userAction.logType) {
-                case 'Registro':
-                    
-                    
-                    break;
-    
-                case 'Modificacion':
-                    
-                    
-                    break;
-    
-                case 'Eliminacion':
-                    
-                    
-                    break;
-            
-                default:
-                    break;
-            }
 
             if (logRegData.userAction.logType == 'Registro') {
                 
-
-                // Reemplazar con elementos para mostrar un card de docente
                 if (docData.data()) {
                     console.log(docData.data());
                     var dataD = docData.data();
@@ -284,20 +325,15 @@ logTable = async function () {
                     .get()
                     .then(async function(querySnapshot) {
                         // console.log(querySnapshot.docs.length);
-                        // Se comprueba si
+                        // Se comprueba si el docente tiene una imagen registrada en su portafolio
                         if (querySnapshot.docs.length > 0) {
                             querySnapshot.forEach(function(doc1) {
                                 urlImage = doc1.data().url;
-                                
                             });
                         } else {
                             var defImg = await getDefImg();
-                            // console.log(defImg.docs[0].data());
-                            
                             urlImage = defImg.docs[0].data().defaultImageUrl;
-
                         }
-                        
                         cardImage.src = urlImage;
                     })
                     .catch(function(error) {
@@ -421,58 +457,9 @@ logTable = async function () {
                     divCardContent.appendChild(divCardSummary);
                     divCardContent.appendChild(h6CategoryText);
                     divCardContent.appendChild(typeTag);
-                    // var divCardAction = document.createElement('div');
-                    // divCardAction.className = 'card-action';
-                    // var divRowCA = document.createElement('div');
-                    // divRowCA.className = 'row';
-                    // var divColCA1 = document.createElement('div');
-                    // divColCA1.className = 'col s6';
-                    // var btnCV = document.createElement('a');
-                    // btnCV.className = 'btn green';
-                    // btnCV.style = 'width: 100%;';
-                    
-                    // db.collection("lms-archivos").where("refid", "==", docData.id).where("type", "==", "pdf")
-                    // .get()
-                    // .then(function(querySnapshot) {
-                    //     querySnapshot.forEach(function(doc1) {
-                    //         urlCV = doc1.data().url;
-
-                    //         btnCV.setAttribute("href", urlCV);
-                    //         btnCV.setAttribute("target", "_blank");
-
-                    //     });
-                    // })
-                    // .catch(function(error) {
-                    //     console.log("Error getting documents: ", error);
-                    // });
-
-                    // var btnCVText = document.createTextNode('CV');
-                    // btnCV.appendChild(btnCVText);
-                    // divColCA1.appendChild(btnCV);
-
-                    // var divColCA2 = document.createElement('div');
-                    // divColCA2.className = 'col s6';
-                    // var btnPortafolio = document.createElement('a');
-                    // btnPortafolio.className = 'btn red modal-trigger';
-                    // btnPortafolio.href = '#modal1';
-                    // btnPortafolio.style = 'width: 100%;';
-                    // btnPortafolio.onclick = function () {
-                    //     console.log('imagenes');
-                    //     // portafolio(docenteDatos.name, docD.id, false);
-                    // }
-                    // var btnPortafolioText = document.createTextNode('Portafolio');
-                    // // btnPortafolioText.appendChild(btnPortafolioText);
-                    // btnPortafolio.appendChild(btnPortafolioText);
-                    // divColCA2.appendChild(btnPortafolio)
-
-                    // divRowCA.appendChild(divColCA1);
-                    // divRowCA.appendChild(divColCA2);
-
-                    // divCardAction.appendChild(divRowCA);
 
                     dicCard.appendChild(divCardImage);
                     dicCard.appendChild(divCardContent);
-                    // dicCard.appendChild(divCardAction);
                     divCol.appendChild(dicCard);
 
                     newModalActionLogContent.appendChild(divCol);
@@ -487,7 +474,6 @@ logTable = async function () {
                     newRegisterContent.textContent = logRegData.userAction.newRegister;
                     divNewRegister.appendChild(newRegisterTitle);
                     divNewRegister.appendChild(newRegisterContent);
-                    // Hasta aqui
 
                     newModalActionLogContent.appendChild(divNewRegister);
                 }
@@ -579,12 +565,23 @@ logTable = async function () {
 }
 
 // Funcion categoryTable() que rellena la tabla de categoria con los datos de la coleccion 'lms-categorias'
-categoryTalbe = async function () {
+categoryTable = async function () {
     // Se ejecuta la funcion getCategories(), y se guarda el resultado en la variable lmsCat
     const lmsCat = await getCategories();
 
-    // Se captura el elemento <tbody> donde seran mostrados los registros de las categorias
-    var categoryTableBody = document.getElementById('categoryTableBody');
+    // Se captura el elemento <tbody> donde seran mostrados los registros de las categorias y se captura el elemento <table> utilizado para refrescar la tabla de categorias
+    var categoryTableElement = document.getElementById('categoryTableElement');
+    var categoryTableBody = document.createElement('tbody');
+    categoryTableBody.id = 'categoryTableBody';
+    var oldCategoryTableBody = document.getElementById('categoryTableBody');
+    categoryTableElement.replaceChild(categoryTableBody, oldCategoryTableBody);
+
+    // Se capturan elementos del modal 
+    var imputModalTitle = document.getElementById('imputModalTitle');
+    var inputModalLabel = document.getElementById('inputModalLabel');
+    var saveInputModalBtn = document.getElementById('saveInputModalBtn');
+    var inputModalValue = document.getElementById('inputModalValue');
+
 
     // Se realiza la funcion forEach que crea las filas en la tabla con los datos de los usuarios, para luego colocarlos en el elemento <tbody>
     lmsCat.forEach(cat => {
@@ -593,11 +590,73 @@ categoryTalbe = async function () {
         var tableElement1 = document.createElement('td');
         tableElement1.textContent = catData.nombreCat;
         var tableElement2 = document.createElement('td');
-        tableElement2.textContent = 'Eliminar Editar';
+        // Boton de editar categoria
+        var editCategoryBtn = document.createElement('a');
+        editCategoryBtn.className = 'btn-floating yellow modal-trigger';
+        editCategoryBtn.href = '#inputModal';
+        editCategoryBtn.onclick = function () {
+            imputModalTitle.textContent = 'Editar categoria';
+            inputModalLabel.textContent = 'Nombre de categoria';
+            inputModalValue.value = catData.nombreCat;
+            inputModalLabel.className = 'active';
+            saveInputModalBtn.onclick = function () {
+                console.log(cat.id+' '+catData.nombreCat+' '+inputModalValue.value);
+                updateCategory(cat.id, inputModalValue.value);
+            }   
+        }
+        var editCategoryIcon = document.createElement('i');
+        editCategoryIcon.className = 'material-icons';
+        editCategoryIcon.textContent = 'edit';
+        editCategoryBtn.appendChild(editCategoryIcon);
+        tableElement2.appendChild(editCategoryBtn);
+        // Fin boton editar categoria
+        // Boton de eliminar categoria
+        var deleteCategoryBtn = document.createElement('a');
+        deleteCategoryBtn.className = 'btn-floating red modal-trigger';
+        deleteCategoryBtn.href = '#modalAlert';
+        deleteCategoryBtn.onclick = function () {
+            var confirmDelete = document.getElementById('confirmDelete');
+            confirmDelete.onclick = function () {
+                console.log(cat.id);
+                deleteCategory(cat.id);
+            }
+        }
+        var deleteCategoryIcon = document.createElement('i');
+        deleteCategoryIcon.className = 'material-icons';
+        deleteCategoryIcon.textContent = 'delete';
+        deleteCategoryBtn.appendChild(deleteCategoryIcon);
+        tableElement2.appendChild(deleteCategoryBtn);
+        // Fin boton eliminar categoria
+        // Se agregan los elementos creados a la tabla de categorias, como el nombre de la categoria y los botones de editar y eliminar
         tableRow.appendChild(tableElement1);
         tableRow.appendChild(tableElement2);
         categoryTableBody.appendChild(tableRow);
     });
+
+    // Boton de agregar categoria
+    var newTableRow = document.createElement('tr');
+    var tableElement = document.createElement('td');
+    tableElement.colSpan = 2;
+    var addCategoryBtn = document.createElement('a');
+    addCategoryBtn.className = 'btn-small green modal-trigger w100';
+    addCategoryBtn.href = '#inputModal';
+    addCategoryBtn.onclick = function () {
+        imputModalTitle.textContent = 'Agregar categoria';
+        inputModalLabel.textContent = 'Nombre de categoria';
+        inputModalValue.value = '';
+        inputModalLabel.className = '';
+        saveInputModalBtn.onclick = function () {
+            saveCategory(inputModalValue.value);
+        }
+    }
+    var addCategoryIcon = document.createElement('i');
+    addCategoryIcon.className = 'material-icons';
+    addCategoryIcon.textContent = 'add';
+    addCategoryBtn.appendChild(addCategoryIcon);
+    tableElement.appendChild(addCategoryBtn);
+    newTableRow.appendChild(tableElement);
+    categoryTableBody.appendChild(newTableRow);
+    // Fin de boton agregar categoria
 }
 
 // Funcion typeTable() que rellena la tabla de categoria con los datos de la coleccion 'lms-tipos'
@@ -605,21 +664,93 @@ typeTable = async function () {
     // Se ejecuta la funcion getTypes(), y se guarda el resultado en la variable lmsType
     const lmsType = await getTypes();
 
-    // Se captura el elemento <tbody> donde seran mostrados los registros de los tipos
-    var typeTableBody = document.getElementById('typeTableBody');
+    // Se captura el elemento <tbody> donde seran mostrados los registros de los tipos y se captura el elemento <table> utilizado para refrescar la tabla de tipos
+    var typeTableElement = document.getElementById('typeTableElement');
+    var typeTableBody = document.createElement('tbody');
+    typeTableBody.id = 'typeTableBody';
+    var oldTypeTableBody = document.getElementById('typeTableBody');
+    typeTableElement.replaceChild(typeTableBody, oldTypeTableBody);
+
+    // Se capturan elementos del modal 
+    var imputModalTitle = document.getElementById('imputModalTitle');
+    var inputModalLabel = document.getElementById('inputModalLabel');
+    var saveInputModalBtn = document.getElementById('saveInputModalBtn');
+    var inputModalValue = document.getElementById('inputModalValue');
 
     // Se realiza la funcion forEach que crea las filas en la tabla con los datos de los usuarios, para luego colocarlos en el elemento <tbody>
     lmsType.forEach(type => {
         var typeData = type.data();
+
         var tableRow = document.createElement('tr');
         var tableElement1 = document.createElement('td');
         tableElement1.textContent = typeData.nombreTipo;
         var tableElement2 = document.createElement('td');
-        tableElement2.textContent = 'Eliminar Editar';
+        // Boton de editar tipo
+        var editTypeBtn = document.createElement('a');
+        editTypeBtn.className = 'btn-floating yellow modal-trigger';
+        editTypeBtn.href = '#inputModal';
+        editTypeBtn.onclick = function () {
+            imputModalTitle.textContent = 'Editar tipo';
+            inputModalLabel.textContent = 'Nombre de tipo';
+            inputModalValue.value = typeData.nombreTipo;
+            inputModalLabel.className = 'active';
+            saveInputModalBtn.onclick = function () {
+                console.log(type.id+' '+typeData.nombreCat+' '+inputModalValue.value);
+                updateType(type.id, inputModalValue.value);
+            }   
+        }
+        var editTypeIcon = document.createElement('i');
+        editTypeIcon.className = 'material-icons';
+        editTypeIcon.textContent = 'edit';
+        editTypeBtn.appendChild(editTypeIcon);
+        tableElement2.appendChild(editTypeBtn);
+        // Fin boton editar tipo
+        // Boton de eliminar tipo
+        var deleteTypeBtn = document.createElement('a');
+        deleteTypeBtn.className = 'btn-floating red modal-trigger';
+        deleteTypeBtn.href = '#modalAlert';
+        deleteTypeBtn.onclick = function () {
+            var confirmDelete = document.getElementById('confirmDelete');
+            confirmDelete.onclick = function () {
+                console.log(type.id);
+                deleteType(type.id);
+            }
+        }
+        var deleteTypeIcon = document.createElement('i');
+        deleteTypeIcon.className = 'material-icons';
+        deleteTypeIcon.textContent = 'delete';
+        deleteTypeBtn.appendChild(deleteTypeIcon);
+        tableElement2.appendChild(deleteTypeBtn);
+        // Fin boton eliminar tipo
+        // Se agregan los elementos creados a la tabla de tipos, como el nombre del tipo y los botones de editar y eliminar
         tableRow.appendChild(tableElement1);
         tableRow.appendChild(tableElement2);
         typeTableBody.appendChild(tableRow);
     });
+    // Boton de agregar tipo
+    var newTableRow = document.createElement('tr');
+    var tableElement = document.createElement('td');
+    tableElement.colSpan = 2;
+    var addTypeBtn = document.createElement('a');
+    addTypeBtn.className = 'btn-small green modal-trigger w100';
+    addTypeBtn.href = '#inputModal';
+    addTypeBtn.onclick = function () {
+        imputModalTitle.textContent = 'Agregar tipo';
+        inputModalLabel.textContent = 'Nombre de tipo';
+        inputModalValue.value = '';
+        inputModalLabel.className = '';
+        saveInputModalBtn.onclick = function () {
+            saveType(inputModalValue.value);
+        }
+    }
+    var addTypeIcon = document.createElement('i');
+    addTypeIcon.className = 'material-icons';
+    addTypeIcon.textContent = 'add';
+    addTypeBtn.appendChild(addTypeIcon);
+    tableElement.appendChild(addTypeBtn);
+    newTableRow.appendChild(tableElement);
+    typeTableBody.appendChild(newTableRow);
+    // Fin de boton agregar tipo
 }
 
 // Se captura el checkbos "todos" para que los checkbox del panel sean seleccionados o no seleccionados
@@ -794,7 +925,6 @@ async function initApp() {
                 } else {
                     idRegistrarDocenteBtn.setAttribute('style', '');
                     idListaDocentesBtn.setAttribute('style', '');
-                            
                 }
                 
             }else{
@@ -865,7 +995,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
 
     logTable();
 
-    categoryTalbe();
+    categoryTable();
 
     typeTable();
 

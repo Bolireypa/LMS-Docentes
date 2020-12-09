@@ -33,7 +33,7 @@
 }
 
 .card {
-    height: 648px;
+    height: 695px;
 }
 
 .cardInfo{
@@ -65,6 +65,9 @@
 
 .divCAButtons{
     padding-top: 5px;
+    position: absolute;
+    bottom: -10px;
+    width: 90%;
 }
 
 .pTextContent{
@@ -129,11 +132,13 @@
     padding-bottom: 1px;
     padding-top: 1px;
 }
-/* .spanCardTitle{
-    background-color: black;
+
+.w100 {
+    width: 100%;
 }
 
-.card-title{
-    background-color: black;
-    opacity: 20%;
-} */
+.dividerClass {
+    position: absolute;
+    bottom: 52px;
+    width: 84%;
+}
