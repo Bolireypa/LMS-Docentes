@@ -35,14 +35,14 @@
         </div>
     </nav>
     <ul class="sidenav" id="mobile-demo">
-            <li id="idListaUsuariosMovil" style="display:none;"><a href="listaUsuarios.html">Lista de usuarios</a></li>
-            <li id="idRegistrarDocenteBtnMovil" style="display:none;"><a href="registroDocentes.html">Registro de docentes</a></li>
-            <li id="idListaDocentesBtnMovil" class="active"><a href="listaDocentes.html">Lista de docentes</a></li>
-            <li class="divider" tabindex="-1"></li>
-            <li id="idOpcionesBtnMovil" style="display:none;"><a href="opciones.html">Panel de control</a></li>
-            <li class="divider" tabindex="-1"></li>
-            <li id="idUserProfile"><a href="#!">Ver perfil</a></li>
-            <li id="idLogoutBtnMovil"><a href="#!">Logout</a></li>
+        <li id="idListaUsuariosMovil" style="display:none;"><a href="listaUsuarios.html">Lista de usuarios</a></li>
+        <li id="idRegistrarDocenteBtnMovil" style="display:none;"><a href="registroDocentes.html">Registro de docentes</a></li>
+        <li id="idListaDocentesBtnMovil" class="active"><a href="listaDocentes.html">Lista de docentes</a></li>
+        <li class="divider" tabindex="-1"></li>
+        <li id="idOpcionesBtnMovil" style="display:none;"><a href="opciones.html">Panel de control</a></li>
+        <li class="divider" tabindex="-1"></li>
+        <li id="idUserProfile"><a href="#!">Ver perfil</a></li>
+        <li id="idLogoutBtnMovil"><a href="#!">Logout</a></li>
     </ul>
 
     <div class="container">
@@ -170,7 +170,7 @@
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
 
     <script src="./js/materialize.min.js"></script>
@@ -205,19 +205,18 @@
     <script src="./perfilUsuario.js"></script>
 
     <script>
-    
-    $(document).ready(function(){
-        $('.sidenav').sidenav();
-    });
-    $(document).ready(function(){
-        $(".dropdown-trigger").dropdown({ hover: false });
-    });
-    $(document).ready(function(){
-        $('.modal').modal();
-    });
-    $(document).ready(function(){
-        $('select').formSelect();
-    });
+        $(document).ready(function(){
+            $('.sidenav').sidenav();
+        });
+        $(document).ready(function(){
+            $(".dropdown-trigger").dropdown({ hover: false });
+        });
+        $(document).ready(function(){
+            $('.modal').modal();
+        });
+        $(document).ready(function(){
+            $('select').formSelect();
+        });
     </script>
 
 </body>

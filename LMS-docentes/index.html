@@ -69,6 +69,7 @@
                                         <a href="resetPassword.html">¿Olvidaste la contraseña?</a>
                                     </div>
                                 </div>
+                                <!--  -->
                             </form>
                         </div>
                     </div>
@@ -77,7 +78,7 @@
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
 
     <script src="./js/materialize.min.js"></script>
@@ -90,7 +91,7 @@
 
     <script src="https://www.gstatic.com/firebasejs/7.23.0/firebase-storage.js"></script>
     <script>
-        // Your web app's Firebase configuration
+        // Configuracion de Firebase
         var firebaseConfig = {
             apiKey: "AIzaSyAXQXbsFbtTjJLtqcPgWJRzyUlvq1i2qOE",
             authDomain: "lms-docentes.firebaseapp.com",
@@ -100,9 +101,9 @@
             messagingSenderId: "430235197366",
             appId: "1:430235197366:web:1b31227c0c8a5e7e2a6b17"
         };
-        // Initialize Firebase
+        // Inicializacion de Firebase
         firebase.initializeApp(firebaseConfig);
-
+        // Inicializacion de firebase storage
         var storage = firebase.storage();
 
     </script>
@@ -116,7 +117,6 @@
         $(document).ready(function(){
             $(".dropdown-trigger").dropdown({ hover: false });
         });
-
     </script>
 
 </body>
