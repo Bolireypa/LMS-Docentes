@@ -15,10 +15,10 @@
 
 </head>
 <body>
-        <ul id="dropdown1" class="dropdown-content">
-            <li><a href="#!" id="btnUserProfile">Ver perfil</a></li>
-            <li><a href="#!" id="btnLogOut">Log out</a></li>
-        </ul>
+    <ul id="dropdown1" class="dropdown-content">
+        <li><a href="#!" id="btnUserProfile">Ver perfil</a></li>
+        <li><a href="#!" id="btnLogOut">Log out</a></li>
+    </ul>
     <nav>
         <div class="nav-wrapper">
           <a href="index.html" class="brand-logo">Co Marca</a>
@@ -30,7 +30,7 @@
     </nav>
     <ul class="sidenav" id="mobile-demo">
             <li id="idUserProfile"><a href="#!">Ver perfil</a></li>
-            <li id="idLogoutBtnMovil"><a href="#!">Logout</a></li>
+            <li id="idLogoutBtnMovil"><a href="#!">Log out</a></li>
     </ul>
 
     <div class="container">
@@ -82,7 +82,7 @@
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
 
     <script src="./js/materialize.min.js"></script>
@@ -116,13 +116,12 @@
     <script src="./perfilUsuario.js"></script>
 
     <script>
-    
-    $(document).ready(function(){
-        $('.sidenav').sidenav();
-    });
-    $(document).ready(function(){
-        $(".dropdown-trigger").dropdown({ hover: false });
-    });
+        $(document).ready(function(){
+            $('.sidenav').sidenav();
+        });
+        $(document).ready(function(){
+            $(".dropdown-trigger").dropdown({ hover: false });
+        });
     </script>
 
 </body>

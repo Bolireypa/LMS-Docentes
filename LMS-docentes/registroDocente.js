@@ -258,7 +258,7 @@ window.addEventListener('DOMContentLoaded', async (e) => {
     lmsCategorias.forEach(docC => {
         console.log(docC.data());
         var optionCat = document.createElement('option');
-        optionCat.value = docC.data().nombreCat;
+        optionCat.value = docC.id;
         var optionCatText = document.createTextNode(docC.data().nombreCat);
         optionCat.appendChild(optionCatText);
         selectCategoryId.appendChild(optionCat);
@@ -270,7 +270,7 @@ window.addEventListener('DOMContentLoaded', async (e) => {
     lmsTipos.forEach(docT => {
         console.log(docT.data());
         var optionType = document.createElement('option');
-        optionType.value = docT.data().nombreTipo;
+        optionType.value = docT.id;
         var optionTypeText = document.createTextNode(docT.data().nombreTipo);
         optionType.appendChild(optionTypeText);
         selectTypeId.appendChild(optionType);

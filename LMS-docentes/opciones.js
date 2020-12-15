@@ -1,22 +1,20 @@
-//
+// Se inicializa firebase
 const db = firebase.firestore();
 
 // Variable btnLogOut que captura el boton 'Salir' para el logout del usuario
 var btnLogOut = document.getElementById('btnLogOut');
 var idLogoutBtnMovil = document.getElementById('idLogoutBtnMovil');
 
-//
+// Se captura elementos del DOM para luego ser modificados
 var idRegistrarDocenteBtn = document.getElementById('idRegistrarDocenteBtn');
 var idListaDocentesBtn = document.getElementById('idListaDocentesBtn');
-
 var idCurrentImageh5 = document.getElementById('idCurrentImageh5');
-
 var defaultImageForm = document.getElementById('defaultImageForm');
 
 // Funcion getUsers() que recupera los datos guardados en la base de datos de firebase, en la coleccion 'lms-roles'
 const getUsers = () => db.collection('lms-roles').get();
 
-// Funcion getOptions() que recupera los datos guardados en la base de datos de firebase, en la coleccion 'lms-roles'
+// Funcion getOptions() que recupera los datos guardados en la base de datos de firebase, en la coleccion 'lms-opciones'
 const getOptions = () => db.collection('lms-opciones').get();
 
 // Funcion getLog() que recupera los datos guardados en la base de datos de firebase, en la coleccion 'lms-log'
@@ -37,14 +35,20 @@ const getUserInfo = (id) => db.collection('lms-roles').where('idUser', '==', id)
 // Funcion getDoc() que obtiene, mediante su id, todos los datos del docente registrado en la coleccion 'lms-docentes' de Firebase
 const getDoc = (id) => db.collection('lms-docentes').doc(id).get();
 
-const getDefImg = () => db.collection('lms-opciones').get();
-    
+// Funcion getDocCat() que realiza una consulta a la coleccion 'lms-docente' para obtener los docentes registrados en una categoria, requiere el parametro: idCat(la id de la categoria a consultar en la coleccion 'lms-docentes')
+const getDocCat = (idCat) => db.collection('lms-docentes').where('category', '==', idCat).get();
+
+// Funcion getDocType() que realiza una consulta a la coleccion 'lms-docente' para obtener los docentes registrados en un tipo, requiere el parametro: idType(la id del tipo a consultar en la coleccion 'lms-docentes')
+const getDocType = (idType) => db.collection('lms-docentes').where('type', '==', idType).get();
+
+// Funcion saveDefectImage() que guarda los datos de la imagen por defecto el la coleccion 'lms-opciones', requiere los parametros: defaultImageName(nombre de la imagen), defaultImageUrl(la url de la ubicacion de la imagen)
 const saveDefectImage = (defaultImageName, defaultImageUrl) => db.collection("lms-opciones").doc("I15m4a89g618E37rd5WQ").update({
         defaultImageName,
         defaultImageUrl,
     })
     .then(function() {
         console.log("Document successfully written!");
+        // Si se guardaron correctamente los datos se recarga la pagina
         location.reload();
     })
     .catch(function(error) {
@@ -56,6 +60,7 @@ const changeNumberImages = (imagesNumber) => db.collection("lms-opciones").doc("
         imagesNumber
     }).then(function () {
         console.log("Document successfully written!");
+        // Si se guardaron correctamente los datos se recarga la pagina
         location.reload();
     }).catch(function(error) {
         console.error("Error writing document: ", error);
@@ -66,6 +71,7 @@ const saveCategory = (nombreCat) => db.collection("lms-categorias").doc().set({
         nombreCat
     }).then(function () {
         console.log("Categoria registrada correctamente");
+        // Se ejecuta la funcion categoryTable() que recarga la tabla con las categorias
         categoryTable();
         $('.modal').modal('close');
     }).catch(function (error) {
@@ -77,6 +83,7 @@ const updateCategory = (id, nombreCat) => db.collection('lms-categorias').doc(id
         nombreCat
     }).then(function () {
         console.log("Categoria editada correctamente");
+        // Se ejecuta la funcion categoryTable() que recarga la tabla con las categorias
         categoryTable();
         $('.modal').modal('close');
     }).catch(function (error) {
@@ -87,6 +94,7 @@ const updateCategory = (id, nombreCat) => db.collection('lms-categorias').doc(id
 const deleteCategory = (id) => db.collection('lms-categorias').doc(id).delete()
     .then(function () {
         console.log("Categoria eliminada correctamenete");
+        // Se ejecuta la funcion categoryTable() que recarga la tabla con las categorias
         categoryTable();        
         $('.modal').modal('close');
     }).catch(function (error) {
@@ -98,6 +106,7 @@ const saveType = (nombreTipo) => db.collection("lms-tipos").doc().set({
         nombreTipo
     }).then(function () {
         console.log("Tipo registrado correctamente");
+        // Se ejecuta la funcion typeTable() que recarga la tabla con los tipos
         typeTable();        
         $('.modal').modal('close');
     }).catch(function (error) {
@@ -109,6 +118,7 @@ const updateType = (id, nombreTipo) => db.collection('lms-tipos').doc(id).update
     nombreTipo
     }).then(function () {
         console.log("Tipo editado correctamente");
+        // Se ejecuta la funcion typeTable() que recarga la tabla con los tipos
         typeTable();
         $('.modal').modal('close');
     }).catch(function (error) {
@@ -119,6 +129,7 @@ const updateType = (id, nombreTipo) => db.collection('lms-tipos').doc(id).update
 const deleteType = (id) => db.collection('lms-tipos').doc(id).delete()
     .then(function () {
         console.log("Tipo eliminado correctamenete");
+        // Se ejecuta la funcion typeTable() que recarga la tabla con los tipos
         typeTable();        
         $('.modal').modal('close');
     }).catch(function (error) {
@@ -127,47 +138,40 @@ const deleteType = (id) => db.collection('lms-tipos').doc(id).delete()
 
 // Fucnion currentImage que muestra el nombre de la imagen por defecto si existe una imagen por defecto
 currentImage = async function () {
+    // Se obtiene la imagen por defecto meiante la funcion getOptions()
     const currentDefaultImage = await getOptions();
+    // Se comprueba que exista la imagen, caso contrario se indica en la pagina que la imagen no existe
     if (currentDefaultImage.docs[0]) {
-        // console.log('existe registro');
+        // Se comprueba que exista el campo de la imagen en el registro de opciones de la coleccion 'lms-opciones' para mostrar su nombre en la pagina
         if (currentDefaultImage.docs[0].data().defaultImageName) {
-            // console.log('existe');
             idCurrentImageh5.textContent = currentDefaultImage.docs[0].data().defaultImageName;
         } else {
-            // console.log('noexiste');
             idCurrentImageh5.textContent = 'No hay imagen por defecto';
         }
     } else {
-        // console.log('no existe registro');
         idCurrentImageh5.textContent = 'No existe registro';
     }
-    
 }
 
+// Funcion uploadImageFile() que realiza el proceso de subir la imagen seleccionada al storage
 uploadImageFile = function(){
     var defaultImageFile = defaultImageForm['inputDefaultImage'].files[0];
-    console.log(defaultImageFile);
+    // Se comprueba que la imagen exista, caso contrario se muestra un mensaje de alerta
     if (!defaultImageFile) {
-        alert('Seleccione una imagen')
+        alert('Seleccione una imagen');
     }else{
-
+        // Realiza el proceso de subir la imagen al storage
         var storageDocRef = storage.ref('/lmsImages/'+defaultImageFile.name)
         var uploadFile = storageDocRef.put(defaultImageFile);
         uploadFile.on('state_changed', function (snapshot) {
             
         }, function (error) {
             console.log(error);
-
         }, function () {
-                
             console.log('Documento subido');
+            // Se obtiene la url de la imagen que se subio para luego guardarla en la coleccion 'lms-opciones' mediante la funcion saveDefectImage()
             uploadFile.snapshot.ref.getDownloadURL().then(function (url) {
-                console.log(url);
-                console.log(defaultImageFile.name);
-
                 saveDefectImage(defaultImageFile.name, url);
-                // saveDocuments(defaultImageFile.name, refid, url, 'pdf', 'documentCV');
-                
             })
         });
     }
@@ -177,16 +181,13 @@ uploadImageFile = function(){
 logTable = async function () {
     // Se ejecuta la funcion getLog(), y se guarda el resultado en la variable lmsLog
     const lmsLog = await getLog();
-
     // Se captura el elemento <tbody> donde seran mostrados los registros de log
     var logTableBody = document.getElementById('logTableBody');
-
-
     // Se realiza la funcion forEach que crea las filas en la tabla con los datos de los usuarios, para luego colocarlos en el elemento <tbody>
     lmsLog.forEach(logReg => {
         var logRegData = logReg.data();
         var tableRow = document.createElement('tr');
-
+        // Se crea la celda que muestra los datos del usuario que realizo alguna accion con los datos de los docentes
         var tableElement1 = document.createElement('td');
         var aUser = document.createElement('a');
         aUser.textContent = logRegData.userName;
@@ -249,7 +250,7 @@ logTable = async function () {
             // Fin para mostrar los datos del usuario            
         }
         tableElement1.appendChild(aUser);
-        
+        // Se crea la celda que muestra la accion realizada para luego mostralo mas a detalle en un modal
         var tableElement2 = document.createElement('td');
         var aAction = document.createElement('a');
         switch (logRegData.userAction.logType) {
@@ -309,7 +310,6 @@ logTable = async function () {
             if (logRegData.userAction.logType == 'Registro') {
                 
                 if (docData.data()) {
-                    console.log(docData.data());
                     var dataD = docData.data();
                     var divCol = document.createElement('div');
                     divCol.className = 'col s12 m6';
@@ -324,14 +324,13 @@ logTable = async function () {
                     db.collection("lms-archivos").where("refid", "==", docData.id).where("type", "==", "imagen")
                     .get()
                     .then(async function(querySnapshot) {
-                        // console.log(querySnapshot.docs.length);
                         // Se comprueba si el docente tiene una imagen registrada en su portafolio
                         if (querySnapshot.docs.length > 0) {
                             querySnapshot.forEach(function(doc1) {
                                 urlImage = doc1.data().url;
                             });
                         } else {
-                            var defImg = await getDefImg();
+                            var defImg = await getOptions();
                             urlImage = defImg.docs[0].data().defaultImageUrl;
                         }
                         cardImage.src = urlImage;
@@ -541,18 +540,15 @@ logTable = async function () {
                     default:
                         break;
                 }
-    
                 var newRegisterContent = document.createElement('p');
                 newRegisterContent.textContent = logRegData.userAction.newRegister;
                 divNewRegister.appendChild(newRegisterTitle);
                 divNewRegister.appendChild(newRegisterContent);
                 newModalActionLogContent.appendChild(divNewRegister);
             }
-
-            // newModalActionLogContent.textContent = logRegData.userAction.newRegister;
         }
         tableElement2.appendChild(aAction);
-
+        // Se crea la celda que muestra la fecha de la accion realizada
         var tableElement3 = document.createElement('td');
         tableElement3.textContent = logRegData.logDate.toDate();
         tableRow.appendChild(tableElement1);
@@ -560,7 +556,6 @@ logTable = async function () {
         tableRow.appendChild(tableElement3);
         logTableBody.appendChild(tableRow);
         // console.log(logRegData.logDate.toDate());
-        
     });
 }
 
@@ -588,11 +583,21 @@ categoryTable = async function () {
         var catData = cat.data();
         var tableRow = document.createElement('tr');
         var tableElement1 = document.createElement('td');
-        tableElement1.textContent = catData.nombreCat;
+        // Se crea un badge para mostrar las categorias en uso
+        var categoryElements = document.createElement('span');
+        categoryElements.setAttribute('data-badge-caption', '');
+        var numberCategoriesDoc = 0;
+        numberElementsVerification(cat.id, categoryElements, 'Category').then(function (i) {
+            numberCategoriesDoc = i;
+        });
+        tableElement1.appendChild(categoryElements);
+        // Fin de creacion del badge
+        var tdCategoryText = document.createTextNode(' '+catData.nombreCat);
+        tableElement1.appendChild(tdCategoryText);
         var tableElement2 = document.createElement('td');
-        // Boton de editar categoria
+        // Boton de opciones de categoria
         var editCategoryBtn = document.createElement('a');
-        editCategoryBtn.className = 'btn-floating yellow modal-trigger';
+        editCategoryBtn.className = 'btn-floating btn-small teal darken-2 modal-trigger';
         editCategoryBtn.href = '#inputModal';
         editCategoryBtn.onclick = function () {
             imputModalTitle.textContent = 'Editar categoria';
@@ -600,16 +605,23 @@ categoryTable = async function () {
             inputModalValue.value = catData.nombreCat;
             inputModalLabel.className = 'active';
             saveInputModalBtn.onclick = function () {
-                console.log(cat.id+' '+catData.nombreCat+' '+inputModalValue.value);
                 updateCategory(cat.id, inputModalValue.value);
-            }   
+            }
+            console.log(numberCategoriesDoc);
+            var divDeleteModal = document.getElementById('divDeleteModal');
+            while (divDeleteModal.firstChild) {
+                divDeleteModal.removeChild(divDeleteModal.firstChild);
+            }
+            if (numberCategoriesDoc < 1) {
+                modalDeleteContent('Categoria', 'Esta categoria no esta en uso', catData.nombreCat, cat.id, divDeleteModal);                
+            }            
         }
         var editCategoryIcon = document.createElement('i');
         editCategoryIcon.className = 'material-icons';
-        editCategoryIcon.textContent = 'edit';
+        editCategoryIcon.textContent = 'settings';
         editCategoryBtn.appendChild(editCategoryIcon);
         tableElement2.appendChild(editCategoryBtn);
-        // Fin boton editar categoria
+        // Fin boton opciones de categoria
         // Boton de eliminar categoria
         var deleteCategoryBtn = document.createElement('a');
         deleteCategoryBtn.className = 'btn-floating red modal-trigger';
@@ -617,15 +629,14 @@ categoryTable = async function () {
         deleteCategoryBtn.onclick = function () {
             var confirmDelete = document.getElementById('confirmDelete');
             confirmDelete.onclick = function () {
-                console.log(cat.id);
                 deleteCategory(cat.id);
             }
         }
         var deleteCategoryIcon = document.createElement('i');
         deleteCategoryIcon.className = 'material-icons';
         deleteCategoryIcon.textContent = 'delete';
-        deleteCategoryBtn.appendChild(deleteCategoryIcon);
-        tableElement2.appendChild(deleteCategoryBtn);
+        // deleteCategoryBtn.appendChild(deleteCategoryIcon);
+        // tableElement2.appendChild(deleteCategoryBtn);
         // Fin boton eliminar categoria
         // Se agregan los elementos creados a la tabla de categorias, como el nombre de la categoria y los botones de editar y eliminar
         tableRow.appendChild(tableElement1);
@@ -647,6 +658,10 @@ categoryTable = async function () {
         inputModalLabel.className = '';
         saveInputModalBtn.onclick = function () {
             saveCategory(inputModalValue.value);
+        }
+        var divDeleteModal = document.getElementById('divDeleteModal');
+        while (divDeleteModal.firstChild) {
+            divDeleteModal.removeChild(divDeleteModal.firstChild);
         }
     }
     var addCategoryIcon = document.createElement('i');
@@ -683,11 +698,21 @@ typeTable = async function () {
 
         var tableRow = document.createElement('tr');
         var tableElement1 = document.createElement('td');
-        tableElement1.textContent = typeData.nombreTipo;
+        // Se crea un badge para mostrar los tipos en uso
+        var typeElements = document.createElement('span');
+        typeElements.setAttribute('data-badge-caption', '');
+        var numberTypesDoc = 0;
+        numberElementsVerification(type.id, typeElements, 'Type').then(function (i) {
+            numberTypesDoc = i;
+        });
+        tableElement1.appendChild(typeElements);
+        // Fin de creacion del badge
+        var tdTypeText = document.createTextNode(' '+typeData.nombreTipo);
+        tableElement1.appendChild(tdTypeText);
         var tableElement2 = document.createElement('td');
         // Boton de editar tipo
         var editTypeBtn = document.createElement('a');
-        editTypeBtn.className = 'btn-floating yellow modal-trigger';
+        editTypeBtn.className = 'btn-floating btn-small teal darken-2 modal-trigger';
         editTypeBtn.href = '#inputModal';
         editTypeBtn.onclick = function () {
             imputModalTitle.textContent = 'Editar tipo';
@@ -695,13 +720,19 @@ typeTable = async function () {
             inputModalValue.value = typeData.nombreTipo;
             inputModalLabel.className = 'active';
             saveInputModalBtn.onclick = function () {
-                console.log(type.id+' '+typeData.nombreCat+' '+inputModalValue.value);
                 updateType(type.id, inputModalValue.value);
             }   
+            var divDeleteModal = document.getElementById('divDeleteModal');
+            while (divDeleteModal.firstChild) {
+                divDeleteModal.removeChild(divDeleteModal.firstChild);
+            }
+            if (numberTypesDoc < 1) {
+                modalDeleteContent('Tipo', 'Este tipo no esta en uso', typeData.nombreTipo, type.id, divDeleteModal);
+            }
         }
         var editTypeIcon = document.createElement('i');
         editTypeIcon.className = 'material-icons';
-        editTypeIcon.textContent = 'edit';
+        editTypeIcon.textContent = 'settings';
         editTypeBtn.appendChild(editTypeIcon);
         tableElement2.appendChild(editTypeBtn);
         // Fin boton editar tipo
@@ -712,15 +743,14 @@ typeTable = async function () {
         deleteTypeBtn.onclick = function () {
             var confirmDelete = document.getElementById('confirmDelete');
             confirmDelete.onclick = function () {
-                console.log(type.id);
                 deleteType(type.id);
             }
         }
         var deleteTypeIcon = document.createElement('i');
         deleteTypeIcon.className = 'material-icons';
         deleteTypeIcon.textContent = 'delete';
-        deleteTypeBtn.appendChild(deleteTypeIcon);
-        tableElement2.appendChild(deleteTypeBtn);
+        // deleteTypeBtn.appendChild(deleteTypeIcon);
+        // tableElement2.appendChild(deleteTypeBtn);
         // Fin boton eliminar tipo
         // Se agregan los elementos creados a la tabla de tipos, como el nombre del tipo y los botones de editar y eliminar
         tableRow.appendChild(tableElement1);
@@ -751,6 +781,26 @@ typeTable = async function () {
     newTableRow.appendChild(tableElement);
     typeTableBody.appendChild(newTableRow);
     // Fin de boton agregar tipo
+}
+
+// Funcion numberElementsVerification() que realiza el conteo del numero de docente registrados con cada categoria
+numberElementsVerification = async function (idElement, badgeText, element) {
+    var getElements;
+    if (element == 'Category') {
+        getElements = await getDocCat(idElement);
+    }
+    if (element == 'Type') {
+        getElements = await getDocType(idElement);
+    }
+    if (getElements.docs.length > 0) {
+        badgeText.className = 'new badge';
+        
+    } else {
+        badgeText.className = 'new badge red';
+        
+    }
+    badgeText.textContent = getElements.docs.length;
+    return getElements.docs.length;
 }
 
 // Se captura el checkbos "todos" para que los checkbox del panel sean seleccionados o no seleccionados
@@ -809,12 +859,9 @@ btnExportEmail.addEventListener('click', async (e) => {
         if (formCheckbox['typeCheckbox'].checked) {
             data[countDocs].type = docData.data().type+" ";
         }
-        
-        // data.push(docData.data());
         countDocs++;
     });
-    console.log(data);
-    
+    // Se crea un objeto llamado 'headers' para la cabecera del documento CSV con los datos selecionados en el panel de control    
     const headers = {
         nombre: 'Nombre'
     };
@@ -839,11 +886,13 @@ btnExportEmail.addEventListener('click', async (e) => {
     if (formCheckbox['typeCheckbox'].checked) {
         headers.type = 'Tipo';
     }
-
+    // Se captura el <input> para el nombre del documento CSV
     var CSVFileName = document.getElementById('CSVFileName').value;
+    // En caso de que no se le coloque el nombre al archivo se crea con el nombre 'Documento.csv'
     if (CSVFileName == '') {
         CSVFileName = 'Documento';
     }
+    // Se ejecuta la funcnion exportCSVFile() en el que se le envian los parametros de la cabecera del documento, el contenido y el nombre del documento
     exportCSVFile(headers, data, CSVFileName);
 })
 
@@ -874,12 +923,8 @@ function exportCSVFile(headers, items, fileName) {
     const exportName = fileName + ".csv" || "export.csv";
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     if (navigator.msSaveBlob) {
-        // console.log('navigator mssaveblob');
-        
         navigator.msSaveBlob(blob, exportName);
     } else {
-        // console.log('no navigator mssaveblob');
-
         const link = document.createElement("a");
         if (link.download !== undefined) {
             const url = URL.createObjectURL(blob);
@@ -893,22 +938,80 @@ function exportCSVFile(headers, items, fileName) {
     }
 }
 
+//
+createElementFunction = function (elementName, elementClass, elementTextContent, elementId) {
+    var newElement = document.createElement(elementName);
+    if (elementClass != '') {
+        newElement.className = elementClass;
+    }
+    if (elementTextContent != '') {
+        newElement.textContent = elementTextContent;
+    }
+    if (elementId != '') {
+        newElement.id = elementId;
+    }
+    return newElement;
+}
 
-
-
+// 
+modalDeleteContent = function (optionDel, optionText, optionName, optionId, divDeleteModal) {
+    var newDivider = createElementFunction('div', 'divider', '', '');
+    divDeleteModal.appendChild(newDivider);
+    var inputModalDeleteTitle = createElementFunction('h5', '', 'Eliminar '+optionDel, '');
+    divDeleteModal.appendChild(inputModalDeleteTitle);
+    var rowWarningDelete = createElementFunction('div', 'row', '', '');
+    var colPWarningDelete = createElementFunction('div', 'col s8', '', '');
+    var pWarningDelete = createElementFunction('p', '', optionText, '');
+    colPWarningDelete.appendChild(pWarningDelete);
+    rowWarningDelete.appendChild(colPWarningDelete);
+    var colBtnWarningDelete = createElementFunction('div', 'col s4', '', '');
+    var btnWarningDelete = createElementFunction('a', 'btn btn-small red darken-4', 'Eliminar', '');
+    colBtnWarningDelete.appendChild(btnWarningDelete);
+    rowWarningDelete.appendChild(colBtnWarningDelete);
+    divDeleteModal.appendChild(rowWarningDelete);
+    btnWarningDelete.onclick = function () {
+        console.log('eliminar '+optionDel,optionName,optionId);
+        var rowConfirmDelete = createElementFunction('div', 'row', '', '');
+        var h6ConfirmTitle = createElementFunction('h6', '', 'Esta seguro?', '');
+        var colBtnConfirmDelete = createElementFunction('div', 'col s3', '', '');
+        var btnConfirmDelete = createElementFunction('a', 'btn btn-small red darken-4 w100', 'Si', '');
+        colBtnConfirmDelete.appendChild(btnConfirmDelete);
+        var colBtnCancelDelete = createElementFunction('div', 'col s3', '', '');
+        var btnCancelDelete = createElementFunction('a', 'btn btn-small green darken-4 modal-close w100', 'Cancelar', '');
+        colBtnCancelDelete.appendChild(btnCancelDelete);
+        rowConfirmDelete.appendChild(h6ConfirmTitle);
+        rowConfirmDelete.appendChild(colBtnConfirmDelete);
+        rowConfirmDelete.appendChild(colBtnCancelDelete);
+        divDeleteModal.appendChild(rowConfirmDelete);
+        btnConfirmDelete.onclick = function () {
+            if (optionDel == 'Categoria') {
+                console.log(optionId, '1');    
+                deleteCategory(optionId);
+            }
+            if (optionDel == 'Tipo') {
+                console.log(optionId, '2');                
+                deleteType(optionId);
+            }
+        }
+    }
+}
 
 // Funcion initApp() utilizada para verificar si un usuario esta autenticado
 async function initApp() {
-    // var state;
+    // Se comprueba que haya un usuario logeado con la funciones de firebase
     firebase.auth().onAuthStateChanged(async function(user) {    
         if (user) {
+        // Si el usuario esta logeado se realizan cambios en la barra de navegacion para que se muestre su nombr
             document.getElementById('dropdown1Text').textContent = user.displayName;
             idDropdown.setAttribute('style', '');
+            // Variables utilizadas para comprobar la habilitacion del usuario y su rol
             var userRol = '';
             var userEnable = false;
+            // Se realiza una consulta a la coleccion 'lms-roles' con la uid del usuario, para obtener el rol del usuario logeado y el estado de habilitacion
             await db.collection("lms-roles").where("idUser", "==", user.uid)
             .get()
             .then(function(querySnapshot) {
+                // Se asignan los datos del rol y el estado de habilitacion del usuario en variables
                 querySnapshot.forEach(function(doc1) {
                     userRol = doc1.data().rolName;
                     userEnable = doc1.data().userEnable;
@@ -917,8 +1020,8 @@ async function initApp() {
             .catch(function(error) {
                 console.log("Error getting documents: ", error);
             });
-
             console.log('User is signed in', user.displayName, userRol);
+            // Si el usuario esta habilitado se comprueba que sea administrador, en caso de que no sea administrador se le redirecciona a la pagina 'listaDocentes.html'
             if (userEnable == true) {
                 if (userRol!='Administrador') {
                     location.href = 'listaDocentes.html'
@@ -926,38 +1029,33 @@ async function initApp() {
                     idRegistrarDocenteBtn.setAttribute('style', '');
                     idListaDocentesBtn.setAttribute('style', '');
                 }
-                
             }else{
+                // En el caso de que el usuario no este habilitado se le redirecciona a la pagina 'deshabilitado.html'
                 location.href = 'deshabilitado.html';
             }
-            
-            
         } else {
+            // En caso de que el usuario no este logeado se le redirecciona a la pagina 'index.html'
             console.log('User is signed out');
-            
             location.href = 'index.html';
         }
     });
 
     // Funcion que se ejecuta cuando se realice un evento 'click' en el boton de salir o logout
     btnLogOut.addEventListener('click', (e) => {
-
         // Se ejecuta la funcion signOut() de firebase para el logout del usuario
          firebase.auth().signOut().then(function() {
             console.log('Log out successful');
-             // Sign-out successful.
-            }).catch(function(error) {
-            // An error happened.
+        }).catch(function(error) {
+            console.log('Log out error', error);
         });
     });
+    // Funcion que se ejecuta cuando se realice un evento 'click' en el boton de salir o logout en modo responsivo
     idLogoutBtnMovil.addEventListener('click', (e) => {
-
         // Se ejecuta la funcion signOut() de firebase para el logout del usuario
          firebase.auth().signOut().then(function() {
             console.log('Log out successful');
-             // Sign-out successful.
-            }).catch(function(error) {
-            // An error happened.
+        }).catch(function(error) {
+            console.log('Log out error', error);
         });
     });
 
@@ -973,17 +1071,14 @@ async function initApp() {
         e.preventDefault();
         var nImagesPort = formImgPort["nImagesPort"].value;
         console.log(nImagesPort);
-        
+        // Se ejecuta la funcion chageNumberImages() que modifica el numero de imagenes que se quiere guardar o registrar para el portafolio de docente
         changeNumberImages(nImagesPort);
     });
 
-    // Se obtiene el valor guardado en la coleccion 'lms-opciones' del numero maximo de imagenes
-    var imgMax = await getDefImg();
+    // Se obtiene el valor guardado en la coleccion 'lms-opciones' del numero maximo de imagenes y se comprueba que el numero exista
+    var imgMax = await getOptions();
     if (imgMax.docs[0].data().imagesNumber && imgMax.docs[0].data().imagesNumber != "") {
-        console.log('numero existe', imgMax.docs[0].data().imagesNumber);
         formImgPort["nImagesPort"].value = imgMax.docs[0].data().imagesNumber;
-    }else{
-        console.log('numero no existe');
     }
 }
 
@@ -992,7 +1087,7 @@ window.addEventListener('DOMContentLoaded', (e) => {
     initApp();
     
     currentImage();
-
+    // Se ejecutan las funciones para la inicializacion de las tablas de log, categorias y tipos
     logTable();
 
     categoryTable();
