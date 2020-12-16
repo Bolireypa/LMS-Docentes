@@ -92,6 +92,10 @@ var currentUser = '';
 // Variable que guarda el valor de numero maximo de imagenes que se mostraran
 var numMaxImg = 0;
 
+var modals = document.getElementsByClassName('modal-close');
+console.log(modals);
+
+
 // Funcion saveFile() que realiza el registro de los datos de los archivos en la coleccion 'lms-archivos', requiere los parametros: fileName (Nombre de archivo a guardar, imagen o PDF), refid (La id del docente al que se vinculara el archivo, imagen o PDF), url (Ubicacion donde sera subido el archivo en el storage del proyecto), type (Tipo de archivo que se esta guardando, imagen - PDF)
 const saveFile = (fileName, refid, url, type) => 
     db.collection('lms-archivos').add({
@@ -109,7 +113,9 @@ const saveFile = (fileName, refid, url, type) =>
             portafolio(docente.data().name, refid, true);
         } else {
             // Se cierra el modal de Editar CV
-            $('.modal').modal('close');
+            // $('.modal').modal('close');
+            modals[0].click();
+            modals[1].click();
             //Se verifica que los filtros de categoria y tipo sean distinto a "todos" o "todas", y asi recargar la lista de docentes con los mismos filtros de categoria seleccionados
             if (categoriaGlobal != "todas") {
                 if (tipoGlobal != "todos") {
@@ -177,8 +183,9 @@ const saveFile = (fileName, refid, url, type) =>
 const deleteCV = (id, refId, namefile) => db.collection('lms-archivos').doc(id).delete()
     .then(async function () {
         // Se cierra el modal de Editar CV
-        $('.modal').modal('close');
-
+        // $('.modal').modal('close');
+        modals[0].click();
+        modals[1].click();
         // Se capturan el nombre del CV a eliminar y su id
         var log1 = {
             logType: 'Eliminacion de archivo',
@@ -407,7 +414,9 @@ const updateFile = (id, refid, fileType, updatedFile, currentFile) => db.collect
             // En caso de que el tipo del archivo sea pdf, se recarga la lista de docentes
             case 'pdf':
                 // Se cierra el modal de Editar CV
-                $('.modal').modal('close');
+                // $('.modal').modal('close');
+                modals[0].click();
+                modals[1].click();
                 //Se verifica que los filtros de categoria y tipo sean distinto a "todos" o "todas", y asi recargar la lista de docentes con los mismos filtros de categoria seleccionados, al momento de modificar el documento pdf del CV de docente
                 if (categoriaGlobal != "todas") {
                     if (tipoGlobal != "todos") {

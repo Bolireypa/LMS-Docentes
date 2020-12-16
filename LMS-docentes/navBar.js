@@ -41,10 +41,6 @@ document.addEventListener('DOMContentLoaded', (e) => {
   var ulNav = createElementFunction('ul', 'right hide-on-med-and-down', '', 'nav-mobile');
   navWrapper.appendChild(ulNav);
   var ulNavMobile = createElementFunction('ul', 'sidenav', '', 'mobile-demo');  
-  ulNavMobile.addEventListener('DOMContentLoaded', (e) => {
-    $('.sidenav').sidenav();
-
-  })
   navBar1.appendChild(ulNavMobile);
   lmsNavBar.forEach(nav => {
     var liNav = createElementFunction('li', '', nav.title, '');
@@ -53,5 +49,7 @@ document.addEventListener('DOMContentLoaded', (e) => {
     var liNavMobile = createElementFunction('li', '', nav.title, '');
     ulNavMobile.appendChild(liNavMobile);
   });
-
+  // $('.sidenav').sidenav();
+  var elems = document.querySelectorAll('.sidenav');
+  var instances = M.Sidenav.init(elems);
 })

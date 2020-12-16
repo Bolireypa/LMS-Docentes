@@ -44,6 +44,12 @@ const getOptions = () => db.collection('lms-opciones').get();
 // Variable que almacena el numero de imagenes del portafolio que se quiere subir
 var nImgPort = 8;
 
+// Ojbeto que se utiliza para la varificacion del formulario de registro
+var formVerification = {
+    name: false,
+    lastWork: false
+}
+
 // Funcion saveUser() que realiza el registro de docentes nuevos en la coleccion 'lms-docentes', requiere de los parametros: name (nombre de docente), email (email de docente), summary (resumen del docente), experience(experiencia laboral), lastWork(ulitmo trabajo), phone(telefono o celular de contacto), category (categoria a la que pertenece el docente), type (tipo al que pertenece el docente: Consultor, Docente, Freelancer).
 const saveUser = (name, email, summary, experience, lastWork, phone, category, type) =>
     db.collection('lms-docentes').add({
@@ -280,6 +286,36 @@ window.addEventListener('DOMContentLoaded', async (e) => {
     $(document).ready(function(){
         $('select').formSelect();
     });
+
+    
+
+    var nameCharacterCounter = document.getElementById('nameCharacterCounter');
+    docenteForm['docenteNombre'].addEventListener('keyup', (e) => {
+        var numberCh = e.target.value;
+        var maxCharacter = 40;
+        nameCharacterCounter.textContent = numberCh.length + ' / '+maxCharacter;
+        if (numberCh.length > maxCharacter) {
+            nameCharacterCounter.className = 'helper-text red-text';
+            formVerification.name = false;
+        }else{
+            nameCharacterCounter.className = 'helper-text green-text';
+            formVerification.name = true;
+        }
+    })
+
+    var lastWorkCharacterCounter = document.getElementById('lastWorkCharacterCounter');
+    docenteForm['docenteTrabajo'].addEventListener('keyup', (e) => {
+        var numberCh = e.target.value;
+        var maxCharacter = 50;
+        lastWorkCharacterCounter.textContent = numberCh.length + ' / '+maxCharacter;
+        if (numberCh.length > maxCharacter) {
+            lastWorkCharacterCounter.className = 'helper-text red-text';
+            formVerification.lastWork = false;
+        }else{
+            lastWorkCharacterCounter.className = 'helper-text green-text';
+            formVerification.lastWork = true;
+        }
+    })
     
 })
 
@@ -287,21 +323,25 @@ window.addEventListener('DOMContentLoaded', async (e) => {
 docenteForm.addEventListener('submit', async (e) => {
     e.preventDefault();//Impide que el formulario se recargue en el evento submit
 
-    $('#modal1').modal('open');
+    if (formVerification.name && formVerification.lastWork) {
+        $('#modal1').modal('open');
 
-    const name = docenteForm['docenteNombre'].value;
-    const email = docenteForm["docenteEmail"].value;
-    const summary = docenteForm["docenteResumen"].value;
-    const experience = docenteForm["docenteExperiencia"].value;
-    const lastWork = docenteForm["docenteTrabajo"].value;
-    const phone = docenteForm["docenteTelefono"].value;
-    const category = docenteForm["docenteCategoria"].value;
-    const type = docenteForm["docenteTipo"].value;
+        const name = docenteForm['docenteNombre'].value;
+        const email = docenteForm["docenteEmail"].value;
+        const summary = docenteForm["docenteResumen"].value;
+        const experience = docenteForm["docenteExperiencia"].value;
+        const lastWork = docenteForm["docenteTrabajo"].value;
+        const phone = docenteForm["docenteTelefono"].value;
+        const category = docenteForm["docenteCategoria"].value;
+        const type = docenteForm["docenteTipo"].value;
 
-    progressBarElements('Registrando docente', 'regDocBar');
-
-    // Se ejecuta la funcion saveUser() que guarda los datos del docentes en la coleccion 'lms-docentes' en firebase
-    await saveUser(name, email, summary, experience, lastWork, phone, category, type);
+        progressBarElements('Registrando docente', 'regDocBar');
+        
+        // Se ejecuta la funcion saveUser() que guarda los datos del docentes en la coleccion 'lms-docentes' en firebase
+        await saveUser(name, email, summary, experience, lastWork, phone, category, type);
+    } else {
+        alert('Coloque los campos del formulario correctamente');
+    }
 
 });
 

@@ -41,6 +41,8 @@ const getDocCat = (idCat) => db.collection('lms-docentes').where('category', '==
 // Funcion getDocType() que realiza una consulta a la coleccion 'lms-docente' para obtener los docentes registrados en un tipo, requiere el parametro: idType(la id del tipo a consultar en la coleccion 'lms-docentes')
 const getDocType = (idType) => db.collection('lms-docentes').where('type', '==', idType).get();
 
+var closeModalId = document.getElementById('closeModalId');
+
 // Funcion saveDefectImage() que guarda los datos de la imagen por defecto el la coleccion 'lms-opciones', requiere los parametros: defaultImageName(nombre de la imagen), defaultImageUrl(la url de la ubicacion de la imagen)
 const saveDefectImage = (defaultImageName, defaultImageUrl) => db.collection("lms-opciones").doc("I15m4a89g618E37rd5WQ").update({
         defaultImageName,
@@ -73,7 +75,8 @@ const saveCategory = (nombreCat) => db.collection("lms-categorias").doc().set({
         console.log("Categoria registrada correctamente");
         // Se ejecuta la funcion categoryTable() que recarga la tabla con las categorias
         categoryTable();
-        $('.modal').modal('close');
+        // $('.modal').modal('close');
+        closeModalId.click();
     }).catch(function (error) {
         console.log("Error al guardar la categoria: ", error);
     });
@@ -85,7 +88,8 @@ const updateCategory = (id, nombreCat) => db.collection('lms-categorias').doc(id
         console.log("Categoria editada correctamente");
         // Se ejecuta la funcion categoryTable() que recarga la tabla con las categorias
         categoryTable();
-        $('.modal').modal('close');
+        // $('.modal').modal('close');
+        closeModalId.click();        
     }).catch(function (error) {
         console.log("Error al editar la categoria: ", error);
     });
@@ -96,7 +100,8 @@ const deleteCategory = (id) => db.collection('lms-categorias').doc(id).delete()
         console.log("Categoria eliminada correctamenete");
         // Se ejecuta la funcion categoryTable() que recarga la tabla con las categorias
         categoryTable();        
-        $('.modal').modal('close');
+        // $('.modal').modal('close');
+        closeModalId.click();        
     }).catch(function (error) {
         console.log("Error al eliminar la categoria: ", error);        
     });
@@ -108,7 +113,8 @@ const saveType = (nombreTipo) => db.collection("lms-tipos").doc().set({
         console.log("Tipo registrado correctamente");
         // Se ejecuta la funcion typeTable() que recarga la tabla con los tipos
         typeTable();        
-        $('.modal').modal('close');
+        // $('.modal').modal('close');
+        closeModalId.click();        
     }).catch(function (error) {
         console.log("Error al guardar el tipo: ", error);
     });
@@ -120,7 +126,8 @@ const updateType = (id, nombreTipo) => db.collection('lms-tipos').doc(id).update
         console.log("Tipo editado correctamente");
         // Se ejecuta la funcion typeTable() que recarga la tabla con los tipos
         typeTable();
-        $('.modal').modal('close');
+        // $('.modal').modal('close');
+        closeModalId.click();        
     }).catch(function (error) {
         console.log("Error al editar el tipo: ", error);
     });
@@ -131,7 +138,8 @@ const deleteType = (id) => db.collection('lms-tipos').doc(id).delete()
         console.log("Tipo eliminado correctamenete");
         // Se ejecuta la funcion typeTable() que recarga la tabla con los tipos
         typeTable();        
-        $('.modal').modal('close');
+        // $('.modal').modal('close');
+        closeModalId.click();        
     }).catch(function (error) {
         console.log("Error al eliminar el tipo: ", error);        
     });
@@ -1095,5 +1103,16 @@ window.addEventListener('DOMContentLoaded', (e) => {
     typeTable();
 
     // Inicializa el modal para mostrase despues de realizar alguna funcion que requiera del modal
-    $('.modal').modal();
+    // $('.modal').modal();
+    var modals = document.querySelectorAll('.modal');
+    M.Modal.init(modals);
+    // $('.sidenav').sidenav();
+    var sidenav = document.querySelectorAll('.sidenav');
+    M.Sidenav.init(sidenav);
+    // $(".dropdown-trigger").dropdown({ hover: false });
+    var dropdown = document.querySelectorAll('.dropdown-trigger');
+    M.Dropdown.init(dropdown);
+    // $('.tooltipped').tooltip();
+    var tooltipped = document.querySelectorAll('.tooltipped');
+    M.Tooltip.init(tooltipped);
 })

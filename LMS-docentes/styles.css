@@ -33,7 +33,7 @@
 }
 
 .card {
-    height: 695px;
+    height: 775px;
 }
 
 .cardInfo{
@@ -45,7 +45,7 @@
 }
 
 .card  > .card-content > .card-title{
-    height: 65px;
+    height: 122px;
 }
 
 .cardSummary{
