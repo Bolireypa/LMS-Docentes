@@ -39,13 +39,13 @@ function userProfileInit() {
         currentUser = user;
     });
 
-    idUserProfile.addEventListener('click', (e) => {
-        profileView();
-    });
+    // idUserProfile.addEventListener('click', (e) => {
+    //     profileView();
+    // });
     
-    btnUserProfile.addEventListener('click', (e) => {
-        profileView();
-    });
+    // btnUserProfile.addEventListener('click', (e) => {
+    //     profileView();
+    // });
 
     formUserProfile.addEventListener('submit', (e) => {
         e.preventDefault();

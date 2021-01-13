@@ -10,25 +10,27 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!--Import materialize.css-->
     <link type="text/css" rel="stylesheet" href="./css/materialize.min.css"  media="screen,projection"/>
-
+    <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
         <ul id="dropdown1" class="dropdown-content">
-            <li><a href="#!" id="btnUserProfile">Ver perfil</a></li>
+            <li><a href="perfilUsuario.html">Ver perfil</a></li>
             <li><a href="#!" id="btnLogOut">Log out</a></li>
         </ul>
     <nav>
-        <div class="nav-wrapper">
-          <a href="index.html" class="brand-logo">Co Marca</a>
-          <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-          <ul id="nav-mobile" class="right hide-on-med-and-down">
-                <li id="idListaUsuarios" style="display:none;"><a href="listaUsuarios.html">Lista de usuarios</a></li>
-                <li id="idRegistrarDocenteBtn" class="active"><a href="registroDocentes.html">Registro de docentes</a></li>
-                <li id="idListaDocentesBtn" style="display:none;"><a href="listaDocentes.html">Lista de docentes</a></li>
-                <li id="idOpcionesBtn" style="display:none;"><a href="opciones.html">Panel de control</a></li>
-                <li id="idRegistrarseBtn" style="display:none;"><a href="registroUsuario.html">Registrarse</a></li>
-                <li id="idLogin" style="display:none;"><a href="login.html">Iniciar sesion</a></li>
-                <li id="idDropdown" style="display:none;"><a class="dropdown-trigger" href="#!" data-target="dropdown1" id="dropdown1Text">Usuario<i class="material-icons right">arrow_drop_down</i></a></li>
+        <div class="nav-wrapper white">
+            <a href="index.html" class="brand-logo"><img src="./image/logo jpg de alta resolucion.png" alt="" class="logo"></a>
+            <a href="#" data-target="mobile-demo" class="sidenav-trigger grey-text">
+                <i class="material-icons">menu</i>
+            </a>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <li id="idListaUsuarios" style="display:none;"><a href="listaUsuarios.html" class="grey-text text-darken-1">Lista de usuarios</a></li>
+                <li id="idRegistrarDocenteBtn" class="active"><a href="registroDocentes.html" class="grey-text text-darken-1">Registro de docentes</a></li>
+                <li id="idListaDocentesBtn" style="display:none;"><a href="listaDocentes.html" class="grey-text text-darken-1">Lista de docentes</a></li>
+                <li id="idOpcionesBtn" style="display:none;"><a href="opciones.html" class="grey-text text-darken-1">Panel de control</a></li>
+                <li id="idRegistrarseBtn" style="display:none;"><a href="registroUsuario.html" class="grey-text text-darken-1">Registrarse</a></li>
+                <li id="idLogin" style="display:none;"><a href="login.html" class="grey-text text-darken-1">Iniciar sesion</a></li>
+                <li id="idDropdown" style="display:none;"><a class="dropdown-trigger grey-text text-darken-1" href="#!" data-target="dropdown1" id="dropdown1Text">Usuario<i class="material-icons right">arrow_drop_down</i></a></li>
           </ul>
         </div>
     </nav>
@@ -39,7 +41,7 @@
             <li class="divider" tabindex="-1"></li>
             <li id="idOpcionesBtnMovil" style="display:none;"><a href="opciones.html">Panel de control</a></li>
             <li class="divider" tabindex="-1"></li>
-            <li id="idUserProfile"><a href="#!">Ver perfil</a></li>
+            <li><a href="perfilUsuario.html">Ver perfil</a></li>
             <li id="idLogoutBtnMovil"><a href="#!">Logout</a></li>
     </ul>
 
@@ -58,11 +60,27 @@
                         <div class="row">
                             <form id="formRegistroDocentes" style="display:none">
                                 <div class="row">
+                                    <div class="col s12">
+                                        <img src="" alt="" id="ProfileImageDoc" class="docProfImage">
+                                    </div>
+                                    <div class="col s12">
+                                        <div class="file-field input-field">
+                                            <div class="btn teal darken-2">
+                                                <span>Imagen de perfil</span>
+                                                <input type="file" id="docenteImagenPerfil" accept="image/*">
+                                            </div>
+                                            <div class="file-path-wrapper">
+                                                <input class="file-path validate" type="text" placeholder="Seleccione imagen de perfil">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
                                     <div class="input-field col s12">
                                         <i class="material-icons prefix">account_circle</i>
                                         <input type="text" class="validate" id="docenteNombre">
                                         <label for="docenteNombre">Nombre</label>
-                                        <span class="helper-text" id="nameCharacterCounter">0 / 50</span>
+                                        <span class="helper-text" id="nameCharacterCounter">0 / 0</span>
                                     </div>
                                     <div class="input-field col s12">
                                         <i class="material-icons prefix">email</i>
@@ -85,12 +103,20 @@
                                         <i class="material-icons prefix">business_center</i>
                                         <input type="text" class="validate" id="docenteTrabajo">
                                         <label for="docenteTrabajo">Ultimo trabajo</label>
-                                        <span class="helper-text" id="lastWorkCharacterCounter">0 / 50</span>
+                                        <span class="helper-text" id="lastWorkCharacterCounter">0 / 0</span>
                                     </div>
                                     <div class="input-field col s12">
                                         <i class="material-icons prefix">phone</i>
                                         <input type="number" class="validate" id="docenteTelefono">
                                         <label for="docenteTelefono">Telefono / Celular</label>
+                                    </div>
+                                    <!--  -->
+                                    <!-- Se agrego el elemeto input <input> de especialidad -->
+                                    <div class="input-field col s12">
+                                        <i class="material-icons prefix">business_center</i>
+                                        <input type="text" class="validate" id="docenteEspecialidad">
+                                        <label for="docenteEspecialidad">Especialidad</label>
+                                        <!-- <span class="helper-text" id="lastWorkCharacterCounter">0 / 0</span> -->
                                     </div>
                                     <!--  -->
                                     <div class="col s12">

@@ -16,21 +16,23 @@
 </head>
 <body>
         <ul id="dropdown1" class="dropdown-content">
-            <li><a href="#!" id="btnUserProfile">Ver perfil</a></li>
+            <li><a href="perfilUsuario.html">Ver perfil</a></li>
             <li><a href="#!" id="btnLogOut">Log out</a></li>
         </ul>
     <nav>
-        <div class="nav-wrapper">
-          <a href="index.html" class="brand-logo">Co Marca</a>
-          <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-          <ul id="nav-mobile" class="right hide-on-med-and-down">
-            <li id="idListaUsuarios" style="display:none;"><a href="listaUsuarios.html">Lista de usuarios</a></li>
-            <li id="idRegistrarDocenteBtn" style="display:none;"><a href="registroDocentes.html">Registro de docentes</a></li>
-            <li id="idListaDocentesBtn" class="active"><a href="listaDocentes.html">Lista de docentes</a></li>
-            <li id="idOpcionesBtn" style="display:none;"><a href="opciones.html">Panel de control</a></li>
-            <li id="idRegistrarseBtn" style="display:none;"><a href="registroUsuario.html">Registrarse</a></li>
-            <li id="idLogin" style="display:none;"><a href="login.html">Iniciar sesion</a></li>
-            <li id="idDropdown" style="display:none;"><a class="dropdown-trigger" href="#!" data-target="dropdown1" id="dropdown1Text">Usuario<i class="material-icons right">arrow_drop_down</i></a></li>
+        <div class="nav-wrapper white">
+        <a href="index.html" class="brand-logo"><img src="./image/logo jpg de alta resolucion.png" alt="" class="logo"></a>
+        <a href="#" data-target="mobile-demo" class="sidenav-trigger grey-text">
+            <i class="material-icons">menu</i>
+        </a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <li id="idListaUsuarios" style="display:none;"><a href="listaUsuarios.html" class="grey-text text-darken-1">Lista de usuarios</a></li>
+            <li id="idRegistrarDocenteBtn" style="display:none;"><a href="registroDocentes.html" class="grey-text text-darken-1">Registro de docentes</a></li>
+            <li id="idListaDocentesBtn" class="active"><a href="listaDocentes.html" class="grey-text text-darken-1">Lista de docentes</a></li>
+            <li id="idOpcionesBtn" style="display:none;"><a href="opciones.html" class="grey-text text-darken-1">Panel de control</a></li>
+            <li id="idRegistrarseBtn" style="display:none;"><a href="registroUsuario.html" class="grey-text text-darken-1">Registrarse</a></li>
+            <li id="idLogin" style="display:none;"><a href="login.html" class="grey-text text-darken-1">Iniciar sesion</a></li>
+            <li id="idDropdown" style="display:none;"><a class="dropdown-trigger grey-text text-darken-1" href="#!" data-target="dropdown1" id="dropdown1Text">Usuario<i class="material-icons right">arrow_drop_down</i></a></li>
           </ul>
         </div>
     </nav>
@@ -41,7 +43,7 @@
         <li class="divider" tabindex="-1"></li>
         <li id="idOpcionesBtnMovil" style="display:none;"><a href="opciones.html">Panel de control</a></li>
         <li class="divider" tabindex="-1"></li>
-        <li id="idUserProfile"><a href="#!">Ver perfil</a></li>
+        <li><a href="perfilUsuario.html">Ver perfil</a></li>
         <li id="idLogoutBtnMovil"><a href="#!">Logout</a></li>
     </ul>
 
@@ -49,6 +51,22 @@
         <div class="row">
             <div class="col s12">
                 <h3>Lista de docentes</h3>
+            </div>
+            <div class="col s12">
+                <div class="row col s9">
+                    <div class="input-field">
+                        <input type="text" id="docSearch" class="autocomplete">
+                        <label for="docSearch">Buscar por especialidad</label>
+                    </div>
+                </div>
+                <div class="row col s1">
+                    <a href="#" class="btn teal darken-3 disabled" id="searchBtn">
+                        <i class="material-icons prefix">search</i>
+                    </a>
+                </div>
+                <!-- <div class="row col s2">
+                    <a href="#" class="btn teal darken-3">Personalizar</a>
+                </div> -->
             </div>
             <!-- Se quito la clase 'input-field' del elemento <div> -->
             <div class="col s12 m6">
@@ -65,6 +83,11 @@
                 <select id="docenteTipo" class="browser-default">
                     <option value="todos">Todos los tipos</option>
                 </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s12">
+                <h5 class="noVisible" id="resultText">Resultados</h5>
             </div>
         </div>
         <div id="idListaD">
@@ -199,7 +222,7 @@
         var storage = firebase.storage();
 
     </script>
-
+    <script src="./lmsApp.js"></script>
     <script src="./logRegister.js"></script>
     <script src="./listaDocentes.js"></script>
     <script src="./perfilUsuario.js"></script>

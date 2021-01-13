@@ -10,6 +10,11 @@ var idRegistrarDocenteBtn = document.getElementById('idRegistrarDocenteBtn');
 var idListaDocentesBtn = document.getElementById('idListaDocentesBtn');
 var idCurrentImageh5 = document.getElementById('idCurrentImageh5');
 var defaultImageForm = document.getElementById('defaultImageForm');
+var btnProfileImage = document.getElementById('btnProfileImage');
+var inputDefaultProfileImage = document.getElementById('inputDefaultProfileImage');
+var h6ProfileImage = document.getElementById('h6ProfileImage');
+var idDefaultProfileImage = document.getElementById('idDefaultProfileImage');
+var idDefaultCardImage = document.getElementById('idDefaultCardImage');
 
 // Funcion getUsers() que recupera los datos guardados en la base de datos de firebase, en la coleccion 'lms-roles'
 const getUsers = () => db.collection('lms-roles').get();
@@ -56,6 +61,20 @@ const saveDefectImage = (defaultImageName, defaultImageUrl) => db.collection("lm
     .catch(function(error) {
         console.error("Error writing document: ", error);
     });
+
+// Funcion saveDefectProfileImage() que guarda los datos de la imagen de perfil por defecto el la coleccion 'lms-opciones', requiere los parametros: defaultProfileImageName(nombre de la imagen), defaultProfileImageUrl(la url de la ubicacion de la imagen)
+const saveDefectProfileImage = (defaultProfileImageName, defaultProfileImageUrl) => db.collection("lms-opciones").doc("I15m4a89g618E37rd5WQ").update({
+    defaultProfileImageName,
+    defaultProfileImageUrl,
+})
+.then(function() {
+    console.log("Document successfully written!");
+    // Si se guardaron correctamente los datos se recarga la pagina
+    location.reload();
+})
+.catch(function(error) {
+    console.error("Error writing document: ", error);
+});
 
 // Funcion que guarda el numero maximo de imagenes para el portafolio de docentes en la coleccion 'lms-opciones' requiere como parametro: imagesNumber(el valor del numero de imagenes que se quierea guardar)
 const changeNumberImages = (imagesNumber) => db.collection("lms-opciones").doc("I15m4a89g618E37rd5WQ").update({
@@ -148,22 +167,41 @@ const deleteType = (id) => db.collection('lms-tipos').doc(id).delete()
 currentImage = async function () {
     // Se obtiene la imagen por defecto meiante la funcion getOptions()
     const currentDefaultImage = await getOptions();
+    // console.log(currentDefaultImage.docs[0].data());
+    
     // Se comprueba que exista la imagen, caso contrario se indica en la pagina que la imagen no existe
     if (currentDefaultImage.docs[0]) {
         // Se comprueba que exista el campo de la imagen en el registro de opciones de la coleccion 'lms-opciones' para mostrar su nombre en la pagina
         if (currentDefaultImage.docs[0].data().defaultImageName) {
             idCurrentImageh5.textContent = currentDefaultImage.docs[0].data().defaultImageName;
+            idDefaultCardImage.src = currentDefaultImage.docs[0].data().defaultImageUrl;
+            idDefaultCardImage.className = 'defCard';
         } else {
             idCurrentImageh5.textContent = 'No hay imagen por defecto';
+        }
+        // Se comprueba que exista el campo de la imagen de perfil en el registro de opciones de la coleccion 'lms-opciones' para mostrar su nombre en la pagina
+        if (currentDefaultImage.docs[0].data().defaultProfileImageName) {
+            h6ProfileImage.textContent = currentDefaultImage.docs[0].data().defaultProfileImageName;
+            idDefaultProfileImage.src = currentDefaultImage.docs[0].data().defaultProfileImageUrl;
+            idDefaultProfileImage.className = 'docProfImage';
+        } else {
+            h6ProfileImage.textContent = 'No hay imagen por defecto';
         }
     } else {
         idCurrentImageh5.textContent = 'No existe registro';
     }
+
+
 }
 
 // Funcion uploadImageFile() que realiza el proceso de subir la imagen seleccionada al storage
-uploadImageFile = function(){
-    var defaultImageFile = defaultImageForm['inputDefaultImage'].files[0];
+uploadImageFile = function(type){
+    if (type == 'portfolioImage') {
+        var defaultImageFile = defaultImageForm['inputDefaultImage'].files[0];
+    }
+    if (type == 'profileImage') {
+        var defaultImageFile = inputDefaultProfileImage.files[0];
+    }
     // Se comprueba que la imagen exista, caso contrario se muestra un mensaje de alerta
     if (!defaultImageFile) {
         alert('Seleccione una imagen');
@@ -179,7 +217,12 @@ uploadImageFile = function(){
             console.log('Documento subido');
             // Se obtiene la url de la imagen que se subio para luego guardarla en la coleccion 'lms-opciones' mediante la funcion saveDefectImage()
             uploadFile.snapshot.ref.getDownloadURL().then(function (url) {
-                saveDefectImage(defaultImageFile.name, url);
+                if (type == 'portfolioImage') {
+                    saveDefectImage(defaultImageFile.name, url);
+                }
+                if (type == 'profileImage') {
+                    saveDefectProfileImage(defaultImageFile.name, url);
+                }
             })
         });
     }
@@ -436,25 +479,25 @@ logTable = async function () {
                     divCardSummary.appendChild(divCardContentText);
                     divCardSummary.appendChild(pCardSummaryText);
 
-                    var h6CategoryText = document.createElement('div');
-                    h6CategoryText.className = 'chip';
-                    h6CategoryText.id = 'h6Id_';
-                    if (dataD.category) {
-                        var categoryText = document.createTextNode(dataD.category);
+                    // var h6CategoryText = document.createElement('div');
+                    // h6CategoryText.className = 'chip';
+                    // h6CategoryText.id = 'h6Id_';
+                    // if (dataD.category) {
+                    //     var categoryText = document.createTextNode(dataD.category);
                         
-                    } else {
-                        var categoryText = document.createTextNode('Sin categoria');
+                    // } else {
+                    //     var categoryText = document.createTextNode('Sin categoria');
                         
-                    }
-                    h6CategoryText.appendChild(categoryText);
+                    // }
+                    // h6CategoryText.appendChild(categoryText);
                     
-                    var typeTag = document.createElement('div');
-                    typeTag.className = 'chip';
-                    if (dataD.type) {
-                        typeTag.textContent = dataD.type;
-                    } else {
-                        typeTag.textContent = 'Sin tipo';
-                    }
+                    // var typeTag = document.createElement('div');
+                    // typeTag.className = 'chip';
+                    // if (dataD.type) {
+                    //     typeTag.textContent = dataD.type;
+                    // } else {
+                    //     typeTag.textContent = 'Sin tipo';
+                    // }
 
                     divCardContent.appendChild(spanCardTitle);
                     divCardContent.appendChild(divCardEmail);
@@ -462,8 +505,8 @@ logTable = async function () {
                     divCardContent.appendChild(divCardLastWork);
                     divCardContent.appendChild(divCardExperience);
                     divCardContent.appendChild(divCardSummary);
-                    divCardContent.appendChild(h6CategoryText);
-                    divCardContent.appendChild(typeTag);
+                    // divCardContent.appendChild(h6CategoryText);
+                    // divCardContent.appendChild(typeTag);
 
                     dicCard.appendChild(divCardImage);
                     dicCard.appendChild(divCardContent);
@@ -821,6 +864,7 @@ allCheckbox.addEventListener('click', (e) => {
         formCheckbox['experienceCheckbox'].checked = true;
         formCheckbox['lastWorkCheckbox'].checked = true;
         formCheckbox['phoneCheckbox'].checked = true;
+        formCheckbox['specialismCheckbox'].checked = true;
         formCheckbox['categoryCheckbox'].checked = true;
         formCheckbox['typeCheckbox'].checked = true;
     } else {
@@ -829,6 +873,7 @@ allCheckbox.addEventListener('click', (e) => {
         formCheckbox['experienceCheckbox'].checked = false;
         formCheckbox['lastWorkCheckbox'].checked = false;
         formCheckbox['phoneCheckbox'].checked = false;
+        formCheckbox['specialismCheckbox'].checked = false;
         formCheckbox['categoryCheckbox'].checked = false;
         formCheckbox['typeCheckbox'].checked = false;
     }
@@ -838,34 +883,96 @@ allCheckbox.addEventListener('click', (e) => {
 var btnExportEmail = document.getElementById('btnExportEmail');
 btnExportEmail.addEventListener('click', async (e) => {
     var docsList = await getDocs();
+    var categoriesList = await getCategories();
+    var typesList = await getTypes();
+    
     // console.log(docsList.docs[0].data());
     var countDocs = 0;
     var data = [];
     
     docsList.forEach(docData => {
         data[countDocs] = {
-            name: docData.data().name
+            NOMBRE: docData.data().name
         };
         if (formCheckbox['emailCheckbox'].checked) {
-            data[countDocs].email = docData.data().email+" ";
+            data[countDocs].EMAIL = docData.data().email+" ";
         }
         if (formCheckbox['summaryCheckbox'].checked) {
-            data[countDocs].summary = docData.data().summary+" ";
+            if (docData.data().summary) {
+                data[countDocs].RESUMEN = docData.data().summary+" ";
+            } else {
+                data[countDocs].RESUMEN = "-------- ";
+            }
         }
         if (formCheckbox['experienceCheckbox'].checked) {
-            data[countDocs].experience = docData.data().experience+" ";
+            if (docData.data().experience) {
+                data[countDocs].EXPERIENCIA = docData.data().experience+" ";
+            } else {
+                data[countDocs].EXPERIENCIA = "-------- ";                
+            }
         }
         if (formCheckbox['lastWorkCheckbox'].checked) {
-            data[countDocs].lastWork = docData.data().lastWork+" ";
+            if (docData.data().lastWork) {
+                data[countDocs].ULTIMO_TRABAJO = docData.data().lastWork+" ";
+            } else {
+                data[countDocs].ULTIMO_TRABAJO = "-------- ";                
+            }
         }
         if (formCheckbox['phoneCheckbox'].checked) {
-            data[countDocs].phone = docData.data().phone+" ";
+            if (docData.data().phone) {
+                data[countDocs].TELEFONO = docData.data().phone+" ";
+            } else {
+                data[countDocs].TELEFONO = "-------- ";                
+            }
+        }
+        if (formCheckbox['specialismCheckbox'].checked) {
+            if (docData.data().specialism) {
+                data[countDocs].ESPECIALIDAD = docData.data().specialism+" ";
+            } else {
+                data[countDocs].ESPECIALIDAD = "-------- ";
+            }
         }
         if (formCheckbox['categoryCheckbox'].checked) {
-            data[countDocs].category = docData.data().category+" ";
+            if (docData.data().category) {
+                var catValue = {
+                    state: false,
+                    value: ''
+                };
+                categoriesList.forEach(cat => {
+                    if (cat.id == docData.data().category) {
+                        catValue.state = true;               
+                        catValue.value = cat.data().nombreCat;  
+                    }
+                })
+                if (catValue.state) {
+                    data[countDocs].CATEGORIA = catValue.value+" ";                
+                }else{
+                    data[countDocs].CATEGORIA = docData.data().category+" ";
+                }
+            } else {
+                data[countDocs].CATEGORIA = "-------- ";
+            }
         }
         if (formCheckbox['typeCheckbox'].checked) {
-            data[countDocs].type = docData.data().type+" ";
+            if (docData.data().type) {
+                var typeValue = {
+                    state: false,
+                    value: ''
+                };
+                typesList.forEach(type => {
+                    if (type.id == docData.data().type) {
+                        typeValue.state = true;               
+                        typeValue.value = type.data().nombreTipo;  
+                    }
+                })
+                if (typeValue.state) {
+                    data[countDocs].TIPO = typeValue.value+" ";                
+                }else{
+                    data[countDocs].TIPO = docData.data().type+" ";
+                }
+            } else {
+                data[countDocs].TIPO = "-------- ";
+            }
         }
         countDocs++;
     });
@@ -898,10 +1005,11 @@ btnExportEmail.addEventListener('click', async (e) => {
     var CSVFileName = document.getElementById('CSVFileName').value;
     // En caso de que no se le coloque el nombre al archivo se crea con el nombre 'Documento.csv'
     if (CSVFileName == '') {
-        CSVFileName = 'Documento';
+        CSVFileName = 'Reporte_docentes';
     }
     // Se ejecuta la funcnion exportCSVFile() en el que se le envian los parametros de la cabecera del documento, el contenido y el nombre del documento
-    exportCSVFile(headers, data, CSVFileName);
+    // exportCSVFile(headers, data, CSVFileName);
+    arrayObjToCsv(data,CSVFileName);
 })
 
 // Funcion conertToCSV() que convierte los datos que se quiere exportar, a formato CSV, requiere el parametro de los datos a exportar
@@ -920,31 +1028,86 @@ function convertToCSV(objArray) {
 }
 
 // Funcion exportCSVFile() que exporta los datos ya converidos a CSV, requiere los parametros: headers(los titulos de cabecera del documento), items(los datos que se quiere exportar), fileName(el nombre del archivo CSV)
-function exportCSVFile(headers, items, fileName) {
-    if (headers) {
-        items.unshift(headers);
-    }
-    const jsonObject = JSON.stringify(items);
-    const csv = convertToCSV(jsonObject);
-    console.log(csv);
+// function exportCSVFile(headers, items, fileName) {
+//     if (headers) {
+//         items.unshift(headers);
+//     }
+//     const jsonObject = JSON.stringify(items);
+//     const csv = convertToCSV(jsonObject);
+//     console.log(csv);
     
-    const exportName = fileName + ".csv" || "export.csv";
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    if (navigator.msSaveBlob) {
-        navigator.msSaveBlob(blob, exportName);
-    } else {
-        const link = document.createElement("a");
-        if (link.download !== undefined) {
-            const url = URL.createObjectURL(blob);
-            link.setAttribute("href", url);
-            link.setAttribute("download", exportName);
-            link.style.visibility = "hidden";
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-    }
-}
+//     const exportName = fileName + ".csv" || "export.csv";
+//     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+//     if (navigator.msSaveBlob) {
+//         navigator.msSaveBlob(blob, exportName);
+//     } else {
+//         const link = document.createElement("a");
+//         if (link.download !== undefined) {
+//             const url = URL.createObjectURL(blob);
+//             link.setAttribute("href", url);
+//             link.setAttribute("download", exportName);
+//             link.style.visibility = "hidden";
+//             document.body.appendChild(link);
+//             link.click();
+//             document.body.removeChild(link);
+//         }
+//     }
+// }
+
+function arrayObjToCsv(ar, fileName) {
+	//comprobamos compatibilidad
+	if(window.Blob && (window.URL || window.webkitURL)){
+		var contenido = "",
+			d = new Date(),
+			blob,
+			reader,
+			save,
+			clicEvent;
+		//creamos contenido del archivo
+		for (var i = 0; i < ar.length; i++) {
+			//construimos cabecera del csv
+			if (i == 0)
+				contenido += Object.keys(ar[i]).join(";") + "\n";
+			//resto del contenido
+			contenido += Object.keys(ar[i]).map(function(key){
+							return ar[i][key];
+						}).join(";") + "\n";
+		}
+		//creamos el blob
+		blob =  new Blob(["\ufeff", contenido], {type: 'text/csv'});
+		//creamos el reader
+		var reader = new FileReader();
+		reader.onload = function (event) {
+			//escuchamos su evento load y creamos un enlace en dom
+			save = document.createElement('a');
+			save.href = event.target.result;
+			save.target = '_blank';
+			//aquí le damos nombre al archivo
+			save.download = fileName+ "_" + d.getDate() + "_" + (d.getMonth()+1) + "_" + d.getFullYear() + "_" + d.getHours()+":"+d.getMinutes()+".csv";
+			try {
+				//creamos un evento click
+				clicEvent = new MouseEvent('click', {
+					'view': window,
+					'bubbles': true,
+					'cancelable': true
+				});
+			} catch (e) {
+				//si llega aquí es que probablemente implemente la forma antigua de crear un enlace
+				clicEvent = document.createEvent("MouseEvent");
+				clicEvent.initEvent('click', true, true);
+			}
+			//disparamos el evento
+			save.dispatchEvent(clicEvent);
+			//liberamos el objeto window.URL
+			(window.URL || window.webkitURL).revokeObjectURL(save.href);
+		}
+		//leemos como url
+		reader.readAsDataURL(blob);
+	}else {
+		//el navegador no admite esta opción
+		alert("Su navegador no permite esta acción");
+	}
+};
 
 //
 createElementFunction = function (elementName, elementClass, elementTextContent, elementId) {
@@ -1070,8 +1233,13 @@ async function initApp() {
     // Se realiza el guardado de la imagen por defecto en la coleccion 'lms-opciones'
     defaultImageForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        uploadImageFile();
+        uploadImageFile('portfolioImage');
     });
+
+    // Se agrega el evento click al boton de Guardar, para guardar la imagen de perfil del docente
+    btnProfileImage.addEventListener('click', (e) => {
+        uploadImageFile('profileImage');
+    })
 
     // Se realiza el guardado del valor para el numero maximo de imagenes del portafolio de docente
     var formImgPort = document.getElementById('formImgPort');

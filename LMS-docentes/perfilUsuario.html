@@ -13,38 +13,10 @@
     <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-      <!-- <ul id="dropdown1" class="dropdown-content">
-          <li><a href="perfilUsuario.html" id="btnUserProfile">Ver perfil</a></li>
-          <li><a href="#!" id="btnLogOut">Log out</a></li>
-      </ul>
-    <nav>
-        <div class="nav-wrapper">
-          <a href="index.html" class="brand-logo">Co Marca</a>
-          <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-          <ul id="nav-mobile" class="right hide-on-med-and-down">
-                <li id="idListaUsuarios" style="display:none;"><a href="listaUsuarios.html">Lista de usuarios</a></li>
-                <li id="idRegistrarDocenteBtn" class="active"><a href="registroDocentes.html">Registro de docentes</a></li>
-                <li id="idListaDocentesBtn" style="display:none;"><a href="listaDocentes.html">Lista de docentes</a></li>
-                <li id="idOpcionesBtn" style="display:none;"><a href="opciones.html">Panel de control</a></li>
-                <li id="idRegistrarseBtn" style="display:none;"><a href="registroUsuario.html">Registrarse</a></li>
-                <li id="idLogin" style="display:none;"><a href="login.html">Iniciar sesion</a></li>
-                <li id="idDropdown" style="display:none;"><a class="dropdown-trigger" href="#!" data-target="dropdown1" id="dropdown1Text">Usuario<i class="material-icons right">arrow_drop_down</i></a></li>
-          </ul>
-        </div>
-    </nav>
-    <ul class="sidenav" id="mobile-demo">
-            <li id="idListaUsuariosMovil" style="display:none;"><a href="listaUsuarios.html">Lista de usuarios</a></li>
-            <li id="idRegistrarDocenteBtnMovil" class="active"><a href="registroDocentes.html">Registro de docentes</a></li>
-            <li id="idListaDocentesBtnMovil" style="display:none;"><a href="listaDocentes.html">Lista de docentes</a></li>
-            <li class="divider" tabindex="-1"></li>
-            <li id="idOpcionesBtnMovil" style="display:none;"><a href="opciones.html">Panel de control</a></li>
-            <li class="divider" tabindex="-1"></li>
-            <li id="idUserProfile"><a href="#!">Ver perfil</a></li>
-            <li id="idLogoutBtnMovil"><a href="#!">Logout</a></li>
-    </ul> -->
+    <!-- Elemento <div> con la id "navBar1", donde sera alojado la barra de navegacion -->
     <div id="navBar1"></div>
     <div class="container">
-      <div class="row">
+      <!-- <div class="row">
         <div class="col s12">
           <ul class="tabs tabs-fixed-width tab-demo z-depth-1">
             <li class="tab col s6"><a class="active" href="#userProfile">Perfil de usuario</a></li>
@@ -52,41 +24,40 @@
           </ul>
         </div>
         <div id="userProfile" class="col s12">
-          <!-- Contenido del formulario de perfil de usuario -->
+          Contenido del formulario de perfil de usuario
           <div class="z-depth-2 pd20">
             <form id="formUserProfile">
-                <div class="row">
-                    <div class="input-field col s12">
-                        <i class="material-icons prefix">account_circle</i>
-                        <input type="text" class="validate" id="userName">
-                        <label for="userName" id="labelUserName">Nombre</label>
-                    </div>
-                    <div class="input-field col s12">
-                        <i class="material-icons prefix">email</i>
-                        <input type="email" class="validate" id="userEmail">
-                        <label for="userEmail" id="labelUserEmail">e-mail</label>
-                        <span class="helper-text" data-error="e-mail invalido" data-success="Correcto"></span>
-                    </div>
-                    <div class="input-field col s12">
-                        <i class="material-icons prefix">lock</i>
-                        <input type="password" class="validate" id="userPassword">
-                        <label for="userPassword">Contraseña</label>
-                    </div>
-                    
-                </div>
-                <div class="row">
-                    <div class="col s12">
-                        <input type="submit" value="Guardar" class="btn">
-                    </div>
-                    <div class="col s12">
-                        <!-- <button type="button" class="btn" id="btnLogOut" style="display:none">Salir</button> -->
-                    </div>
-                </div>
-              </form>
+              <div class="row">
+                  <div class="input-field col s12">
+                      <i class="material-icons prefix">account_circle</i>
+                      <input type="text" class="validate" id="userName">
+                      <label for="userName" id="labelUserName">Nombre</label>
+                  </div>
+                  <div class="input-field col s12">
+                      <i class="material-icons prefix">email</i>
+                      <input type="email" class="validate" id="userEmail">
+                      <label for="userEmail" id="labelUserEmail">e-mail</label>
+                      <span class="helper-text" data-error="e-mail invalido" data-success="Correcto"></span>
+                  </div>
+                  <div class="input-field col s12">
+                      <i class="material-icons prefix">lock</i>
+                      <input type="password" class="validate" id="userPassword">
+                      <label for="userPassword">Contraseña</label>
+                  </div>
+                  
+              </div>
+              <div class="row">
+                  <div class="col s12">
+                      <input type="submit" value="Guardar" class="btn">
+                  </div>
+                  <div class="col s12">
+                  </div>
+              </div>
+            </form>
           </div>
         </div>
         <div id="userDocData" class="col s12">
-          <!-- Contenido del formulario de datos de docente -->
+          Contenido del formulario de datos de docente
           <div class="z-depth-2 pd20">
             <form id="formRegistroDocentes">
               <div class="row">
@@ -106,7 +77,6 @@
                   <textarea class="materialize-textarea" rows="4" id="docenteResumen"></textarea>
                   <label for="docenteResumen">Resumen</label>
                 </div>
-                <!-- Se agrego los siguientes elementos <input> para experiencia laboral, ultimo trabajo y telefono -->
                 <div class="input-field col s12">
                   <i class="material-icons prefix">assignment</i>
                   <textarea class="materialize-textarea" rows="4" id="docenteExperiencia"></textarea>
@@ -122,7 +92,6 @@
                   <input type="number" class="validate" id="docenteTelefono">
                   <label for="docenteTelefono">Telefono / Celular</label>
                 </div>
-                <!--  -->
                 <div class="col s12">
                   <label>Categoria</label>
                   <select id="docenteCategoria" class="browser-default">
@@ -156,30 +125,207 @@
             </form>
           </div>
         </div>
-      </div>
+      </div> -->
       <div class="row">
         <div class="col s12">
-          <ul class="collapsible">
+          <ul class="collapsible expandable">
+            <li class="active">
+              <div class="collapsible-header"><i class="material-icons">account_circle</i>Perfil de usuario</div>
+              <div class="collapsible-body">
+                <form id="formUserProfile">
+                  <div class="row">
+                      <div class="input-field col s12">
+                          <i class="material-icons prefix">account_circle</i>
+                          <input type="text" class="validate" id="userName">
+                          <label for="userName" id="labelUserName">Nombre</label>
+                      </div>
+                      <div class="input-field col s12">
+                          <i class="material-icons prefix">email</i>
+                          <input type="email" class="validate" id="userEmail">
+                          <label for="userEmail" id="labelUserEmail">e-mail</label>
+                          <span class="helper-text" data-error="e-mail invalido" data-success="Correcto"></span>
+                      </div>
+                      <div class="input-field col s12">
+                          <i class="material-icons prefix">lock</i>
+                          <input type="password" class="validate" id="userPassword">
+                          <label for="userPassword">Contraseña</label>
+                      </div>
+                      
+                  </div>
+                  <div class="row">
+                      <div class="col s12">
+                          <!-- <input type="submit" value="Guardar" id="" class="btn"> -->
+                          <a href="#modalUserData" class="modal-trigger btn blue">Guardar</a>
+                      </div>
+                      <div class="col s12">
+                          <!-- <button type="button" class="btn" id="btnLogOut" style="display:none">Salir</button> -->
+                      </div>
+                  </div>
+                </form>
+              </div>
+            </li>
             <li>
               <div class="collapsible-header"><i class="material-icons">whatshot</i>Datos de docente</div>
-              <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+              <div class="collapsible-body">
+                <form id="formRegistroDocentes">
+                  <div class="row">
+                      <div class="col s12">
+                          <img src="" alt="" id="ProfileImageDoc" class="docProfImage">
+                      </div>
+                      <div class="col s12">
+                          <div class="file-field input-field">
+                              <div class="btn teal darken-2">
+                                  <span>Imagen de perfil</span>
+                                  <input type="file" id="docenteImagenPerfil" accept="image/*">
+                              </div>
+                              <div class="file-path-wrapper">
+                                  <input class="file-path validate" type="text" placeholder="Seleccione imagen de perfil">
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="row">
+                    <div class="input-field col s12">
+                      <i class="material-icons prefix">mode_edit</i>
+                      <textarea class="materialize-textarea" rows="4" id="docenteResumen"></textarea>
+                      <label for="docenteResumen" id="docenteResumenLabel">Resumen</label>
+                    </div>
+                    <div class="input-field col s12">
+                      <i class="material-icons prefix">assignment</i>
+                      <textarea class="materialize-textarea" rows="4" id="docenteExperiencia"></textarea>
+                      <label for="docenteExperiencia" id="docenteExperienciaLabel">Experiencia laboral</label>
+                    </div>
+                    <div class="input-field col s12">
+                      <i class="material-icons prefix">business_center</i>
+                      <input type="text" class="validate" id="docenteTrabajo">
+                      <label for="docenteTrabajo" id="docenteTrabajoLabel">Ultimo trabajo</label>
+                    </div>
+                    <div class="input-field col s12">
+                      <i class="material-icons prefix">phone</i>
+                      <input type="number" class="validate" id="docenteTelefono">
+                      <label for="docenteTelefono" id="docenteTelefonoLabel">Telefono / Celular</label>
+                    </div>
+                    <div class="input-field col s12">
+                      <i class="material-icons prefix">business_center</i>
+                      <input type="text" class="validate" id="docenteEspecialidad">
+                      <label for="docenteEspecialidad" id="docenteEspecialidadLabel">Especialidad</label>
+                    </div>
+                    <div class="col s12">
+                      <label>Categoria</label>
+                      <select id="docenteCategoria" class="browser-default">
+                        <option value="" disabled selected>Seleccione la categoria</option>
+                      </select>
+                    </div>
+                    <div class="col s12">
+                      <label>Tipo</label>
+                      <select id="docenteTipo" class="browser-default">
+                          <option value="" disabled selected>Seleccione tipo</option>
+                      </select>
+                    </div>
+                    <div class="col s12 m6">
+                      <div class="file-field input-field">
+                        <a href="#modal2" class="btn green w100 modal-trigger" id="showCV">CV</a>
+                        
+                      </div>
+                    </div>
+                    <div class="col s12 m6" id="idPortafolio">
+                      <div class="file-field input-field">
+                        <a href="#modal1" class="btn red w100 modal-trigger" id="showPortfolio">Portafolio</a>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col s6 m4">
+                      <input type="submit" value="Registrar" class="btn" id="btnSaveDocData">
+                    </div>
+                    <div class="col s6 m4"></div>
+                    <div class="col s6 m4">
+                      <a href="#modalAlert" class="btn red modal-trigger" id="btnDeleteDocModal" style="display:none">Eliminar Datos</a>
+                    </div>
+                  </div>
+                </form>
+              </div>
             </li>
           </ul>
         </div>
       </div>
     </div>
     
-    <div id="modal1" class="modal">
+    <div id="modal2" class="modal">
         <div class="modal-content">
           <div id="modalContent">
-            <div id="modalProgress">
-                
+            <div class="row">
+              <h5>Agregar CV</h5>
+              <div class="file-field input-field col s12">
+                  <div class="btn green">
+                      <span>CV</span>
+                      <input type="file" id="docenteCV" accept="application/pdf">
+                  </div>
+                  <div class="file-path-wrapper">
+                      <input class="file-path validate" type="text" placeholder="Seleccione un archivo con el formato pdf">
+                  </div>
+              </div>
+              <div class="col s12">
+                <a class="btn teal" id="saveCVModalBtn">Guardar</a>
+              </div>
             </div>
+            <div class="divider"></div>
+            <div id="modalCVContent"></div>
           </div>
         </div>
         <div class="modal-footer">
-          <a href="#!" class="modal-close waves-effect waves-green btn-flat" onclick="location.reload()">Cerrar</a>
+          <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cerrar</a>
         </div>
+    </div>
+
+    <div id="modal1" class="modal modal-fixed-footer">
+      <div class="modal-content">
+          <h4 id="modal1Title">Portafolio de: ...</h4>
+          <p>Imagenes</p>
+          <div class="row">
+              <div class="col s12" id="idModalBody">
+                  <div id="verPortafolio">Sin elementos</div>
+              </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+          <a href="#!" class="modal-close waves-effect waves-green btn-flat">cerrar</a>
+      </div>
+    </div>
+
+    <div id="modalAlert" class="modal">
+      <div class="modal-content">
+        <h4>Esta seguro?</h4>
+        <div class="row">
+          <div class="col s6" id="colConfirmDelete">
+              <a class="btn green w100" id="confirmDelete">Si</a>
+          </div>
+          <div class="col s6">
+              <a class="btn red modal-close w100">No</a>
+          </div>  
+        </div>
+      </div>
+    </div>
+
+    <div id="modalUserData" class="modal">
+      <div class="modal-content">
+        <div id="modalContent">
+          <div class="row">
+            <div class="col s12">
+              <h4>Introduzca su contraseña actual</h4>
+            </div>
+            <div class="input-field col s12">
+              <i class="material-icons prefix">lock</i>
+              <input type="password" class="validate" id="userPasswordConfirm">
+              <label for="userPasswordConfirm">Contraseña</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect waves-green btn green" id="saveUserData">Guardar</a>
+        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cerrar</a>
+      </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
@@ -201,6 +347,7 @@
     <script src="./lmsApp.js"></script>
     <!-- <script src="./registroDocente.js"></script> -->
     <script src="./perfilUsuariojs.js"></script>
+    <script src="./showPortfolio.js"></script>
     <script src="./navBar.js"></script>
 </body>
 </html>

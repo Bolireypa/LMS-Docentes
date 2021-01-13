@@ -14,24 +14,21 @@
 
 </head>
 <body>
-        <ul id="dropdown1" class="dropdown-content">
-            <li><a href="perfilUsuario.html" id="btnUserProfile">Ver perfil</a></li>
-            <li><a href="#!" id="btnLogOut">Log out</a></li>
-        </ul>
+        
     <nav>
-        <div class="nav-wrapper">
-            <a href="index.html" class="brand-logo">Co Marca</a>
-            <a href="#" data-target="mobile-demo" class="sidenav-trigger">
+        <div class="nav-wrapper white">
+            <a href="index.html" class="brand-logo"><img src="./image/logo jpg de alta resolucion.png" alt="" class="logo"></a>
+            <a href="#" data-target="mobile-demo" class="sidenav-trigger grey-text">
               <i class="material-icons">menu</i>
             </a>
           <ul id="nav-mobile" class="right hide-on-med-and-down">
-                <li id="idListaUsuarios"><a href="listaUsuarios.html">Lista de usuarios</a></li>
-                <li id="idRegistrarDocenteBtn"><a href="registroDocentes.html">Registro de docentes</a></li>
-                <li id="idListaDocentesBtn"><a href="listaDocentes.html">Lista de docentes</a></li>
-                <li id="idOpcionesBtn" class="active"><a href="opciones.html">Panel de control</a></li>
-                <li id="idRegistrarseBtn" style="display:none;"><a href="registroUsuario.html">Registrarse</a></li>
-                <li id="idLogin" style="display:none;"><a href="login.html">Iniciar sesion</a></li>
-                <li id="idDropdown" style="display:none;"><a class="dropdown-trigger" href="#!" data-target="dropdown1" id="dropdown1Text">Usuario<i class="material-icons right">arrow_drop_down</i></a></li>    
+                <li id="idListaUsuarios"><a href="listaUsuarios.html" class="grey-text text-darken-1">Lista de usuarios</a></li>
+                <li id="idRegistrarDocenteBtn"><a href="registroDocentes.html" class="grey-text text-darken-1">Registro de docentes</a></li>
+                <li id="idListaDocentesBtn"><a href="listaDocentes.html" class="grey-text text-darken-1">Lista de docentes</a></li>
+                <li id="idOpcionesBtn" class="active"><a href="opciones.html" class="grey-text text-darken-1">Panel de control</a></li>
+                <li id="idRegistrarseBtn" style="display:none;"><a href="registroUsuario.html" class="grey-text text-darken-1">Registrarse</a></li>
+                <li id="idLogin" style="display:none;"><a href="login.html" class="grey-text text-darken-1">Iniciar sesion</a></li>
+                <li id="idDropdown" style="display:none;"><a class="dropdown-trigger grey-text text-darken-1" href="#!" data-target="dropdown1" id="dropdown1Text">Usuario<i class="material-icons right">arrow_drop_down</i></a></li>    
           </ul>
         </div>
     </nav>
@@ -42,11 +39,14 @@
             <li class="divider" tabindex="-1"></li>
             <li><a href="opciones.html">Panel de control</a></li>
             <li class="divider" tabindex="-1"></li>
-            <li id="idUserProfile"><a href="#!">Ver perfil</a></li>
+            <li id="idUserProfile"><a href="perfilUsuario.html">Ver perfil</a></li>
             <li id="idLogoutBtnMovil"><a href="#!">Logout</a></li>
 
     </ul>
-
+    <ul id="dropdown1" class="dropdown-content">
+        <li><a href="perfilUsuario.html" id="btnUserProfile">Ver perfil</a></li>
+        <li><a href="#!" id="btnLogOut">Log out</a></li>
+    </ul>
 
     <div class="container">
         <div class="row">
@@ -105,6 +105,12 @@
                                             </p>
                                             <p>
                                                 <label>
+                                                    <input type="checkbox" class="filled-in" id="specialismCheckbox" name="exportCheckbox"/>
+                                                    <span>Especialidad</span>
+                                                </label>
+                                            </p>
+                                            <p>
+                                                <label>
                                                     <input type="checkbox" class="filled-in" id="categoryCheckbox" name="exportCheckbox"/>
                                                     <span>Categoria</span>
                                                 </label>
@@ -131,12 +137,39 @@
                         <div class="z-depth-1 panelTable">
                             <h4>Opciones</h4>
                             <div class="row">
+                                <div class="col s12">
+                                    <h5>Inagen de perfil:</h5>
+                                    <div>
+                                        <img src="" alt="" id="idDefaultProfileImage">
+                                    </div>
+                                    <h6 id="h6ProfileImage"></h6>
+                                </div>
+                                <div class="col s12">
+                                    <div class="file-field input-field">
+                                        <div class="btn teal darken-2">
+                                            <span>Seleccione una imagen</span>
+                                            <input type="file" id="inputDefaultProfileImage" accept="image/*">
+                                        </div>
+                                        <div class="file-path-wrapper">
+                                            <input class="file-path validate" type="text" placeholder="Seleccione una imagen">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col s12">
+                                    <a class="btn green darken-2" id="btnProfileImage">Guardar</a>
+                                </div>
+                            </div>
+                            <div class="divider"></div>
+                            <div class="row">
                                 <form id="defaultImageForm">
                                     <div class="col s12">
                                         <!-- <h5>Imagen por defecto</h5> -->
                                         <!-- <p>Seleccione una imagen por defecto que se mostrará cuando se registre un docente sin las imagenes de su portafolio.</p> -->
-                                        <h5>Imagen por defecto:</h5>
+                                        <h5>Imagen de portafolio:</h5>
                                         <a class="btn-floating tooltipped" data-position="bottom" data-tooltip="Seleccione una imagen por defecto que se mostrará cuando se registre un docente sin las imagenes de su portafolio."><i class="material-icons">info_outline</i></a>
+                                        <div>
+                                            <img src="" alt="" id="idDefaultCardImage">
+                                        </div>
                                         <h6 id="idCurrentImageh5"></h6>
                                     </div>
                                     <div class="col s12">
