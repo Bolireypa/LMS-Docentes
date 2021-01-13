@@ -49,6 +49,7 @@ var listaLmsDoc = '';
 
 // Variablel de tipo array que guarda los elementos de las cards de los docentes, esta variable es utilizada para la paginacion
 var docentesCards = [];
+var docentesCardsPag = [];
 
 // Variable que guarda el rol de usuario, utilizada para los permisos de acuerdo al rol de ususario
 var userRol = '';
@@ -86,6 +87,9 @@ var idOpcionesBtn = document.getElementById('idOpcionesBtn');
 // Variable que captura el elemento del menu responsivo de la barra de navegacion en moviles que lleva a la vista 'registroDocentes.html'
 var idRegistrarDocenteBtnMovil = document.getElementById('idRegistrarDocenteBtnMovil');
 
+var docSearch = document.getElementById('docSearch');
+var searchBtn = document.getElementById('searchBtn');
+
 // Variable que guarda al usuario con sesion iniciada
 var currentUser = '';
 
@@ -93,8 +97,12 @@ var currentUser = '';
 var numMaxImg = 0;
 
 var modals = document.getElementsByClassName('modal-close');
-console.log(modals);
 
+// Variable que guarda los daots de los docentes, utilizado para la busqueda mediante especialidad
+var specialismSearch = [];
+
+// Variable que guarda la imagen por defecto guardado en la coleccion 'lms-opciones'
+var defautlProfImg = '';
 
 // Funcion saveFile() que realiza el registro de los datos de los archivos en la coleccion 'lms-archivos', requiere los parametros: fileName (Nombre de archivo a guardar, imagen o PDF), refid (La id del docente al que se vinculara el archivo, imagen o PDF), url (Ubicacion donde sera subido el archivo en el storage del proyecto), type (Tipo de archivo que se esta guardando, imagen - PDF)
 const saveFile = (fileName, refid, url, type) => 
@@ -269,6 +277,14 @@ const deleteDoc = (id, nameDelete) => db.collection('lms-docentes').doc(id).dele
         console.error("Error removing document: ", error);
     });
 
+// Funcion getDefaultProfileImage() que obtiene la imagen de perfil por defecto a mostrar en los cards de los docentes
+getDefaultProfileImage = async function () {
+    var getOptionsProf = await getOptions();
+    // console.log(getOptionsProf.docs[0].data().defaultProfileImageUrl);
+    defautlProfImg = getOptionsProf.docs[0].data().defaultProfileImageUrl;
+}
+getDefaultProfileImage();
+
 // Funcion deleteImgPortafolio() que elimina la imagen del portafolio de docente de la coleccion 'lms-archivos', requiere los parametros: id (id de los datos de la imagen), refid (id del docente al que pertenece la imagen), imgData (nombre de la imagen que sera eliminada)
 const deleteImgPortafolio = (id, refid, imgData) => db.collection('lms-archivos').doc(id).delete()
     .then(async function() {
@@ -371,6 +387,10 @@ const updateDoc = (id, updatedDoc, currentDoc) => db.collection('lms-docentes').
             lastReg = lastReg+' | '+'Telefono: '+currentDoc.phone;
             newReg = newReg+' | '+'Telefono: '+updatedDoc.phone;
         }
+        if (currentDoc.specialism != updatedDoc.specialism) {
+            lastReg = lastReg+' | '+'Especialidad: '+currentDoc.specialism;
+            newReg = newReg+' | '+'Especialidad: '+updatedDoc.specialism;
+        }
         if (currentDoc.category != updatedDoc.category) {
             lastReg = lastReg+' | '+'Categoria: '+currentDoc.category;
             newReg = newReg+' | '+'Categoria: '+updatedDoc.category;
@@ -385,7 +405,7 @@ const updateDoc = (id, updatedDoc, currentDoc) => db.collection('lms-docentes').
             newRegister: newReg,
             idRegister: id,
         };
-        console.log(log1);
+        // console.log(log1);
         
         // Se ejecuta la funcion logRegister() que guarda un registro de que usuario esta modificando a un docente, en la coleccion 'lms-log', se envia los parametros: Primer parametro (el nombre del usuario que realiza la accion de registrar), segundo parametro (la id del usuario que realiza la accion de registrar), tercer parametro (los datos del docente que se modificaron), cuarto parametro (la id del docente registrado)
         logRegister(currentUser.displayName, currentUser.uid, log1, id);
@@ -554,7 +574,7 @@ portafolio = function (docName, docRef, editPortafolio) {
                             console.log(error);
                 
                         }, function () {
-                            console.log('Imagen cambiada');
+                            // console.log('Imagen cambiada');
                             // En caso de que se haya subido la imagen se obtiene la url de su ubicacion
                             uploadDoc.snapshot.ref.getDownloadURL().then(async function (url1) {
                                 // Luego de subir la imagen al storage se obtiene la url y se modifica la referencia en la coleccion 'lms-archivos', se pasan los parametros: (id de la referencia, id del docente, tipo de archivo que se esta cambiando, el nombre del archivo y la url de su ubicacion, nombre del archivo que sera reemplazado)
@@ -638,7 +658,7 @@ portafolio = function (docName, docRef, editPortafolio) {
                         console.log(error);
             
                     }, function () {
-                        console.log('Imagen Guardada');
+                        // console.log('Imagen Guardada');
                         uploadImage.snapshot.ref.getDownloadURL().then(async function (urlImage) {
                             saveFile(imageFile.name, docRef, urlImage, 'imagen');
                         })
@@ -799,7 +819,8 @@ listaDocentes = async function (lmsDocentes) {
 
     // Array que guarda la lista de docentes, para luego ser utilizada en la paginacion
     docentesCards = [];
-
+    docentesCardsPag = [];
+    
     // Se realiza un forEach() para la creacion de los cards de cada docente con sus datos
     lmsDocentes.forEach(docD => {
         var docenteDatos = docD.data();
@@ -839,7 +860,7 @@ listaDocentes = async function (lmsDocentes) {
 
         // Creacion del boton que habilita la edicion de los datos del docente, mediante un formulario en el mismo card
         var aBtnFloating = document.createElement('a');
-        aBtnFloating.className = 'btn-floating activator halfway-fab waves-effect waves-light red';
+        aBtnFloating.className = 'btn activator divProfileImageBtn red';
         
         var optionsIcon = document.createElement('i');
         optionsIcon.className = 'material-icons right';
@@ -868,6 +889,23 @@ listaDocentes = async function (lmsDocentes) {
         var divCardContent = document.createElement('div');
         divCardContent.className = 'card-content';
         divCardContent.id = 'idCardContent_'+c1;//
+        
+        // Creacion de los elementos que muestran la imagen de perfil del docente
+        var divProfileImage = document.createElement('div');
+        // divProfileImage.className = 'divProfileImage';
+        var profileImage = document.createElement('img');
+        if (docenteDatos.profImageUrl) {
+            // console.log('existe imagen de perfil');
+            profileImage.src = docenteDatos.profImageUrl;
+            
+        } else {
+            // console.log('no existe imagen de perfil');
+            profileImage.src = defautlProfImg;
+            
+        }
+        profileImage.className = 'profileImage';
+        divProfileImage.appendChild(profileImage);
+        divCardContent.appendChild(divProfileImage);
 
         // Creacion de los elementos para el contenido del card que muestra el nombre del docente
         var spanCardTitle = document.createElement('span');
@@ -883,10 +921,12 @@ listaDocentes = async function (lmsDocentes) {
         var cardEmailIcon = document.createElement('i');
         cardEmailIcon.className = 'tiny material-icons';
         cardEmailIcon.textContent = 'email';
-        var cardEmailText = document.createTextNode(' '+docenteDatos.email);
+        var cardEmailText = document.createTextNode(' Email: ');
         divCardEmailText.appendChild(cardEmailIcon);
         divCardEmailText.appendChild(cardEmailText);
         divCardEmail.appendChild(divCardEmailText);
+        var cardEmailValue = createElementFunction('p', 'cardValue', docenteDatos.email, '');
+        divCardEmail.appendChild(cardEmailValue);
         // Fin de creacion de elementos para el email del docente
         
         // Creacion de los elementos que muestra el ultimo trabajo del docente
@@ -896,16 +936,17 @@ listaDocentes = async function (lmsDocentes) {
         var cardLastWorkIcon = document.createElement('i');
         cardLastWorkIcon.className = 'tiny material-icons';
         cardLastWorkIcon.textContent = 'business_center';
-        if (docenteDatos.lastWork && docenteDatos.lastWork != '') {
-            var cardLastWorkText = document.createTextNode(' '+docenteDatos.lastWork);
-            
-        } else {
-            var cardLastWorkText = document.createTextNode(' No registrado');
-            
-        }
+        var cardLastWorkText = document.createTextNode(' Ultimo trabajo: ');
         divCardLastWorkText.appendChild(cardLastWorkIcon);
         divCardLastWorkText.appendChild(cardLastWorkText);
         divCardLastWork.appendChild(divCardLastWorkText);
+        if (docenteDatos.lastWork && docenteDatos.lastWork != '') {
+            var lastWorkValue = docenteDatos.lastWork;
+        } else {
+            var lastWorkValue = ' No registrado';
+        }
+        var cardLastWorkValue = createElementFunction('p', 'cardValue', lastWorkValue, '');
+        divCardLastWork.appendChild(cardLastWorkValue);
         // Fin de creacion de los elementos que muestra el ultimo trabajo del docente
 
         // Creacion de los elementos que muestra el telefono del docente
@@ -915,16 +956,16 @@ listaDocentes = async function (lmsDocentes) {
         var cardPhoneIcon = document.createElement('i');
         cardPhoneIcon.className = 'tiny material-icons';
         cardPhoneIcon.textContent = 'phone';
-        if (docenteDatos.phone && docenteDatos.phone != '') {
-            var cardPhoneText = document.createTextNode(' '+docenteDatos.phone);
-            
-        } else {
-            var cardPhoneText = document.createTextNode(' No registrado');
-            
-        }
+        var cardPhoneText = document.createTextNode(' Telefono: ');        
         divCardPhoneText.appendChild(cardPhoneIcon);
         divCardPhoneText.appendChild(cardPhoneText);
         divCardPhone.appendChild(divCardPhoneText);
+        if (docenteDatos.phone && docenteDatos.phone != '') {
+            var cardPhoneValue = createElementFunction('p', 'cardValue', docenteDatos.phone, '');
+        } else {
+            var cardPhoneValue = createElementFunction('p', 'cardValue', ' No registrado', '');
+        }
+        divCardPhone.appendChild(cardPhoneValue);
         // Fin de creacion de los elementos que muestra el telefono del docente
 
         // Creacion de los elementos que muestra la experiencia laboral del docente
@@ -948,6 +989,33 @@ listaDocentes = async function (lmsDocentes) {
         divCardExperience.appendChild(divCardExperienceText);
         divCardExperience.appendChild(pCardExperienceText);
         // Fin de creacion de los elementos que muestra la experiencia laboral del docente
+
+        // Creacion de los elementos que muestan la especialidad
+        var divCardSpecialism = document.createElement('div');
+        // divCardSpecialism.className = 'cardInfo';
+        var divCardSpecialismText = document.createElement('p');
+        var cardSpecialismIcon = document.createElement('i');
+        cardSpecialismIcon.className = 'tiny material-icons';
+        cardSpecialismIcon.textContent = 'assignment';
+        var cardSpecialismText = document.createTextNode(' Especialidad: ');        
+        divCardSpecialismText.appendChild(cardSpecialismIcon);
+        divCardSpecialismText.appendChild(cardSpecialismText);
+        divCardSpecialism.appendChild(divCardSpecialismText);
+        if (docenteDatos.specialism && docenteDatos.specialism != '') {
+            var cardSpecialismValue = createElementFunction('p', 'cardValue', docenteDatos.specialism, '');
+            specialismSearch[c1] = {
+                index: c1,
+                name: docenteDatos.specialism
+            };
+        } else {
+            var cardSpecialismValue = createElementFunction('p', 'cardValue', ' No registrado', '');
+            specialismSearch[c1] = {
+                index: c1,
+                name: ''
+            };
+        }
+        divCardSpecialism.appendChild(cardSpecialismValue);
+        // Fin de crecion de los elementos
 
         // Creacion de los elementos que muestra el resumen del docente
         var divCardSummary = document.createElement('div');
@@ -976,7 +1044,7 @@ listaDocentes = async function (lmsDocentes) {
             async function loadCategory() {
                 var getCategory = await docGetCategory(docenteDatos.category);
                 if (getCategory.data()) {
-                    console.log(getCategory.data().nombreCat);
+                    // console.log(getCategory.data().nombreCat);
                     var categoryText = document.createTextNode(getCategory.data().nombreCat);
                     h6CategoryText.appendChild(categoryText);
                 } else {
@@ -998,7 +1066,7 @@ listaDocentes = async function (lmsDocentes) {
             async function loadType() {
                 var getType = await docGetType(docenteDatos.type);
                 if (getType.data()) {
-                    console.log(getType.data().nombreTipo);
+                    // console.log(getType.data().nombreTipo);
                     typeTag.textContent = getType.data().nombreTipo;
                     
                 } else {
@@ -1051,7 +1119,7 @@ listaDocentes = async function (lmsDocentes) {
         btnPortafolio.href = '#modal1';
         btnPortafolio.style = 'width: 100%;';
         btnPortafolio.onclick = function () {
-            console.log('imagenes');
+            // console.log('imagenes');
             portafolio(docenteDatos.name, docD.id, false);
         }
         var btnPortafolioText = document.createTextNode('Portafolio');
@@ -1068,6 +1136,7 @@ listaDocentes = async function (lmsDocentes) {
         divCardContent.appendChild(divCardEmail);
         divCardContent.appendChild(divCardPhone);
         divCardContent.appendChild(divCardLastWork);
+        divCardContent.appendChild(divCardSpecialism);
         divCardContent.appendChild(divCardExperience);
         divCardContent.appendChild(divCardSummary);
         divCardContent.appendChild(h6CategoryText);
@@ -1102,28 +1171,86 @@ listaDocentes = async function (lmsDocentes) {
         // Se asigna el evento 'onsubmit' al formulario de edicion de datos, que ejecuta la funcion updateDoc() para que guarde los cambios en la coleccion 'lms-docetes'
         editForm.onsubmit = async function (e) {
             e.preventDefault();
+            // console.log(e.target[0].files[0]);
+            var profImgDoc = e.target[0].files[0];
+            if (profImgDoc) {
+                var storageRef = storage.ref('/ImagenPerfil/'+profImgDoc.name);
+    
+                var uploadTask = storageRef.put(profImgDoc);
+                
+                uploadTask.on('state_changed', function(snapshot){
+    
+                    // Progreso de la imagen a subir
+                    var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    console.log(profImgDoc.name+' subiendo ' + progress + '% completado');
+    
+                }, function (error) {
+                    console.log(error);
+                    
+                }, function () {
+                    // console.log('Imagen '+c1+' '+profImgDoc.name+' subida');
+    
+                    uploadTask.snapshot.ref.getDownloadURL().then(async function (url) {
+                        // console.log(url);
+                        await updateDoc(docD.id, {
+                            // ref: e.target[0].value,
+                            name: e.target[2].value,
+                            email: e.target[3].value,
+                            summary: e.target[4].value,
+                            experience: e.target[5].value,
+                            lastWork: e.target[6].value,
+                            phone: e.target[7].value,
+                            specialism: e.target[8].value,
+                            category: e.target[9].value,
+                            type: e.target[10].value,
+                            profImageName: profImgDoc.name,
+                            profImageUrl: url
+                            // refCatDoc: e.target[0].value,
+                        },{
+                            name: docenteDatos.name,
+                            email: docenteDatos.email,
+                            summary: docenteDatos.summary,
+                            experience: docenteDatos.experience,
+                            lastWork: docenteDatos.lastWork,
+                            phone: docenteDatos.phone,
+                            category: docenteDatos.category,
+                            type: docenteDatos.type,
+                            specialism: docenteDatos.specialism,
+                            profImageName: docenteDatos.profImageName,
+                            profImageUrl: docenteDatos.profImageUrl
+                        });
+                    })
+                });
+    
+                // console.log('Imagen:'+profImgDoc);
+                
+            }else{
+                // console.log('Imagen: no esxiste');
+                await updateDoc(docD.id, {
+                    // ref: e.target[0].value,
+                    name: e.target[2].value,
+                    email: e.target[3].value,
+                    summary: e.target[4].value,
+                    experience: e.target[5].value,
+                    lastWork: e.target[6].value,
+                    phone: e.target[7].value,
+                    specialism: e.target[8].value,
+                    category: e.target[9].value,
+                    type: e.target[10].value,
+                    // refCatDoc: e.target[0].value,
+                },{
+                    name: docenteDatos.name,
+                    email: docenteDatos.email,
+                    summary: docenteDatos.summary,
+                    experience: docenteDatos.experience,
+                    lastWork: docenteDatos.lastWork,
+                    phone: docenteDatos.phone,
+                    category: docenteDatos.category,
+                    type: docenteDatos.type,
+                    specialism: docenteDatos.specialism
+                });
+            }
             
-            await updateDoc(docD.id, {
-                // ref: e.target[0].value,
-                name: e.target[0].value,
-                email: e.target[1].value,
-                summary: e.target[2].value,
-                experience: e.target[3].value,
-                lastWork: e.target[4].value,
-                phone: e.target[5].value,
-                category: e.target[6].value,
-                type: e.target[7].value,
-                // refCatDoc: e.target[0].value,
-            },{
-                name: docenteDatos.name,
-                email: docenteDatos.email,
-                summary: docenteDatos.summary,
-                experience: docenteDatos.experience,
-                lastWork: docenteDatos.lastWork,
-                phone: docenteDatos.phone,
-                category: docenteDatos.category,
-                type: docenteDatos.type,
-            });
 
         }
 
@@ -1220,6 +1347,26 @@ listaDocentes = async function (lmsDocentes) {
         inputPhone.value = docenteDatos.phone;
         divColInputPhone.appendChild(inputPhone);
         divColInputPhone.appendChild(labelInputPhone);
+
+        // Creacion de elemento <input> para el telefono del docente
+        var divColInputSpecialism = document.createElement('div');
+        divColInputSpecialism.className = 'input-field divInputField col s12';
+        var labelInputSpecialism = document.createElement('label');
+        labelInputSpecialism.className = 'active';
+        labelInputSpecialism.setAttribute('for', 'inputSpecialismId_'+c1);
+        labelInputSpecialism.textContent = 'Especialidad';
+        var inputSpecialism = document.createElement('input');
+        inputSpecialism.type = 'text';
+        inputSpecialism.id = 'inputSpecialismId_'+c1;
+        if (docenteDatos.specialism) {
+            inputSpecialism.value = docenteDatos.specialism;
+            
+        } else {
+            inputSpecialism.value = '';
+            
+        }
+        divColInputSpecialism.appendChild(inputSpecialism);
+        divColInputSpecialism.appendChild(labelInputSpecialism);
 
         // Elemento <select> de categoria
         var divColSelectCategory = document.createElement('div');
@@ -1339,7 +1486,9 @@ listaDocentes = async function (lmsDocentes) {
                         newCVInputFile.type = 'file';
                         newCVInputFile.id = 'docenteNewCV_';
                         newCVInputFile.accept = "application/pdf";
-                        newCVInputFile.onchange = function () { console.log(this.files[0]); };
+                        newCVInputFile.onchange = function () { 
+                            // console.log(this.files[0]); 
+                        };
                         var newCVSpan = document.createElement('span');
                         var spanCVText = document.createTextNode('Portafolio');
                         newCVSpan.appendChild(spanCVText);
@@ -1379,7 +1528,7 @@ listaDocentes = async function (lmsDocentes) {
                                     console.log(error);
                         
                                 }, function () {
-                                    console.log('Documento subido');
+                                    // console.log('Documento subido');
                                     // Se obtiene la url de la ubicacion del PDF subido al storage
                                     uploadDoc.snapshot.ref.getDownloadURL().then(async function (url1) {
                                         // Se guarda la url y el nombre del PDF en la coleccion 'lms-archivos' mediante la funcion updateFile()
@@ -1444,7 +1593,9 @@ listaDocentes = async function (lmsDocentes) {
                     newCVInputFile.type = 'file';
                     newCVInputFile.id = 'docenteNewCV_';
                     newCVInputFile.accept = "application/pdf";
-                    newCVInputFile.onchange = function () { console.log(this.files[0]); };
+                    newCVInputFile.onchange = function () { 
+                        // console.log(this.files[0]); 
+                    };
                     var newCVSpan = document.createElement('span');
                     var spanCVText = document.createTextNode('Portafolio');
                     newCVSpan.appendChild(spanCVText);
@@ -1525,13 +1676,32 @@ listaDocentes = async function (lmsDocentes) {
         divRowEditDocuments.appendChild(divColEditPortafolio);
         // Fin de creacion del boton Editar Portafolio
 
+        // Se crean los elementos necesarios para la modificacion del perfil de usuario
+        var divColPI = createElementFunction('div', 'col s12 file-field input-field', '', '');
+        var divInputBtnPI = createElementFunction('div', 'btn teal darken-2', '', '');
+        var spanInputBtnPI = createElementFunction('span', '', 'Imagen de perfil', '');
+        var inputBtnPI = createElementFunction('input', '', '', 'docenteImagePerfil'+c1);
+        inputBtnPI.type = 'file';
+        inputBtnPI.setAttribute('accept', 'image/*');
+        divInputBtnPI.appendChild(spanInputBtnPI);
+        divInputBtnPI.appendChild(inputBtnPI);
+        divColPI.appendChild(divInputBtnPI);
+        var divPathWrapper = createElementFunction('div', 'file-path-wrapper', '', '');
+        var inputPathWrapper = createElementFunction('input', 'file-path validate', '', '');
+        inputPathWrapper.type = 'text';
+        inputPathWrapper.setAttribute('placeholder', 'Seleccione una imagen de perfil');
+        divPathWrapper.appendChild(inputPathWrapper);
+        divColPI.appendChild(divPathWrapper);
+
         // Se agregan los elementos <input> creados anteriormente para el formulario de edicion de docente
+        divRowEditForm.appendChild(divColPI);
         divRowEditForm.appendChild(divColInputName);
         divRowEditForm.appendChild(divColInputEmail);
         divRowEditForm.appendChild(divColInputSummary);
         divRowEditForm.appendChild(divColInputExperience);
         divRowEditForm.appendChild(divColInputLastWork);
         divRowEditForm.appendChild(divColInputPhone);
+        divRowEditForm.appendChild(divColInputSpecialism);
         divRowEditForm.appendChild(divColSelectCategory);
         divRowEditForm.appendChild(divColSelectType);
         divRowEditForm.appendChild(divColEditDocument);
@@ -1569,10 +1739,13 @@ listaDocentes = async function (lmsDocentes) {
         deleteButton.appendChild(deleteButtonText);
         // Fin de creacion del boton Eliminar docente
 
+        
+
         editForm.appendChild(divRowEditForm);
         editForm.appendChild(editButton);
         divColOC1.appendChild(editForm);
         divColOC2.appendChild(deleteButton);
+        // divCardReveal.appendChild(divColPI);
         divCardReveal.appendChild(divColOC1);
         divCardReveal.appendChild(divColOC2);
 
@@ -1581,6 +1754,7 @@ listaDocentes = async function (lmsDocentes) {
         dicCard.appendChild(divCardReveal);
         divCol.appendChild(dicCard);
         docentesCards[c1] = divCol;
+        docentesCardsPag[c1] = divCol;
         c1=c1+1;
 
     })
@@ -1590,16 +1764,65 @@ listaDocentes = async function (lmsDocentes) {
 
     firstItem = lastItem - pageItems;
     // Se ejecuta la funcion pagination() que realiza la paginacion de los cards en la lista de docentes
-    pagination(docentesCards, divListaDocentes);
+    pagination(docentesCards);
 
     countPages = Math.ceil(docentesCards.length / pageItems);
 
     // Se ejecuta la funcion paginationNumbers() que agrega los numeros en el pie de la pagina para la paginacion
     paginationNumbers(countPages, divListaDocentes);
+
+    // Se asigna el evento onclick al boton de buscar
+    searchBtn.onclick = function () {
+        var docentesCardsSearch = [];
+        var countResults = 0;
+        var resultText = document.getElementById('resultText');
+        // console.log(docSearch.value);
+        // console.log(specialismSearch);
+        if (docSearch.value == 'Todos') {
+            docentesCardsSearch = docentesCardsPag;
+            resultText.className = 'noVisible';
+        } else {
+            resultText.className = '';
+            for (let index = 0; index < specialismSearch.length; index++) {
+                if (specialismSearch[index].name == docSearch.value) {
+                    console.log('Encontrado');
+                    docentesCardsSearch.push(docentesCardsPag[index]);
+                    countResults++;
+                } else {
+                    console.log('No encontrado');
+                    
+                }
+                
+            }    
+        }
+        
+        // console.log(docentesCardsSearch);
+        currentPage = 1;
+        lastItem = pageItems * currentPage;
+
+        firstItem = lastItem - pageItems;
+        // Se ejecuta la funcion pagination() que realiza la paginacion de los cards en la lista de docentes
+        pagination(docentesCardsSearch);
+
+        countPages = Math.ceil(docentesCardsSearch.length / pageItems);
+
+        // Se ejecuta la funcion paginationNumbers() que agrega los numeros en el pie de la pagina para la paginacion
+        paginationNumbers(countPages, divListaDocentes);
+        // console.log(countResults);
+        
+        resultText.textContent = 'Se Encontró '+countResults+ ' elemento(s)';
+
+        docentesCards = docentesCardsSearch;
+        docSearch.value = '';
+        searchBtn.className = 'btn teal darken-3 disabled';
+
+    }
+
+    autocompleteFunction(lmsDocentes);
 }
 
 // Funcion pagination() que realiza la paginacion de los cards en la lista de docentes, requiere el parametro: docCards(los cards generados para luego repartirlos en paginas)
-pagination = function (docCards, divListaDoc) {
+pagination = function (docCards) {
     // Obtiene el elemento <div> donde se muestran los cards de los docentes para luego refrescarlos y mostrar los nuevos cards de los docentes
     var idList = document.getElementById('idListaD');
     var idListaDoc = document.getElementById('idListaDocentes');
@@ -1640,7 +1863,7 @@ paginationNumbers = function (countPages, divListaDocentes) {
             lastItem = pageItems * currentPage;
             firstItem = lastItem - pageItems;
             // Se ejecuta la funcion pagination() que muestra los cards de los docentes, correspondientes a la pagina
-            pagination(docentesCards, divListaDocentes);
+            pagination(docentesCards);
             // Se capturan todos los numeros de la paginacion
             var btnPaginationNumbers = document.getElementsByClassName('btnNro');
             // Se realiza el proceso para marcar el numero de la pagina actual en la paginacion
@@ -1666,7 +1889,7 @@ paginationNumbers = function (countPages, divListaDocentes) {
             lastItem = pageItems * currentPage;
             firstItem = lastItem - pageItems;
             // Se ejecuta la funcion pagination() que muestra los cards de los docentes, correspondientes a la pagina
-            pagination(docentesCards, divListaDocentes);
+            pagination(docentesCards);
             // Se capturan todos los numeros de la paginacion
             var btnPaginationNumbers = document.getElementsByClassName('btnNro');
             // Se realiza el proceso para marcar el numero de la pagina actual en la paginacion
@@ -1711,7 +1934,7 @@ paginationNumbers = function (countPages, divListaDocentes) {
             lastItem = pageItems * currentPage;
             firstItem = lastItem - pageItems;
             // Se ejecuta la funcion pagination() que muestra los cards de los docentes, correspondientes a la pagina
-            pagination(docentesCards, divListaDocentes);
+            pagination(docentesCards);
         }
         // Se agregan los numero de la paginacion al DOM
         aNumberPage.textContent = j;
@@ -1719,6 +1942,30 @@ paginationNumbers = function (countPages, divListaDocentes) {
         newPaginationItem.appendChild(liPage);     
     }
     newPaginationItem.appendChild(rightArrow);
+}
+
+function autocompleteFunction(lmsDocentes) {
+    // Inicalizacion del autocomplete utilizado para la busqueda por especialidad
+    var aData = '';
+    var countSpecialism = 0;
+    lmsDocentes.forEach(doc => {
+        var specialismDoc = doc.data().specialism; 
+        if (specialismDoc) {
+            aData = aData+'"'+specialismDoc+'": null';
+            if (countSpecialism < lmsDocentes.docs.length) {
+                aData = aData+', ';
+            }   
+        }
+        countSpecialism++;
+    })
+    aData = aData+'"Todos": null';
+    var autocompleteData = '{"data": { '+ aData +' }}';
+    
+    var autoData = JSON.parse(autocompleteData);
+
+    var elems = document.querySelectorAll('.autocomplete');
+    var instances = M.Autocomplete.init(elems, autoData);
+    // Final de autocompletado
 }
 
 // Funcion initApp() utilizada para verificar si un usuario esta autenticado
@@ -1775,7 +2022,7 @@ async function initApp() {
                 console.log("Error getting documents: ", error);
             });
 
-            console.log('User is signed in', user.displayName, userRol);
+            // console.log('User is signed in', user.displayName, userRol);
 
             btnLogOut.setAttribute('style', '');
             
@@ -1812,6 +2059,16 @@ async function initApp() {
         });
     });
 
+    // Se asigna la funcion onkeyup en el input de busqueda, que habilita el boton de buscar cuando el input no esta vacio
+    docSearch.addEventListener('keyup', (e) => {
+        // console.log(docSearch.value);
+        if (docSearch.value == '') {
+            searchBtn.className = 'btn teal darken-3 disabled';
+        } else {
+            searchBtn.className = 'btn teal darken-3';
+        }
+    })
+
     // Se realiza una consulta a la coleccion 'lms-opciones' mediante la funcion getOptions(), luego se reemplaza la varialble imgMaxNumber que limita las imagenes del portafolio de docente
     var imgMaxNumber = await getOptions();
     numMaxImg = imgMaxNumber.docs[0].data().imagesNumber;
@@ -1845,9 +2102,14 @@ window.addEventListener('DOMContentLoaded', async (e) => {
     $(document).ready(function(){
         $('select').formSelect();
     });
+
+    
     // Se realiza una consulta a la coleccion 'lms-docentes' mediante la funcion getDocentes()
     const lmsDocentes = await getDocentes();
     listaLmsDoc = lmsDocentes;
+
+    autocompleteFunction(lmsDocentes);
+    
     // Se ejecuta la funcion listaDocentes() que genera los cards de los docentes y los muestra en la lista de docentes
     listaDocentes(lmsDocentes);
 })

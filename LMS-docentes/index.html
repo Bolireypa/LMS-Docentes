@@ -10,16 +10,19 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!--Import materialize.css-->
     <link type="text/css" rel="stylesheet" href="./css/materialize.min.css"  media="screen,projection"/>
+    <link rel="stylesheet" href="./styles.css">
 
 </head>
 <body>
     
     <nav>
-        <div class="nav-wrapper">
-          <a href="index.html" class="brand-logo">Co Marca</a>
-          <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-          <ul id="nav-mobile" class="right hide-on-med-and-down">
-            <li><a href="registroUsuario.html">Registrarse</a></li>
+        <div class="nav-wrapper white">
+            <a href="index.html" class="brand-logo"><img src="./image/logo jpg de alta resolucion.png" alt="" class="logo"></a>
+            <a href="#" data-target="mobile-demo" class="sidenav-trigger grey-text">
+                <i class="material-icons">menu</i>
+            </a>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <li><a href="registroUsuario.html" class="grey-text text-darken-1">Registrarse</a></li>
             <li class="active"><a href="login.html"></a></li>
           </ul>
         </div>
@@ -28,15 +31,12 @@
         <li><a href="registroUsuario.html">Registrarse</a></li>
         <li class="active"><a href="login.html">Iniciar sesion</a></li>
     </ul>
-
-    <div class="container">
+    <br>
+    <div class="">
         <div class="row">
-            <div class="col s1 m6">
-
-            </div>
-            <div class="col s10 m6">
+            <div class="col s12 m5">
                 <div class="z-depth-3">
-                    <div class="" style="padding: 24px;">
+                    <div class="" style="padding: 10px 50px;">
                         <span class="">
                             <h4>Iniciar sesión</h4>
                         </span>
@@ -75,8 +75,57 @@
                     </div>
                 </div>
             </div>
+            <div class="col s12 m7">
+                <div class="carousel carousel-slider center" id="carouselId">
+                    <div class="carousel-fixed-item center">
+                        <h3 class="white-text">Co Marca</h3>
+                        <!-- <a class="btn waves-effect white grey-text darken-text-2">button</a> -->
+                    </div>
+                    <div class="carousel-item red white-text" href="#one!">
+                      <h2>Quienes somos</h2>
+                      <p class="white-text">This is your first panel</p>
+                    </div>
+                    <div class="carousel-item amber white-text" href="#two!">
+                      <h2>Second Panel</h2>
+                      <p class="white-text">This is your second panel</p>
+                    </div>
+                    <div class="carousel-item teal white-text" href="#three!">
+                      <h2>Third Panel</h2>
+                      <p class="white-text">This is your third panel</p>
+                    </div>
+                    <div class="carousel-item blue white-text" href="#four!">
+                      <h2>Fourth Panel</h2>
+                      <p class="white-text">This is your fourth panel</p>
+                    </div>
+                  </div>
+            </div>
         </div>
     </div>
+
+    <footer class="page-footer">
+        <div class="container">
+          <div class="row">
+            <div class="col l6 s12">
+              <h5 class="white-text">Academia Co Marca</h5>
+              <!-- <p class="grey-text text-lighten-4">&copy; Academia Co Marca 2021</p> -->
+            </div>
+            <!-- <div class="col l4 offset-l2 s12">
+              <h5 class="white-text">Links</h5>
+              <ul>
+                <li><a class="grey-text text-lighten-3" href="#!">Link 1</a></li>
+                <li><a class="grey-text text-lighten-3" href="#!">Link 2</a></li>
+                <li><a class="grey-text text-lighten-3" href="#!">Link 3</a></li>
+                <li><a class="grey-text text-lighten-3" href="#!">Link 4</a></li>
+              </ul>
+            </div> -->
+          </div>
+        </div>
+        <div class="footer-copyright">
+          <div class="container">
+          © 2021 Academia Co Marca
+          </div>
+        </div>
+      </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
@@ -116,6 +165,25 @@
         });
         $(document).ready(function(){
             $(".dropdown-trigger").dropdown({ hover: false });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var elems = document.querySelectorAll('.carousel');
+            var instances = M.Carousel.init(elems, {
+                fullWidth: true,
+                indicators: true,
+                duration: 200
+            })
+            var elem = document.getElementById('carouselId');
+            var instance = M.Carousel.getInstance(elem);
+            var t = setInterval(() => {
+                sliderLoop();
+            }, 4500);
+            function sliderLoop() {
+                instance.next();
+                // console.log('time');
+            }
+            
         });
     </script>
 

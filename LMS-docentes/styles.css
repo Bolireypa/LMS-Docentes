@@ -18,7 +18,7 @@
 
 .card > .card-image {
     height: 180px;
-    background-color: grey;
+    background-color: #eaeaea;
     display: flex;
     vertical-align: middle;
 }
@@ -33,7 +33,7 @@
 }
 
 .card {
-    height: 775px;
+    height: 845px;
 }
 
 .cardInfo{
@@ -90,6 +90,7 @@
 
 .portafolioImg > .file-field{
     width: 100%;
+    /* height: 45px; */
 }
 
 .portafolioImg > .file-field > .btn{
@@ -145,4 +146,52 @@
 
 .pd20 {
     padding: 20px;
+}
+
+.logo {
+    width: 215px;
+}
+
+.profileImage {
+    width: 70px;
+    height: 70px;
+    position: absolute;
+    top: 144px;
+    border-radius: 50%;
+    right: 9px;
+}
+
+.divProfileImageBtn {
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    border-radius: 50%;
+    right: 9px;
+    z-index: 1;
+    bottom: -34px;
+    padding: 0 5px;
+}
+
+.noVisible {
+    display: none;
+}
+
+.docProfImage {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+}
+
+.cardValue {
+    padding-left: 20px;
+}
+
+.defCard {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    height: 90px;
 }

@@ -18,6 +18,8 @@ var idLogin = document.getElementById('idLogin');
 var idListaUsuariosMovil = document.getElementById('idListaUsuariosMovil');
 var idOpcionesBtnMovil = document.getElementById('idOpcionesBtnMovil');
 var idListaDocentesBtnMovil = document.getElementById('idListaDocentesBtnMovil');
+var docenteImagenPerfil = document.getElementById('docenteImagenPerfil');
+var ProfileImageDoc = document.getElementById('ProfileImageDoc');
 // Fin de captura de elementos del DOM
 
 // Variable que guarda al usuario con sesion iniciada
@@ -50,8 +52,10 @@ var formVerification = {
     lastWork: false
 }
 
+var defautlProfImg = '';
+
 // Funcion saveUser() que realiza el registro de docentes nuevos en la coleccion 'lms-docentes', requiere de los parametros: name (nombre de docente), email (email de docente), summary (resumen del docente), experience(experiencia laboral), lastWork(ulitmo trabajo), phone(telefono o celular de contacto), category (categoria a la que pertenece el docente), type (tipo al que pertenece el docente: Consultor, Docente, Freelancer).
-const saveUser = (name, email, summary, experience, lastWork, phone, category, type) =>
+const saveUser = (name, email, summary, experience, lastWork, phone, category, type, specialism, profImageName, profImageUrl) =>
     db.collection('lms-docentes').add({
         name,
         email,
@@ -61,6 +65,9 @@ const saveUser = (name, email, summary, experience, lastWork, phone, category, t
         phone,
         category,
         type,
+        specialism, 
+        profImageName, 
+        profImageUrl
     }).then(function(docData) {
         console.log("Docente registrado correctamente ",docData.id);
 
@@ -119,6 +126,14 @@ const newBtnPortafolio = function (imgVal) {
         imgVal = 'no hay imagen';
     }
 }
+// Funcion getDefaultProfileImage() que obtiene la imagen de perfil por defecto a mostrar en los cards de los docentes
+getDefaultProfileImage = async function () {
+    var getOptionsProf = await getOptions();
+    console.log(getOptionsProf.docs[0].data().defaultProfileImageUrl);
+    ProfileImageDoc.src = getOptionsProf.docs[0].data().defaultProfileImageUrl;
+    defautlProfImg = getOptionsProf.docs[0].data().defaultProfileImageUrl;
+}
+getDefaultProfileImage();
 
 // Funcion verificarDatos()
 // const verificarDatos = function () {
@@ -238,6 +253,14 @@ async function initApp() {
     });
     // return state;
 
+    docenteImagenPerfil.addEventListener('change', (e) => {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            ProfileImageDoc.src = e.target.result;
+        }
+        reader.readAsDataURL(this.docenteImagenPerfil.files[0]);
+    })
+
     // Se realiza una consulta a la coleccion 'lms-opciones' mediante la funcion getOptions(), luego se reemplaza la varialble nImgPort que limita las imagenes que se quiere registrar
     var imgNumber = await getOptions();
     nImgPort = imgNumber.docs[0].data().imagesNumber;
@@ -262,7 +285,7 @@ window.addEventListener('DOMContentLoaded', async (e) => {
     var selectCategoryId = document.getElementById("docenteCategoria");
     const lmsCategorias = await getCat();
     lmsCategorias.forEach(docC => {
-        console.log(docC.data());
+        // console.log(docC.data());
         var optionCat = document.createElement('option');
         optionCat.value = docC.id;
         var optionCatText = document.createTextNode(docC.data().nombreCat);
@@ -274,7 +297,7 @@ window.addEventListener('DOMContentLoaded', async (e) => {
     var selectTypeId = document.getElementById("docenteTipo");
     const lmsTipos = await getType();
     lmsTipos.forEach(docT => {
-        console.log(docT.data());
+        // console.log(docT.data());
         var optionType = document.createElement('option');
         optionType.value = docT.id;
         var optionTypeText = document.createTextNode(docT.data().nombreTipo);
@@ -290,9 +313,10 @@ window.addEventListener('DOMContentLoaded', async (e) => {
     
 
     var nameCharacterCounter = document.getElementById('nameCharacterCounter');
+    var maxCharacter = 40;
+    nameCharacterCounter.textContent = '0 / '+maxCharacter;
     docenteForm['docenteNombre'].addEventListener('keyup', (e) => {
         var numberCh = e.target.value;
-        var maxCharacter = 40;
         nameCharacterCounter.textContent = numberCh.length + ' / '+maxCharacter;
         if (numberCh.length > maxCharacter) {
             nameCharacterCounter.className = 'helper-text red-text';
@@ -304,11 +328,12 @@ window.addEventListener('DOMContentLoaded', async (e) => {
     })
 
     var lastWorkCharacterCounter = document.getElementById('lastWorkCharacterCounter');
+    var maxCharacterLastWork = 50;
+    lastWorkCharacterCounter.textContent = '0 / '+maxCharacterLastWork;
     docenteForm['docenteTrabajo'].addEventListener('keyup', (e) => {
         var numberCh = e.target.value;
-        var maxCharacter = 50;
-        lastWorkCharacterCounter.textContent = numberCh.length + ' / '+maxCharacter;
-        if (numberCh.length > maxCharacter) {
+        lastWorkCharacterCounter.textContent = numberCh.length + ' / '+maxCharacterLastWork;
+        if (numberCh.length > maxCharacterLastWork) {
             lastWorkCharacterCounter.className = 'helper-text red-text';
             formVerification.lastWork = false;
         }else{
@@ -334,11 +359,42 @@ docenteForm.addEventListener('submit', async (e) => {
         const phone = docenteForm["docenteTelefono"].value;
         const category = docenteForm["docenteCategoria"].value;
         const type = docenteForm["docenteTipo"].value;
+        const specialism = docenteForm["docenteEspecialidad"].value;
+        const profImgDoc = docenteForm["docenteImagenPerfil"].files[0];
 
         progressBarElements('Registrando docente', 'regDocBar');
         
-        // Se ejecuta la funcion saveUser() que guarda los datos del docentes en la coleccion 'lms-docentes' en firebase
-        await saveUser(name, email, summary, experience, lastWork, phone, category, type);
+        if (profImgDoc) {
+            var storageRef = storage.ref('/ImagenPerfil/'+profImgDoc.name);
+
+            var uploadTask = storageRef.put(profImgDoc);
+            
+            uploadTask.on('state_changed', function(snapshot){
+
+                // Progreso de la imagen a subir
+                var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                console.log(profImgDoc.name+' subiendo ' + progress + '% completado');
+
+            }, function (error) {
+                console.log(error);
+                
+            }, function () {
+                // console.log('Imagen '+c1+' '+profImgDoc.name+' subida');
+
+                uploadTask.snapshot.ref.getDownloadURL().then(async function (url) {
+                    console.log(url);
+                    // Se ejecuta la funcion saveUser() que guarda los datos del docentes en la coleccion 'lms-docentes' en firebase
+                    await saveUser(name, email, summary, experience, lastWork, phone, category, type, specialism, profImgDoc.name, url);
+                })
+            });
+
+            console.log('Imagen:'+profImgDoc);
+            
+        }else{
+            console.log('Imagen: no esxiste');
+        }
+
+        
     } else {
         alert('Coloque los campos del formulario correctamente');
     }
